@@ -1,7 +1,8 @@
 litePlay.js
 ======
 
-This repo contains the source files for litePlay.js, an experimental platform for lite coding. litePlay uses three off-the-shelf technologies:
+
+This [repo](https://github.com/vlazzarini/litePlay.js) contains the source files for litePlay.js, an experimental platform for lite coding. litePlay uses three off-the-shelf technologies:
 
 - Csound
 - JavaScript
