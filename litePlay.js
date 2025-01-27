@@ -437,16 +437,34 @@ export const eventList = {
     score: function (when = 0, evtLst = this.events) {
         let mess = "";
         let instr, amp, dur,
-            t = when, what;
+            time = when, what;
         for (const evt of evtLst) {
             if (typeof evt === "object") {
-                what = evt[0];
+                what_ = evt[0];
+                if (typeof what_ === "function")
+                    what = what_();
+                else
+                    what = what_  
                 instr = evt.length > 4 && isInstr(evt[4]) ? evt[4] : defInstr;
-                dur = evt.length > 3 ? evt[3] : instr.howLong;
-                t = evt.length > 2 ? evt[2] :   t;
-                amp = evt.length > 1 ? evt[1] : instr.howLoud;
+                dur_ = evt.length > 3 ? evt[3] : instr.howLong;
+                if(typeof dur_ === "function")
+                    dur = dur_();
+                else dur = dur_;
+ 
+                time_ = evt.length > 2 ? evt[2] : time;
+                if(typeof time_ === "function")
+                   time = time_();
+                else time = time_;
+                
+                amp_ = evt.length > 1 ? evt[1] : instr.howLoud;
+                if(typeof amp_ === "function")
+                   amp = amp_();
+                else amp = amp_;     
             } else {
-                what = evt;
+                if (typeof evt === "function")
+                    what = evt_();
+                else
+                    what = evt;
                 instr = defInstr;
                 amp = instr.howLoud;
                 dur = instr.howLong;
@@ -491,6 +509,42 @@ export function instrument(instr) {
     if(isInstr(instr)) defInstr = instr;
     return defInstr;
 }
+
+
+rnd = (min, max) => { return min + (max-min)*random(); };
+
+const lowmin = 0.01;
+const lowmax = 0.1;
+const midmin = 0.1;
+const midmax = 0.4;
+const himin = 0.4;
+const himax = 0.9;
+export soft = () => { return rnd(lowmin,lowmax); };
+export level = () => { return rnd(midmin, midmax); };
+export loud = () => { return rnd(himin, himax); };
+
+
+const shortmin = 0.05;
+const shortmax = 0.2;
+const middurmin = 0.2;
+const middurmax = 2;
+const longmin = 2;
+const longmax = 5;
+export shortdur = () => { return rnd(shortmin,shortmax); };
+export middur = () => { return rnd(middurmin, middurmax); };
+export longdur = () => { return rnd(longmin, longmax); };
+
+const lowpmin = 12.0;
+const lowpmax = 48.0;
+const midpmin = 48.0;
+const midpmax = 72.0;
+const hipmin = 72.0;
+const hipmax = 96.0;
+
+export lowpitch = () => { return rnd(lowpmin,lowpmax); };
+export midpitch = () => { return rnd(midpmin, midpmax); };
+export hipitch = () => { return rnd(hipmin, hipmax); };
+
 
 // instrument collection
 export const grandPiano = new Instrument(0);
