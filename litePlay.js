@@ -521,7 +521,7 @@ const himin = 0.4;
 const himax = 0.9;
 export const soft = () => { return rnd(lowmin,lowmax); };
 export const level = () => { return rnd(midmin, midmax); };
-export v loud = () => { return rnd(himin, himax); };
+export const loud = () => { return rnd(himin, himax); };
 
 
 const shortmin = 0.05;
