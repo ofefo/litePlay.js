@@ -534,6 +534,12 @@ export const shortdur = () => { return rnd(shortmin,shortmax); };
 export const middur = () => { return rnd(middurmin, middurmax); };
 export const longdur = () => { return rnd(longmin, longmax); };
 
+
+export const immediately = () => { return rnd(0,shortmin); };
+export const soon = () => { return rnd(shortmax, middurmax); };
+export const later = () => { return rnd(longmin, longmax); };
+
+
 const lowpmin = 12.0;
 const lowpmax = 48.0;
 const midpmin = 48.0;
