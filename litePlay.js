@@ -440,23 +440,23 @@ export const eventList = {
             time = when, what;
         for (const evt of evtLst) {
             if (typeof evt === "object") {
-                what_ = evt[0];
+                let what_ = evt[0];
                 if (typeof what_ === "function")
                     what = what_();
                 else
                     what = what_  
                 instr = evt.length > 4 && isInstr(evt[4]) ? evt[4] : defInstr;
-                dur_ = evt.length > 3 ? evt[3] : instr.howLong;
+                let dur_ = evt.length > 3 ? evt[3] : instr.howLong;
                 if(typeof dur_ === "function")
                     dur = dur_();
                 else dur = dur_;
  
-                time_ = evt.length > 2 ? evt[2] : time;
+                let time_ = evt.length > 2 ? evt[2] : time;
                 if(typeof time_ === "function")
                    time = time_();
                 else time = time_;
                 
-                amp_ = evt.length > 1 ? evt[1] : instr.howLoud;
+                let amp_ = evt.length > 1 ? evt[1] : instr.howLoud;
                 if(typeof amp_ === "function")
                    amp = amp_();
                 else amp = amp_;     
