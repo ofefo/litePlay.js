@@ -519,9 +519,9 @@ const midmin = 0.1;
 const midmax = 0.4;
 const himin = 0.4;
 const himax = 0.9;
-export soft = () => { return rnd(lowmin,lowmax); };
-export level = () => { return rnd(midmin, midmax); };
-export loud = () => { return rnd(himin, himax); };
+export const soft = () => { return rnd(lowmin,lowmax); };
+export const level = () => { return rnd(midmin, midmax); };
+export v loud = () => { return rnd(himin, himax); };
 
 
 const shortmin = 0.05;
@@ -530,9 +530,9 @@ const middurmin = 0.2;
 const middurmax = 2;
 const longmin = 2;
 const longmax = 5;
-export shortdur = () => { return rnd(shortmin,shortmax); };
-export middur = () => { return rnd(middurmin, middurmax); };
-export longdur = () => { return rnd(longmin, longmax); };
+export const shortdur = () => { return rnd(shortmin,shortmax); };
+export const middur = () => { return rnd(middurmin, middurmax); };
+export const longdur = () => { return rnd(longmin, longmax); };
 
 const lowpmin = 12.0;
 const lowpmax = 48.0;
@@ -541,9 +541,9 @@ const midpmax = 72.0;
 const hipmin = 72.0;
 const hipmax = 96.0;
 
-export lowpitch = () => { return rnd(lowpmin,lowpmax); };
-export midpitch = () => { return rnd(midpmin, midpmax); };
-export hipitch = () => { return rnd(hipmin, hipmax); };
+export function lowpitch() { return rnd(lowpmin,lowpmax); }
+export function midpitch()  { return rnd(midpmin, midpmax); }
+export function hipitch()  { return rnd(hipmin, hipmax); }
 
 
 // instrument collection
