@@ -511,7 +511,7 @@ export function instrument(instr) {
 }
 
 
-rnd = (min, max) => { return min + (max-min)*random(); };
+const rnd = (min, max) => { return min + (max-min)*random(); };
 
 const lowmin = 0.01;
 const lowmax = 0.1;
