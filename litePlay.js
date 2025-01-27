@@ -471,8 +471,8 @@ export const eventList = {
                 instr = defInstr;
             }
             if(what >= 0)
-                mess += instr.score(what, amp, t, dur);
-            t += dur;
+                mess += instr.score(what, amp, time, dur);
+            time += dur;
         }
         return {
             score: mess,
