@@ -391,38 +391,45 @@ export const sequencer = {
                                 theInstr = this.instr;
                                 dur = theInstr.isDrums ? 0 : this.bbs;
                                 let what_ = el[0];
+                                
                                 if(typeof what_  === "function")
                                     pp = what_();
                                 else pp = what_;
+                                
                                 if (el.length > 1) {
                                     let gain = el[1];
                                     if(typeof gain === "function")
                                         amp *= gain();
                                     else amp *= gain;                                    
                                 }
+                                
                                 if (el.length > 2) {
                                     let offs = el[2];
                                     if(typeof offs === "function")
                                         sched += offs();
                                     else sched += offs;
                                 }
+                                
                                 if (el.length > 3) {
                                     let dur_ = el[3];
                                     if(typeof dur_ === "function")
                                         dur = dur_();
                                     else dur = dur_;
                                 }
+                                
                                 if (el.length > 4 && isInstr(el[4])) {
                                     theInstr = el[4];
                                     dur = dur > 0 ? dur : theInstr.isDrums ? 0 : t;
                                 }
+                                
                                 if (sched >= 0 && pp >= 0 && this.on)
-                                    theInstr.play(pp, amp, sched + i * bbs, dur]);
+                                    theInstr.play([pp, amp, sched + i * bbs, dur]);                     
+                            }
                         }
                     }
                 }
-            }
-        }
+            },
+        };
     },
     add: function (instr, what, howLoud = 1, bbs = 1) {
         if(isInstr(instr)) {
