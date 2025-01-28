@@ -578,7 +578,7 @@ const midmax = 0.4;
 const himin = 0.4;
 const himax = 0.9;
 export const soft = () => { return rnd(lowmin,lowmax); };
-export const level = () => { return rnd(midmin, midmax); };
+export const midlevel = () => { return rnd(midmin, midmax); };
 export const loud = () => { return rnd(himin, himax); };
 
 
@@ -589,7 +589,7 @@ const middurmax = 2;
 const longmin = 2;
 const longmax = 5;
 export const shortdur = () => { return rnd(shortmin,shortmax); };
-export const middur = () => { return rnd(middurmin, middurmax); };
+export const midduration = () => { return rnd(middurmin, middurmax); };
 export const longdur = () => { return rnd(longmin, longmax); };
 
 const immediatemin = 0.01;
@@ -599,7 +599,7 @@ const soonmax = 4;
 const latermin = 4;
 const latermax = 8;
 
-export const immediately = () => { return rnd(immediatemin,immediatemax); };
+export const now = () => { return rnd(immediatemin,immediatemax); };
 export const soon = () => { return rnd(soonmin, soonmax); };
 export const later = () => { return rnd(latermin, latermax); };
 
