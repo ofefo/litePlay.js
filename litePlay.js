@@ -130,9 +130,6 @@ export class Instrument {
         if (evtLst.length == 0) {
             mess += this.score(this.what,this.howLoud,0,0);
         } else {
- 
-
-            
             for (const evt of evtLst) {
                 if (typeof evt === "object") {
                     let what_ = evt[0];
@@ -357,9 +354,24 @@ export const sequencer = {
                             theInstr.play([evt, amp, sched + i * bbs, dur]);
                     } else {
                         if (typeof evt[0] !== "object") {
-                            if (evt.length > 1) amp *= evt[1];
-                            if (evt.length > 2) sched += evt[2];
-                            if (evt.length > 3) dur = evt[3];
+                            if (evt.length > 1) {
+                                let gain = evt[1];
+                                if(typeof gain === "function")
+                                    amp *= gain();
+                                else amp *= gain;
+                            }
+                            if (evt.length > 2) {
+                                let offs = evt[2];
+                                if(typeof offs === "function")
+                                    sched += offs();
+                                else sched += offs;
+                            }
+                            if (evt.length > 3) {
+                                let dur_ = evt[3];
+                                if(typeof dur_ === "function")
+                                    dur = dur_();
+                                else dur = dur_;
+                            }
                             if (evt.length > 4 && isInstr(evt[4])) {
                                 theInstr = evt[4];
                                 dur = dur > 0 ? dur : theInstr.isDrums ? 0 : t;
@@ -371,9 +383,24 @@ export const sequencer = {
                                 amp = this.amp;
                                 theInstr = this.instr;
                                 dur = theInstr.isDrums ? 0 : this.bbs;
-                                if (el.length > 1) amp *= el[1];
-                                if (el.length > 2) sched += el[2];
-                                if (el.length > 3) dur = el[3];
+                                if (el.length > 1) {
+                                    let gain = el[1];
+                                    if(typeof gain === "function")
+                                        amp *= gain();
+                                    else amp *= gain;                                    
+                                }
+                                if (el.length > 2) {
+                                    let offs = el[2];
+                                    if(typeof offs === "function")
+                                        sched += offs();
+                                    else sched += offs;
+                                }
+                                if (el.length > 3) {
+                                    let dur_ = el[3];
+                                    if(typeof dur_ === "function")
+                                        dur = dur_();
+                                    else dur = dur_;
+                                }
                                 if (el.length > 4 && isInstr(el[4])) {
                                     theInstr = el[4];
                                     dur = dur > 0 ? dur : theInstr.isDrums ? 0 : t;
