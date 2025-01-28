@@ -343,7 +343,7 @@ export const sequencer = {
             play: function (sched) {
                 const what = this.what,
                       bbs = this.bbs;
-                let amp, theInstr = this.instr,
+                let pp, amp, theInstr = this.instr,
                     dur = theInstr.isDrums ? 0 : this.bbs;
                 for (let i = 0; i < 1 / bbs; i++) {
                     let evt = what[this.n];
@@ -351,16 +351,16 @@ export const sequencer = {
                     this.n = this.n != what.length - 1 ? this.n + 1 : 0;
                     if (typeof evt !== "object") {
                         if(typeof evt === "function")
-                            what = evt();
-                        else what = evt;
-                        if (sched >= 0 && what >= 0 && this.on)
-                            theInstr.play([what, amp, sched + i * bbs, dur]);
+                            pp = evt();
+                        else pp = evt;
+                        if (sched >= 0 && pp >= 0 && this.on)
+                            theInstr.play([pp, amp, sched + i * bbs, dur]);
                     } else {
                         if (typeof evt[0] !== "object") {
                             let what_ = evt[0];
                             if(typeof what_  === "function")
-                                what = what_();
-                            else what = what_;
+                                pp = what_();
+                            else pp = what_;
                             if (evt.length > 1) {
                                 let gain = evt[1];
                                 if(typeof gain === "function")
@@ -383,8 +383,8 @@ export const sequencer = {
                                 theInstr = evt[4];
                                 dur = dur > 0 ? dur : theInstr.isDrums ? 0 : t;
                             }
-                            if (sched >= 0 && what >= 0 && this.on)
-                                theInstr.play([what, amp, sched + i * bbs, dur]);
+                            if (sched >= 0 && pp >= 0 && this.on)
+                                theInstr.play([pp, amp, sched + i * bbs, dur]);
                         } else {
                             for (const el of evt) {
                                 amp = this.amp;
@@ -392,8 +392,8 @@ export const sequencer = {
                                 dur = theInstr.isDrums ? 0 : this.bbs;
                                 let what_ = el[0];
                                 if(typeof what_  === "function")
-                                    what = what_();
-                                else what = what_;
+                                    pp = what_();
+                                else pp = what_;
                                 if (el.length > 1) {
                                     let gain = el[1];
                                     if(typeof gain === "function")
@@ -416,8 +416,8 @@ export const sequencer = {
                                     theInstr = el[4];
                                     dur = dur > 0 ? dur : theInstr.isDrums ? 0 : t;
                                 }
-                                if (sched >= 0 && what >= 0 && this.on)
-                                    theInstr.play(what, amp, sched + i * bbs, dur]);
+                                if (sched >= 0 && pp >= 0 && this.on)
+                                    theInstr.play(pp, amp, sched + i * bbs, dur]);
                             }
                         }
                     }
