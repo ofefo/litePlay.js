@@ -418,12 +418,11 @@ export const sequencer = {
                                 }
                                 if (sched >= 0 && pp >= 0 && this.on)
                                     theInstr.play(pp, amp, sched + i * bbs, dur]);
-                            }
                         }
                     }
                 }
-            },
-        };
+            }
+        }
     },
     add: function (instr, what, howLoud = 1, bbs = 1) {
         if(isInstr(instr)) {
