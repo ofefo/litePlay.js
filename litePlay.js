@@ -130,14 +130,28 @@ export class Instrument {
         if (evtLst.length == 0) {
             mess += this.score(this.what,this.howLoud,0,0);
         } else {
+ 
+
+            
             for (const evt of evtLst) {
                 if (typeof evt === "object") {
-                    what = evt[0];
-                    dur = evt.length > 3 ? evt[3] : dur;
-                    when = evt.length > 2 ? evt[2] : 0;
-                    amp = evt.length > 1 ? evt[1] : amp;
-                } else 
-                    what = evt;
+                    let what_ = evt[0];
+                    let dur_ = evt.length > 3 ? evt[3] : dur;
+                    let when_ = evt.length > 2 ? evt[2] : 0;
+                    let amp_ = evt.length > 1 ? evt[1] : amp;
+                    if(typeof what_ === "function") what = what_();
+                    else what = what_;
+                    if(typeof dur_ === "function") dur = dur_();
+                    else dur = dur_;
+                    if(typeof when_ === "function") when = when_();
+                    else when = when_;
+                    if(typeof amp_ === "function") amp = amp_();
+                    else amp = amp_;
+                } else {
+                    let what_ = evt;
+                    if(typeof what_ === "function") what = what_();
+                    else what = what_;
+                }
                 mess += this.score(what, amp, when, dur);
             }
         }
