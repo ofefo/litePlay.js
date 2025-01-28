@@ -132,7 +132,7 @@ export class Instrument {
         } else {
             for (const evt of evtLst) {
                 if (typeof evt === "object") {
-                    let what_ = evt;
+                    let what_ = evt[0];
                     if(typeof what_ === "function") what = what_();
                     else what = what_;
                     let dur_ = evt.length > 3 ? evt[3] : dur;
