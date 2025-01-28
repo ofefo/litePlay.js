@@ -68,7 +68,7 @@ export class Instrument {
         this.pgm = pgm;
         this.chn = globalObj.freeChannel++;
         this.isDrums = isDrums;
-        this.what = 60;
+        this.what = 60.0;
         this.howLoud = 1;
         this.howLong = 1;
         this.on = new Uint8Array(128);
@@ -132,7 +132,9 @@ export class Instrument {
         } else {
             for (const evt of evtLst) {
                 if (typeof evt === "object") {
-                    let what_ = evt[0];
+                    let what_ = evt;
+                    if(typeof what_ === "function") what = what_();
+                    else what = what_;
                     let dur_ = evt.length > 3 ? evt[3] : dur;
                     let when_ = evt.length > 2 ? evt[2] : 0;
                     let amp_ = evt.length > 1 ? evt[1] : amp;
