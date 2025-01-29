@@ -121,3 +121,7 @@ const Bs0 = Bs[0], Bs1 = Bs[1], Bs2 = Bs[2], Bs3 = Bs[3], Bs4 = Bs[4],
       Bs5 = Bs[5], Bs6 = Bs[6], Bs7 = Bs[7], Bs8 = Bs[8], Bs9 = Bs[9];
 const O = -999;
 
+const quarterTone = 0.25;
+const thirdTone =  0.333;
+const oneCent = 0.01;
+const tenCent = 0.1;
