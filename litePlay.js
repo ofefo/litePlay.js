@@ -509,10 +509,10 @@ export const eventList = {
                     dur = dur_();
                 else dur = dur_;
  
-                let time_ = evt.length > 2 ? evt[2] : time;
+                let time_ = evt.length > 2 ? evt[2] : 0;
                 if(typeof time_ === "function")
-                   time = time_();
-                else time = time_;
+                    time = time_() + when;
+                else time = time_ + when;
                 
                 let amp_ = evt.length > 1 ? evt[1] : instr.howLoud;
                 if(typeof amp_ === "function")
