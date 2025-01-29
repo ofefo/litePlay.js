@@ -1,3 +1,6 @@
+// litePlay URL
+const lp_URL = "https://vlazzarini.github.io/litePlay.js/litePlay.js";
+
 // MIDI NOTE constants
 
 const acousticBassDrum = 35;
