@@ -77,7 +77,7 @@ async function setup() {
     fill('red');
     rect(20, 20, 60, 60);
     setTimeout(()=> {
-      fill(200);
+      fill('grey');
       rect(20, 20, 60, 60);
       }, 100);
     sequencer.addCallback(heartbeat);
