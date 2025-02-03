@@ -1,5 +1,5 @@
 // litePlay URL
-export const lp_URL = "https://vlazzarini.github.io/litePlay.js/litePlay.js";
+const lp_URL = "https://vlazzarini.github.io/litePlay.js/litePlay.js";
 
 // MIDI NOTE constants
 
