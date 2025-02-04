@@ -568,7 +568,7 @@ export function instrument(instr) {
     return defInstr;
 }
 
-export function lp.stop() {
+export function stop() {
     defInstr.stop();
 }
 
