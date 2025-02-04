@@ -568,6 +568,10 @@ export function instrument(instr) {
     return defInstr;
 }
 
+export function lp.stop() {
+    defInstr.stop();
+}
+
 
 const rnd = (min, max) => { return min + (max-min)*random(); };
 
