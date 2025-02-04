@@ -125,3 +125,14 @@ const quarterTone = 0.25;
 const thirdTone =  0.333;
 const oneCent = 0.01;
 const tenCent = 0.1;
+
+const lpRun = (code) => {
+     import(lp_URL).then((val) => {
+         lp = val; 
+         lp.startEngine().then(() => { 
+             if(typeof(code) === 'function') code();
+             else console.log("litePlay.js: running\n");
+         }
+       );
+     });
+}
