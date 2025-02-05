@@ -18,6 +18,6 @@ You can start by looking at the following sketches in the P5.js editor:
 
 [Sequencer example](https://editor.p5js.org/vlazzarini/sketches/c4PhzF39r)
 
-A [startup tutorial](./tutorial.md) is available, with an overview of
+A [start-up tutorial](./tutorial.md) is available, with an overview of
 the system. This is a work-in-progress, which aims to cover the
 complete system.
