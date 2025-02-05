@@ -137,4 +137,8 @@ const lpRun = (code = null) => {
      });
 }
 
-
+const lpLoad = async () => {
+    let lp = await import(lp_URL);
+    await lp.startEngine();
+    return lp;
+};
