@@ -104,7 +104,7 @@ Event attributes (or parameters) are optional, as we have seen. If we do pass th
 Events are passed using a JS list (or array) with attributes in the order listed earlier
 
 ```
-[_what_,  _howLoud_, _when_, _howLong_, _onSomething_]
+[what,  howLoud, when, howLong, onSomething]
 ```
 
 For example,
