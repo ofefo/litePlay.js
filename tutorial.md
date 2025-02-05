@@ -37,15 +37,67 @@ when the page is loaded, you will have access to various system constants, as we
 lpRun(f)
 ```
 
-which loads the module, starts the audio engine, and then calls the function `f` which is supplied to it. At the simplest, we can have the following JS script code
+which loads the module, starts the audio engine, and then calls the function `f()` which is supplied to it. At the simplest, we can have the following JS script code
+
+```
+lpRun();
+```
+
+which tells the user that the system is ready to use when a message is printed to the JS console. Alternatively, the function `f()` can be use as the starting point of the litePlay.js application. Or it can simply contain all the code that is to be executed when the script is run,
 
 ```
 function code() {
-    console.log("litePlay.js: ready")
+ // we start executing from here ...
 }
 lpRun(code);
 ```
 
-which tells the user that the system is ready to use when the message is printed to the JS console. The function `code()` can be use as the starting point of the litePlay.js application.
-Or it can simply contain all the code that is to be executed when the script is run.
+Once the litePlay.js engine is running, we can use its functionality anywhere by prefixing its functions etc with `lp.`.
+
+The `play()` action
+---------
+
+At the core of litePlay.js we have `play()`. This can be simply run as
+
+```
+lp.play()
+```
+
+to play a sound, and `lp.stop()` to stop it.
+
+We can make changes to this sound by setting
+the default instrument playing it,
+
+```
+lp.instrument(organ)
+```
+
+the default was set to piano at the start, but we now changed it to organ.
+
+We can also tell what to play. If the sound is from a pitched instrument,
+we can ask it to play a given pitch,
+
+```
+lp.play(E4)
+```
+
+The pitch symbolic names range from Cm2 ($=C_{-2}$) to G7 ($=G_{7}$),
+in such a way that the middle C of a piano keyboard is set to C4.
+
+Events
+---
+
+In litePlay.js we can think of the resulting action of `play()` in this form is a musical _event_. We can define it with five attributes:
+
+- _what_: the thing that we play, which may vary, but in the case shown earlier, is the pitch of the sound.
+
+- _howLoud_: the level of the sound, which can be set by a numeric value in a scale from 0 to 1.
+
+- _when_: the event time, when it is supposed to be happening, in the present case, set in seconds.
+
+- _howLong_: how long the sound is to last for, in seconds.
+
+- _onSomething_: the thing that will be making the sound, the instrument, such as `lp.organ`, `lp.violin` etc. There are several of these to choose from. Depending on the type of instrument, _what_ can be played may vary. For example, in the case of `lp.drums`, we do not have pitch, but different percussion sounds like `snare`, `kick`,  etc.
+
+
 

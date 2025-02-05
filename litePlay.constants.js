@@ -64,7 +64,7 @@ function notes(start) {
 
 const C = notes(0);
 const C0 = C[2], C1 = C[3], C2 = C[4], C3 = C[5], C4 = C[6],
-      C5 = C[7], C6 = C[8], C7 = C[9], Cm1 = c[1], Cm2 = c[0];
+      C5 = C[7], C6 = C[8], C7 = C[9], Cm1 = C[1], Cm2 = C[0];
 const Cs = notes(1);
 const Cs0 = Cs[2], Cs1 = Cs[3], Cs2 = Cs[4], Cs3 = Cs[5], Cs4 = Cs[6],
       Cs5 = Cs[7], Cs6 = Cs[8], Cs7 = Cs[9], Csm1 = Cs[1], Csm2 = Cs[0];
