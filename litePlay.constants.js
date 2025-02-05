@@ -103,19 +103,19 @@ const Gs0 = Gs[1], Gs1 = Gs[2], Gs2 = Gs[3], Gs3 = Gs[4], Gs4 = Gs[5],
       Gs5 = Gs[6], Gs6 = Gs[7], Gs7 = Gs[8], Gsm1 = Gs[0];
 const Ab = Gs;
 const Ab0 = Ab[1], Ab1 = Ab[2], Ab2 = Ab[3], Ab3 = Ab[4], Ab4 = Ab[5],
-      Ab5 = Ab[6], Ab6 = Ab[7], Abm1 = Ab[0];
+      Ab5 = Ab[6], Ab6 = Ab[7], Ab7 = Ab[8], Abm1 = Ab[0];
 const A = notes(9);
 const A0 = A[1], A1 = A[2], A2 = A[3], A3 = A[4], A4 = A[5],
-      A5 = A[6], A6 = A[7], Am1 = A[0];
+      A5 = A[6], A6 = A[7], A7 = A[8], Am1 = A[0];
 const As = notes(10);
 const As0 = As[1], As1 = As[2], As2 = As[3], As3 = As[4], As4 = As[5],
-      As5 = As[6], As6 = As[7], Asm1 = As[0];
+      As5 = As[6], As6 = As[7], As7 = As[8], Asm1 = As[0];
 const Bb = As;
 const Bb0 = Bb[1], Bb1 = Bb[2], Bb2 = Bb[3], Bb3 = Bb[4], Bb4 = Bb[5],
-      Bb5 = Bb[6], Bb6 = Bb[7], Bbm1 = Bb[0];
+      Bb5 = Bb[6], Bb6 = Bb[7], Bb7 = Bb[8], Bbm1 = Bb[0];
 const B = notes(12);
 const B0 = B[1], B1 = B[2], B2 = B[3], B3 = B[4], B4 = B[5],
-      B5 = B[6], B6 = B[7], Bm1 = B[0];
+      B5 = B[6], B6 = B[7], B7 = B[8], Bm1 = B[0];
 const Bs = C;
 const Bs0 = Bs[1], Bs1 = Bs[2], Bs2 = Bs[3], Bs3 = Bs[4], Bs4 = Bs[5],
       Bs5 = Bs[6], Bs6 = Bs[7], Bs7 = Bs[8], Bs8 = Bs[9], Bsm1 = Bs[0];
