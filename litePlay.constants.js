@@ -63,62 +63,62 @@ function notes(start) {
 }
 
 const C = notes(0);
-const C0 = C[2], C1 = C[3], C2 = C[4], C3 = C[5], C4 = C[6],
-      C5 = C[7], C6 = C[8], C7 = C[9], Cm1 = C[1], Cm2 = C[0];
+const C0 = C[1], C1 = C[2], C2 = C[3], C3 = C[4], C4 = C[5],
+      C5 = C[6], C6 = C[7], C7 = C[8], C8 = C[9], Cm1 = C[0];
 const Cs = notes(1);
-const Cs0 = Cs[2], Cs1 = Cs[3], Cs2 = Cs[4], Cs3 = Cs[5], Cs4 = Cs[6],
-      Cs5 = Cs[7], Cs6 = Cs[8], Cs7 = Cs[9], Csm1 = Cs[1], Csm2 = Cs[0];
+const Cs0 = Cs[1], Cs1 = Cs[2], Cs2 = Cs[3], Cs3 = Cs[4], Cs4 = Cs[5],
+      Cs5 = Cs[6], Cs6 = Cs[7], Cs7 = Cs[8], Cs8 = Cs[9], Csm1 = Cs[0];
 const Db = Cs;
-const Db0 = Db[2], Db1 = Db[3], Db2 = Db[4], Db3 = Db[5], Db4 = Db[6],
-      Db5 = Db[7], Db6 = Db[8], Db7 = Db[9], Dbm1 = Db[1], Dbm2 = Db[0];
+const Db0 = Db[1], Db1 = Db[2], Db2 = Db[3], Db3 = Db[4], Db4 = Db[5],
+      Db5 = Db[6], Db6 = Db[7], Db7 = Db[8], Db8 = Db[9], Dbm1 = Db[0];
 const D = notes(2);
-const D0 = D[2], D1 = D[3], D2 = D[4], D3 = D[5], D4 = D[6],
-      D5 = D[7], D6 = D[8], D7 = D[9], Dm1 = D[1], Dm2 = D[0];
+const D0 = D[1], D1 = D[2], D2 = D[3], D3 = D[4], D4 = D[5],
+      D5 = D[6], D6 = D[7], D7 = D[8], D8 = D[9], Dm1 = D[0];
 const Ds = notes(3);
-const Ds0 = Ds[2], Ds1 = Ds[3], Ds2 = Ds[4], Ds3 = Ds[5], Ds4 = Ds[6],
-      Ds5 = Ds[7], Ds6 = Ds[8], Ds7 = Ds[9], Dsm1 = Ds[1], Dsm2 = Ds[0];
+const Ds0 = Ds[1], Ds1 = Ds[2], Ds2 = Ds[3], Ds3 = Ds[4], Ds4 = Ds[5],
+      Ds5 = Ds[6], Ds6 = Ds[7], Ds7 = Ds[8], Ds9 = Ds[9], Dsm1 = Ds[0];
 const Eb = Ds;
-const Eb0 = Eb[2], Eb1 = Eb[3], Eb2 = Eb[4], Eb3 = Eb[5], Eb4 = Eb[6],
-      Eb5 = Eb[7], Eb6 = Eb[8], Eb7 = Eb[9], Ebm1 = Eb[1], Ebm2 = Eb[0];
+const Eb0 = Eb[1], Eb1 = Eb[2], Eb2 = Eb[3], Eb3 = Eb[4], Eb4 = Eb[5],
+      Eb5 = Eb[6], Eb6 = Eb[7], Eb7 = Eb[8], Eb8 = Eb[9], Ebm1 = Eb[0];
 const E = notes(4);
-const E0 = E[2], E1 = E[3], E2 = E[4], E3 = E[5], E4 = E[6],
-      E5 = E[7], E6 = E[8], E7 = E[9], Em1 = E[1], Em2 = E[0];
+const E0 = E[1], E1 = E[2], E2 = E[3], E3 = E[4], E4 = E[5],
+      E5 = E[6], E6 = E[7], E7 = E[8], E8 = E[9], Em1 = E[0];
 const Es = notes(5);
-const Es0 = Es[2], Es1 = Es[3], Es2 = Es[4], Es3 = Es[5], Es4 = Es[6],
-      Es5 = Es[7], Es6 = Es[8], Es7 = Es[9], Esm1 = Es[1], Esm2 = Es[0];
+const Es0 = Es[1], Es1 = Es[2], Es2 = Es[3], Es3 = Es[4], Es4 = Es[5],
+      Es5 = Es[6], Es6 = Es[7], Es7 = Es[8], Es8 = Es[9], Esm1 = Es[0];
 const F = Es;
-const F0 = F[2], F1 = F[3], F2 = F[4], F3 = F[5], F4 = F[6],
-      F5 = F[7], F6 = F[8], F7 = F[9], Fm1 = F[1], Fm2 = F[0];
+const F0 = F[1], F1 = F[2], F2 = F[3], F3 = F[4], F4 = F[5],
+      F5 = F[6], F6 = F[7], F7 = F[8], F8 = F[9], Fm1 = F[0];
 const Fs = notes(6);
-const Fs0 = Fs[2], Fs1 = Fs[3], Fs2 = Fs[4], Fs3 = Fs[5], Fs4 = Fs[6],
-      Fs5 = Fs[7], Fs6 = Fs[8], Fs7 = Fs[9], Fsm1 = Fs[1], Fsm2 = Fs[0];
+const Fs0 = Fs[1], Fs1 = Fs[2], Fs2 = Fs[3], Fs3 = Fs[4], Fs4 = Fs[5],
+      Fs5 = Fs[6], Fs6 = Fs[7], Fs7 = Fs[8], Fs8 = Fs[9], Fsm1 = Fs[0];
 const Gb = Fs;
-const Gb0 = Gb[2], Gb1 = Gb[3], Gb2 = Gb[4], Gb3 = Gb[5], Gb4 = Gb[6],
-      Gb5 = Gb[7], Gb6 = Gb[8], Gb7 = Gb[9], Gbm1 = Gb[1], Gbm2 = Gb[0];
+const Gb0 = Gb[1], Gb1 = Gb[2], Gb2 = Gb[3], Gb3 = Gb[4], Gb4 = Gb[5],
+      Gb5 = Gb[6], Gb6 = Gb[7], Gb7 = Gb[8], Gb8 = Gb[9], Gbm1 = Gb[0];
 const G = notes(7);
-const G0 = G[2], G1 = G[3], G2 = G[4], G3 = G[5], G4 = G[6],
-      G5 = G[7], G6 = G[8], G7 = G[9], Gm1 = G[1], Gm2 = G[0];
+const G0 = G[1], G1 = G[2], G2 = G[3], G3 = G[4], G4 = G[5],
+      G5 = G[6], G6 = G[7], G7 = G[8], G8 = G[9], Gm1 = G[0];
 const Gs = notes(8);
-const Gs0 = Gs[2], Gs1 = Gs[3], Gs2 = Gs[4], Gs3 = Gs[5], Gs4 = Gs[6],
-      Gs5 = Gs[7], Gs6 = Gs[8], Gs7 = Gs[9], Gsm1 = Gs[1], Gsm2 = Gs[0];
+const Gs0 = Gs[1], Gs1 = Gs[2], Gs2 = Gs[3], Gs3 = Gs[4], Gs4 = Gs[5],
+      Gs5 = Gs[6], Gs6 = Gs[7], Gs7 = Gs[8], Gsm1 = Gs[0];
 const Ab = Gs;
-const Ab0 = Ab[2], Ab1 = Ab[3], Ab2 = Ab[4], Ab3 = Ab[5], Ab4 = Ab[6],
-      Ab5 = Ab[7], Ab6 = Ab[8], Abm1 = Ab[1], Abm2 = Ab[0];
+const Ab0 = Ab[1], Ab1 = Ab[2], Ab2 = Ab[3], Ab3 = Ab[4], Ab4 = Ab[5],
+      Ab5 = Ab[6], Ab6 = Ab[7], Abm1 = Ab[0];
 const A = notes(9);
-const A0 = A[2], A1 = A[3], A2 = A[4], A3 = A[5], A4 = A[6],
-      A5 = A[7], A6 = A[8], Am1 = A[1], Am2 = A[0];
+const A0 = A[1], A1 = A[2], A2 = A[3], A3 = A[4], A4 = A[5],
+      A5 = A[6], A6 = A[7], Am1 = A[0];
 const As = notes(10);
-const As0 = As[2], As1 = As[3], As2 = As[4], As3 = As[5], As4 = As[6],
-      As5 = As[7], As6 = As[8], Asm1 = As[1], Asm2 = As[0];
+const As0 = As[1], As1 = As[2], As2 = As[3], As3 = As[4], As4 = As[5],
+      As5 = As[6], As6 = As[7], Asm1 = As[0];
 const Bb = As;
-const Bb0 = Bb[2], Bb1 = Bb[3], Bb2 = Bb[4], Bb3 = Bb[5], Bb4 = Bb[6],
-      Bb5 = Bb[7], Bb6 = Bb[8], Bbm1 = Bb[1], Bbm2 = Bb[0];
+const Bb0 = Bb[1], Bb1 = Bb[2], Bb2 = Bb[3], Bb3 = Bb[4], Bb4 = Bb[5],
+      Bb5 = Bb[6], Bb6 = Bb[7], Bbm1 = Bb[0];
 const B = notes(12);
-const B0 = B[2], B1 = B[3], B2 = B[4], B3 = B[5], B4 = B[6],
-      B5 = B[7], B6 = B[8], Bm1 = B[1], Bm2 = B[0];
+const B0 = B[1], B1 = B[2], B2 = B[3], B3 = B[4], B4 = B[5],
+      B5 = B[6], B6 = B[7], Bm1 = B[0];
 const Bs = C;
-const Bs0 = Bs[2], Bs1 = Bs[3], Bs2 = Bs[4], Bs3 = Bs[5], Bs4 = Bs[6],
-      Bs5 = Bs[7], Bs6 = Bs[8], Bs7 = Bs[9], Bsm1 = Bs[1], Bsm2 = Bs[0];
+const Bs0 = Bs[1], Bs1 = Bs[2], Bs2 = Bs[3], Bs3 = Bs[4], Bs4 = Bs[5],
+      Bs5 = Bs[6], Bs6 = Bs[7], Bs7 = Bs[8], Bs8 = Bs[9], Bsm1 = Bs[0];
 const O = -999;
 
 const quarterTone = 0.25;

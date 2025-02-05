@@ -63,7 +63,7 @@ At the core of litePlay.js we have `play()`. This can be simply run as
 lp.play()
 ```
 
-to play a sound, and `lp.stop()` to stop it.
+to play a sound, and `lp.stop()` to stop it. These code lines can be typed directly on an interactive REPL console or added to the script.
 
 We can make changes to this sound by setting
 the default instrument playing it,
@@ -81,7 +81,7 @@ we can ask it to play a given pitch,
 lp.play(E4)
 ```
 
-The pitch symbolic names range from Cm2 ($=C_{-2}$) to G7 ($=G_{7}$),
+The pitch symbolic names range from Cm1 ($=C_{-1}$) to G8 ($=G_{8}$),
 in such a way that the middle C of a piano keyboard is set to C4.
 
 Events
@@ -99,5 +99,24 @@ In litePlay.js we can think of the resulting action of `play()` in this form is 
 
 - _onSomething_: the thing that will be making the sound, the instrument, such as `lp.organ`, `lp.violin` etc. There are several of these to choose from. Depending on the type of instrument, _what_ can be played may vary. For example, in the case of `lp.drums`, we do not have pitch, but different percussion sounds like `snare`, `kick`,  etc.
 
+Event attributes (or parameters) are optional, as we have seen. If we do pass them, defaults are used. It is possible to pass only a few parameters, for example just _what_; _what_ and _howLoud_; _what_, _howLoud_, and _when_; as well as _what_, _howLoud_,_when_, and _howLong_.
 
+Events are passed using a JS list (or array) with attributes in the order listed earlier
+
+```
+[_what_,  _howLoud_, _when_, _howLong_, _onSomething_]
+```
+
+For example,
+
+```
+lp.play([C4, 0.5, 0, 2, lp.violin])
+```
+
+The top-level`play()` action can take several events as arguments, such
+as
+
+```
+lp.play([C4, 0.1, 0, 3],[E4, 0.2, 0.5, 0.5], [G4, 0.4, 2, 0.1])
+```
 
