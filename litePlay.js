@@ -505,11 +505,11 @@ export const eventList = {
                     what = what_;
 
                 let instr_ = evt.length > 4 ? evt[4] : defInstr;
-                if (typeof what_ === "function")
+                if (typeof instr_ === "function")
                     instr = instr_();
                 else
                     instr = instr_;  
-                //instr = isInstr(instr) ? instr : defInstr;
+                instr = isInstr(instr) ? instr : defInstr;
                 
                 let dur_ = evt.length > 3 ? evt[3] : instr.howLong;
                 if(typeof dur_ === "function")
