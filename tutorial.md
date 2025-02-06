@@ -120,3 +120,30 @@ as
 lp.play([C4, 0.1, 0, 3],[E4, 0.2, 0.5, 0.5], [G4, 0.4, 2, 0.1])
 ```
 
+Event Lists
+-----------
+
+The last example of the previous section demonstrated that we can work
+with lists of events, instead of only sending individual events to
+`play()`.  There is a particular aspect of this that we should note,
+the _when_ attributes of each event will be interpreted in a certain
+way.
+
+- A simple list of _what_
+
+```
+lp.play(C3, C4, C5);
+```
+
+In this case, the events will be separated by a default
+_howLong_ (1 sec) and played in sequence.
+
+
+- A list of incomplete events
+
+```
+lp.play([C3], [C4], [C5]);
+```
+
+
+
