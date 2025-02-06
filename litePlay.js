@@ -731,7 +731,7 @@ export const  stringEnsemble2 = new Instrument(49);
 export const  synthStrings1 = new Instrument(50);
 export const  synthStrings2 = new Instrument(51);
 
-export function onStrings() { return new Instrument(int(rnd(40,51))); }
+export function onBowed() { return new Instrument(int(rnd(40,44))); }
 
 export const  choirAahs = new Instrument(52);
 export const  voiceOohs = new Instrument(53);
@@ -739,9 +739,7 @@ export const  synthVoice = new Instrument(54);
 
 export function onVoice() { return new Instrument(int(rnd(52,54))); }
 
-
 export const  orchestralHit = new Instrument(55);
-
 
 export const  trumpet = new Instrument(56);
 export const  trombone = new Instrument(57);
