@@ -545,12 +545,12 @@ export const eventList = {
                 amp = instr.howLoud;
                 dur = instr.howLong;
                 instr = defInstr;
-            }
+                }
+            let totdur = time + dur;
+            if(totdur > this.maxdur) this.maxdur = totdur;
             if(what >= 0)
                 mess += instr.score(what, amp, time, dur);
             time += dur;
-            let totdur = time + dur;
-            if(totdur > this.maxdur) this.maxdur = totdur;
         }
         return {
             score: mess,
