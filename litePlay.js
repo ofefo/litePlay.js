@@ -496,6 +496,7 @@ export const eventList = {
     play: function (when = 0, evtLst = this.events) {
         this.score(when, evtLst).play();
         this.events = evtLst;
+        return this.maxdur + when();
     },
     create: function (...evtLst) {
         let e = Object.create(eventList);
@@ -506,6 +507,7 @@ export const eventList = {
         let mess = "";
         let instr, amp, dur,
             time = when, what;
+        this.maxdur = 0.;
         for (const evt of evtLst) {
             if (typeof evt === "object") {
                 let what_ = evt[0];
@@ -513,7 +515,6 @@ export const eventList = {
                     what = what_();
                 else
                     what = what_;
-
                 let instr_ = evt.length > 4 ? evt[4] : defInstr;
                 if (typeof instr_ === "function")
                     instr = instr_();
@@ -529,7 +530,7 @@ export const eventList = {
                 let time_ = evt.length > 2 ? evt[2] : 0;
                 if(typeof time_ === "function")
                     time = time_() + when;
-                else time = time_ + when;
+                else time = time_ + when;                
                 
                 let amp_ = evt.length > 1 ? evt[1] : instr.howLoud;
                 if(typeof amp_ === "function")
@@ -548,6 +549,8 @@ export const eventList = {
             if(what >= 0)
                 mess += instr.score(what, amp, time, dur);
             time += dur;
+            let totdur = time + dur;
+            if(totdur > this.maxdur) this.maxdur = totdur;
         }
         return {
             score: mess,
