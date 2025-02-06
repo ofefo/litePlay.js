@@ -526,18 +526,18 @@ export const eventList = {
                 if(typeof dur_ === "function")
                     dur = dur_();
                 else dur = dur_;
- 
+                
                 let time_ = evt.length > 2 ? evt[2] : 0;
                 if(typeof time_ === "function") 
                     etime = time_()
                 else etime = time_;
-           
+                
                 time = etime + when;
                 let amp_ = evt.length > 1 ? evt[1] : instr.howLoud;
                 if(typeof amp_ === "function")
-                   amp = amp_();
+                    amp = amp_();
                 else amp = amp_;     
-                } else {
+            } else {
                 if (typeof evt === "function")
                     what = evt_();
                 else
@@ -546,11 +546,12 @@ export const eventList = {
                 amp = instr.howLoud;
                 dur = instr.howLong;
                 instr = defInstr;
-                }
+                etime = time;    
+            }
             let totdur = etime + dur;
-            if(totdur > this.maxdur) this.maxdur = totdur;
             if(what >= 0)
                 mess += instr.score(what, amp, time, dur);
+            if(totdur > this.maxdur) this.maxdur = totdur;
             time += dur;
         }
         return {
