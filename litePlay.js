@@ -502,8 +502,15 @@ export const eventList = {
                 if (typeof what_ === "function")
                     what = what_();
                 else
-                    what = what_  
-                instr = evt.length > 4 && isInstr(evt[4]) ? evt[4] : defInstr;
+                    what = what_
+
+                let instr_ = evt.length > 4 ? evt[4] : defInstr;
+                if (typeof what_ === "function")
+                    instr = instr_();
+                else
+                    instr = instr_  
+                instr = isInstr(instr) ? instr : defInstr;
+                
                 let dur_ = evt.length > 3 ? evt[3] : instr.howLong;
                 if(typeof dur_ === "function")
                     dur = dur_();
@@ -628,7 +635,7 @@ export const lowpitch = lowPitch;
 export const midpitch = midPitch;
 export const hipitch = hiPitch;
 
-export function onSomething() { return int(rnd(0, 127)); }
+export function onSomething() { return new Instrument(int(rnd(0, 127))); }
 
 
 // instrument collection

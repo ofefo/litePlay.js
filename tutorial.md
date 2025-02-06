@@ -82,7 +82,9 @@ lp.play(E4)
 ```
 
 The pitch symbolic names range from Cm1 ($=C_{-1}$) to G8 ($=G_{8}$),
-in such a way that the middle C of a piano keyboard is set to C4.
+in such a way that the middle C of a piano keyboard is set to C4. The
+sound is played immediately and lasts indefinitely (although some
+may decay in intensity over time).
 
 Events
 ---
@@ -135,8 +137,9 @@ way.
 lp.play(C3, C4, C5);
 ```
 
-In this case, the events will be separated by a default
-_howLong_ (1 sec) and played in sequence.
+In this case, the events will be separated by the default 
+_howLong_ for the _onSomething_ being played (set to 1 sec). So we
+hear the sounds in sequence.
 
 
 - A list of incomplete events
@@ -145,5 +148,80 @@ _howLong_ (1 sec) and played in sequence.
 lp.play([C3], [C4], [C5]);
 ```
 
+In this case, the default for _when_ is 0, immediately, for
+all events in the list. We hear the sounds starting at the same
+time, mixed up.
+
+
+- A list of events with _when_ attributes explicitly defined
+
+```
+lp.play([C3, 0.1, 0], [C4, 0.2, 1], [C5, 0.4, 2]);
+```
+
+In this case, the timing of events is relative to the time we
+asked for the event list to be played, with perhaps a very
+short delay. All events are precisely timed in relation to
+that. We can decide when these should come in with an
+exact time.
+
+This brings us the concept of an _eventList_, which is
+expressed in litePlay.js by JS object  that can be manipulated.
+For example, we can create it
+
+```
+evts = eventList.create([C3, 0.1, 0], [C4, 0.2, 1], [C5, 0.4, 2]);
+```
+
+then we can play it
+
+```
+evts.play()
+```
+
+repeatedly (by calling `play()` on it). The `play()` can take
+two optional parameters,
+
+```
+eventList.play(when, events);
+```
+
+the first one is a _when_ for the complete list, taken from the
+time of the action, so we can place the performance in the
+future. The second is a list of events, basically a JS list of
+lists, such as
+
+```
+[ [C3, 0.2, 0, 0.1], [C2, 0.3, 0.1, 1]]
+```
+
+as can be seen, there is an outer lists which holds two
+events, which are themselves lists (of attributes). One
+fundamental aspect is that the event list passed to `play()`
+replaces the existing events (if any have been added)
+in the object. Beyond that, we may, amongst other things,
+
+-`eventList.add(event, ...)` events to the end of the list. This can
+take any number of events (as `create()` did).
+
+- `eventList.remove(index)` remove an event with a given `index`
+from the list, or the last event (if no `index` is given).
+
+- `eventList.insert(pos, event, ...)` insert one or more events into
+the object, after position `pos`.
+
+One consequence of all these ideas is that we have introduced the
+idea that a `play()` action may have different forms, depending on
+which context it is being invoked, which at the moment can be
+
+- The global litePlay.js context: `lp.play()`
+
+- An instrument object : `lp.organ.play()`
+
+- An _eventList_: `eventList.play()`
+
+With events and eventLists we can construct compositions and
+performances with precise relative timing between events, which is
+something desirable in musical activities.
 
 
