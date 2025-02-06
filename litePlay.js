@@ -379,9 +379,14 @@ export const sequencer = {
                                     dur = dur_();
                                 else dur = dur_;
                             }
-                            if (evt.length > 4 && isInstr(evt[4])) {
-                                theInstr = evt[4];
-                                dur = dur > 0 ? dur : theInstr.isDrums ? 0 : t;
+                            if (evt.length > 4) {
+                                let instr_ = evt[4];
+                               if (typeof instr_ === "function")
+                                  theInstr = instr_();
+                               else
+                                  theInstr = instr_;  
+                               theInstr = isInstr(theInstr) ? theInstr : this.instr;
+                               dur = dur > 0 ? dur : theInstr.isDrums ? 0 : t;
                             }
                             if (sched >= 0 && pp >= 0 && this.on)
                                 theInstr.play([pp, amp, sched + i * bbs, dur]);
@@ -417,11 +422,16 @@ export const sequencer = {
                                     else dur = dur_;
                                 }
                                 
-                                if (el.length > 4 && isInstr(el[4])) {
-                                    theInstr = el[4];
+                                if (el.length > 4) {
+                                    let instr_ = el[4];
+                                    if (typeof instr_ === "function")
+                                        theInstr = instr_();
+                                    else
+                                        theInstr = instr_;  
+                                    theInstr = isInstr(theInstr) ? theInstr : this.instr;
                                     dur = dur > 0 ? dur : theInstr.isDrums ? 0 : t;
                                 }
-                                
+                                                           
                                 if (sched >= 0 && pp >= 0 && this.on)
                                     theInstr.play([pp, amp, sched + i * bbs, dur]);                     
                             }
@@ -525,7 +535,7 @@ export const eventList = {
                 if(typeof amp_ === "function")
                    amp = amp_();
                 else amp = amp_;     
-            } else {
+                } else {
                 if (typeof evt === "function")
                     what = evt_();
                 else
