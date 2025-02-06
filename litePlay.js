@@ -559,6 +559,11 @@ export const eventList = {
             },
         };
     },
+    repeat: function(times=1) {
+        let next = 0.;
+        for(let i = 0; i < times; i++)
+            next = this.play(next);
+    },
     add: function(...evtLst) {
         for (const evt of evtLst)  
             this.events.push(evt);
