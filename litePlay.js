@@ -496,7 +496,7 @@ export const eventList = {
     play: function (when = 0, evtLst = this.events) {
         this.score(when, evtLst).play();
         this.events = evtLst;
-        return this.maxdur + when();
+        return this.maxdur + when;
     },
     create: function (...evtLst) {
         let e = Object.create(eventList);
