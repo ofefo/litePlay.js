@@ -628,6 +628,8 @@ export const lowpitch = lowPitch;
 export const midpitch = midPitch;
 export const hipitch = hiPitch;
 
+export const onSomething() { return int(rnd(0, 127)); }
+
 
 // instrument collection
 export const grandPiano = new Instrument(0);
