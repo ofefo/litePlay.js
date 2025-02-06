@@ -217,6 +217,22 @@ seconds later from the action,
 evt.repeat(times, when)
 ```
 
+Both `eventList.play()` and `eventList.repeat()` return the end time
+of the playback. So we can use that information to schedule other
+events. For example, this code plays an event list, adds two events
+to it and then schedule to repeat that longer sequence for three
+times after the end of the first `play()` action,
+
+```
+  let evt = lp.eventList.create([C4, 0.1, 0, 1],
+                                [E4, 0.2, 1, 1], 
+                                [G4, 0.4, 2, 1]);
+  end = evt.play();
+  evt.add([C1, 0.1, 3, 3], [C1, 0.1, 0, 4]);
+  evt.repeat(3, end);
+
+```
+
 One consequence of all these ideas is that we have introduced the
 idea that a `play()` action may have different forms, depending on
 which context it is being invoked, which at the moment can be
