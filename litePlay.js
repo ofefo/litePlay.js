@@ -628,7 +628,7 @@ export const lowpitch = lowPitch;
 export const midpitch = midPitch;
 export const hipitch = hiPitch;
 
-export const onSomething() { return int(rnd(0, 127)); }
+export function onSomething() { return int(rnd(0, 127)); }
 
 
 // instrument collection
