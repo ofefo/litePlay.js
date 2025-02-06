@@ -502,13 +502,13 @@ export const eventList = {
                 if (typeof what_ === "function")
                     what = what_();
                 else
-                    what = what_
+                    what = what_;
 
                 let instr_ = evt.length > 4 ? evt[4] : defInstr;
                 if (typeof what_ === "function")
                     instr = instr_();
                 else
-                    instr = instr_  
+                    instr = instr_;  
                 instr = isInstr(instr) ? instr : defInstr;
                 
                 let dur_ = evt.length > 3 ? evt[3] : instr.howLong;
