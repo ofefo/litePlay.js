@@ -192,7 +192,7 @@ future. The second is a list of events, basically a JS list of
 lists, such as
 
 ```
-[ [C3, 0.2, 0, 0.1], [C2, 0.3, 0.1, 1]]
+[ [C3, 0.1, 0, 1], [C4, 0.2, 1, 1], [C5, 0.4, 2, 1]]
 ```
 
 as can be seen, there is an outer lists which holds two
@@ -209,6 +209,13 @@ from the list, or the last event (if no `index` is given).
 
 - `eventList.insert(pos, event, ...)` insert one or more events into
 the object, after position `pos`.
+
+We can also repeat an `eventList` any number of `times`, `when`
+seconds later from the action,
+
+```
+evt.repeat(times, when)
+```
 
 One consequence of all these ideas is that we have introduced the
 idea that a `play()` action may have different forms, depending on
