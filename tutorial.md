@@ -230,7 +230,6 @@ times after the end of the first `play()` action,
   end = evt.play();
   evt.add([C1, 0.1, 3, 3], [C1, 0.1, 0, 4]);
   evt.repeat(3, end);
-
 ```
 
 One consequence of all these ideas is that we have introduced the
@@ -246,5 +245,290 @@ which context it is being invoked, which at the moment can be
 With events and eventLists we can construct compositions and
 performances with precise relative timing between events, which is
 something desirable in musical activities.
+
+Instruments
+-----
+
+In litePlay.js, sound generation is managed by instrument objects. In
+general, we can access these by using one of the names defined in the
+JS module, like `lp.piano`, `lp.organ`, `lp.synth`, etc. These are
+constants provided by litePlay.js, allowing an easy selection of sound
+generators (to fulfill the _onSomething_ attribute of an event).
+
+This is the complete set of JS constant declarations for instruments.
+Note that each one of them has the form `const instrName = new
+Instrument(number)`. There are 128 different instruments plus six
+special drum kits that can be accessed via their individual numbers.
+
+- _Struck_: pitched sounds create by striking something like a
+string or a bar
+
+```
+const grandPiano = new Instrument(0);
+const  piano = grandPiano;
+const  brightPiano = new Instrument(1);
+const  electricGrand = new Instrument(2);
+const  honkyPiano = new Instrument(3);
+const  electricPiano = new Instrument(4);
+const  electricPiano2 = new Instrument(5);
+const  harpsichord = new Instrument(6);
+const  clavinet = new Instrument(7);
+const  celesta = new Instrument(8);
+const  glockenspiel = new Instrument(9);
+const musicBox = new Instrument(10);
+const vibraphone = new Instrument(11);
+const marimba = new Instrument(12);
+const xylophone = new Instrument(13);
+const tubularBells = new Instrument(14);
+const dulcimer = new Instrument(15);
+```
+
+- _Sustained_: pitched sounds created by sustaining tones
+
+```
+const drawbarOrgan = new Instrument(16);
+const percussiveOrgan = new Instrument(17);
+const rockOrgan = new Instrument(18);
+const organ = rockOrgan;
+const churchOrgan = new Instrument(19);
+const reedOrgan = new Instrument(20);
+const accordion = new Instrument(21);
+const harmonic = new Instrument(22);
+const tangoAccordion = new Instrument(23);
+```
+
+- _Plucked_: pitched sounds created by plucking strings
+
+```
+const nylonAcousticGuitar = new Instrument(24);
+const guitar = nylonAcousticGuitar;
+const steelAcousticGuitar = new Instrument(25);
+const jazzElectricGuitar = new Instrument(26);
+const clearElectricGuitar = new Instrument(27);
+const mutedElectricGuitar = new Instrument(28);
+const overdrivenGuitar = new Instrument(29);
+const  distortionGuitar = new Instrument(30);
+const  guitarHarmonics = new Instrument(31);
+```
+
+-_Plucke_: pitched sounds from plucked strings on non-Western instruments
+
+```
+const  sitar = new Instrument(105);
+const  banjo = new Instrument(106);
+const  shamisen = new Instrument(107);
+const  koto = new Instrument(108);
+const  kalimba = new Instrument(109);
+```
+
+- _Bass_: various types of pitched sounds for the bass range
+
+```
+const  acousticBass = new Instrument(32);
+const  fingerElectricBass = new Instrument(33);
+const  pickElectricBass = new Instrument(34);
+const  fretlessBass = new Instrument(35);
+const  bass = fretlessBass;
+const  slapBass1 = new Instrument(36);
+const  slapBass2 = new Instrument(37);
+const  synthBass1 = new Instrument(38);
+const  synthBass2 = new Instrument(39);
+```
+
+- _Bowed_: pitched sounds created by bowing strings
+
+```
+const  violin = new Instrument(40);
+const  viola = new Instrument(41);
+const  cello = new Instrument(42);
+const  contrabass = new Instrument(43);
+const  tremoloStrings = new Instrument(44);
+```
+
+- _Ensemble_: ensemble-like pitched sounds
+
+```
+const  stringEnsemble1 = new Instrument(48);
+const  strings = stringEnsemble1;
+const  stringEnsemble2 = new Instrument(49);
+const  synthStrings1 = new Instrument(50);
+const  synthStrings2 = new Instrument(51);
+```
+
+- _Voice_: pitched sounds created through singing
+
+```
+const  choirAahs = new Instrument(52);
+const  voiceOohs = new Instrument(53);
+const  synthVoice = new Instrument(54);
+```
+- _Blow_: pitched sounds created by blowing on a open mouthpiece
+  connected to a pipe
+
+```
+const  trumpet = new Instrument(56);
+const  trombone = new Instrument(57);
+const  tuba = new Instrument(58);
+const  mutedTrumpet = new Instrument(59);
+const  frenchHorn = new Instrument(60);
+const  horn = frenchHorn;
+const  brassSection = new Instrument(61);
+const  brass = brassSection;
+const  synthBrass1 = new Instrument(62);
+const  synthBrass2 = new Instrument(63);
+```
+
+-_Wind_: pitched sounds created by blowing on different types of reeds 
+
+```
+const  sopranoSax = new Instrument(64);
+const  altoSax = new Instrument(65);
+const  tenorSax = new Instrument(66);
+const  baritoneSax = new Instrument(67);
+const  oboe = new Instrument(68);
+const  englishHorn = new Instrument(69);
+const  bassoon = new Instrument(70);
+const  clarinet = new Instrument(71);
+const  piccolo = new Instrument(72);
+const  flute = new Instrument(73);
+const  recorder = new Instrument(74);
+const  panFlute = new Instrument(75);
+const  blownBottle = new Instrument(76);
+const  shakuhachi = new Instrument(77);
+const  whistle = new Instrument(78);
+const  ocarina = new Instrument(79);
+```
+
+-_Lead_: lead-type pitched synthesizer sounds
+
+```
+const  lead1 = new Instrument(80);
+const  lead2 = new Instrument(81);
+const  lead3 = new Instrument(82);
+const  lead4 = new Instrument(83);
+const  lead5 = new Instrument(84);
+const  lead6 = new Instrument(85);
+const  lead7 = new Instrument(86);
+const  lead8 = new Instrument(87);
+```
+-_Synth_: generic pitched synthesizer sounds
+
+```
+const  pad1 = new Instrument(88);
+const  pad2 = new Instrument(89);
+const  pad3 = new Instrument(90);
+const  pad4 = new Instrument(91);
+const  pad5 = new Instrument(92);
+const  synth = pad5;
+const  pad6 = new Instrument(93);
+const  pad7 = new Instrument(94);
+const  pad8 = new Instrument(96);
+```
+- _Fx_: mostly unpitched effects sounds
+
+```
+const  fx1 = new Instrument(97);
+const  fx2 = new Instrument(98);
+const  fx3 = new Instrument(99);
+const  fx4 = new Instrument(100);
+const  fx5 = new Instrument(101);
+const  fx6 = new Instrument(102);
+const  fx7 = new Instrument(103);
+const  fx8 = new Instrument(104);
+```
+
+-_Perc_: mostly unpitched percussion sounds.
+
+```
+const  agogo = new Instrument(113);
+const  steelDrums = new Instrument(114);
+const  woodblock = new Instrument(115);
+const  taikoDrum = new Instrument(116);
+const  melodicTom = new Instrument(117);
+const  synthDrum = new Instrument(118);
+const  reverseCymbal = new Instrument(119);
+const  guitarFretNoise = new Instrument(120);
+const  breathNoise = new Instrument(121);
+const  seaShore = new Instrument(122);
+const  birdTweet = new Instrument(123);
+const  telephoneRing = new Instrument(124);
+const  helicopter = new Instrument(125);
+const  applause = new Instrument(126);
+const  gunshot = new Instrument(127);
+```
+
+- Miscelaneous: miscelaneous other instruments, mostly pitched
+
+```
+export const  pizzicatoStrings = new Instrument(45);
+export const  orchestralHarp = new Instrument(46);
+export const  harp = orchestralHarp;
+const  timpani = new Instrument(47);
+const  bagPipe = new Instrument(110);
+const  fiddle = new Instrument(111);
+const  tinkleBell = new Instrument(112);
+```
+
+- _Drums_: unpitched, and with specific sounds that can be selected. For
+  these, the instrument names are `drums`, `drums1`,`drums2`,
+  `drums3`,  `drums4`, `drums5`, and `drums6`. The sounds can be
+  selected via a _what_ attribute, which can be one of the following
+  defined below:
+
+```
+const acousticBassDrum = 35;
+const kick = acousticBassDrum;
+const bassDrum1 = 36;
+const sideStick = 37;
+const acousticSnare = 38;
+const handClap = 39;
+const electricSnare = 40;
+const snare = electricSnare;
+const lowFloorTom = 41;
+const closedHiHat = 42;
+const highFloorTom = 43;
+const pedalHiHat = 44;
+const lowTom = 45;
+const tom = lowTom;
+const openHiHat = 46;
+const lowMidTom = 47;
+const hiMidTom = 48;
+const crashCymbal = 49;
+const crash = crashCymbal;
+const hiTom = 50;
+const rideCymbal1 = 51;
+const cymbal = rideCymbal1;
+const chineseCymbal = 52;
+const rideBell = 53;
+const tambourine = 54;
+const splashCymbal = 55;
+const cowbell = 56;
+const crashCymbal2 = 57;
+const vibraslap = 58;
+const rideCymbal2 = 59;
+const hiBongo = 60;
+const lowBongo = 61;
+const muteHiConga = 62;
+const openHiConga = 63;
+const lowConga = 64;
+const hiTimbale= 65;
+const lowTimbale = 66;
+const hiAgogo = 67;
+const lowAgogo = 68;
+const cabasa = 69;
+const maracas = 70;
+const shortWhistle = 71;
+const longWhistle = 72;
+const shortGuiro = 73;
+const longGuiro = 74;
+const claves = 75;
+const hiWoodBlock= 76;
+const lowWoodBlock = 77;
+const muteCuica = 78;
+const openCuica = 79;
+const muteTriangle = 80;
+const openTriangle = 81;
+```
+
 
 

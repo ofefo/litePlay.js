@@ -723,17 +723,21 @@ export const  viola = new Instrument(41);
 export const  cello = new Instrument(42);
 export const  contrabass = new Instrument(43);
 export const  tremoloStrings = new Instrument(44);
+export function onBowed() { return new Instrument(int(rnd(40,44))); }
+
 export const  pizzicatoStrings = new Instrument(45);
 export const  orchestralHarp = new Instrument(46);
 export const  harp = orchestralHarp;
 export const  timpani = new Instrument(47);
+
+
 export const  stringEnsemble1 = new Instrument(48);
 export const  strings = stringEnsemble1;
 export const  stringEnsemble2 = new Instrument(49);
 export const  synthStrings1 = new Instrument(50);
 export const  synthStrings2 = new Instrument(51);
 
-export function onBowed() { return new Instrument(int(rnd(40,44))); }
+export function onEnsemble() { return new Instrument(int(rnd(48,51))); }
 
 export const  choirAahs = new Instrument(52);
 export const  voiceOohs = new Instrument(53);
@@ -754,7 +758,7 @@ export const  brass = brassSection;
 export const  synthBrass1 = new Instrument(62);
 export const  synthBrass2 = new Instrument(63);
 
-export function onBrass() { return new Instrument(int(rnd(56,63))); }
+export function onBlow() { return new Instrument(int(rnd(56,63))); }
 
 export const  sopranoSax = new Instrument(64);
 export const  altoSax = new Instrument(65);
@@ -849,3 +853,4 @@ export const  drums5 = new Instrument(6, true);
 export const  drums6 = new Instrument(7, true);
 
     
+export function onDrums() { return new Instrument(int(rnd(2,7)), true); }
