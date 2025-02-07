@@ -131,7 +131,7 @@ export class Instrument {
             mess += this.score(this.what,this.howLoud,0,0);
         } else {
             for (const evt of evtLst) {
-                if (typeof evt === "object") {
+                if (typeof evt === "object" && typeof evt !== "function") {
                     let what_ = evt[0];
                     let dur_ = evt.length > 3 ? evt[3] : dur;
                     let when_ = evt.length > 2 ? evt[2] : 0;
@@ -509,7 +509,7 @@ export const eventList = {
             time = when, what;
         this.maxdur = 0.;
         for (const evt of evtLst) {
-            if (typeof evt === "object") {
+            if (typeof evt === "object" && typeof evt !== "function") {
                 let what_ = evt[0];
                 if (typeof what_ === "function")
                     what = what_();

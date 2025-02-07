@@ -261,7 +261,7 @@ Instrument(number)`. There are 128 different instruments plus six
 special drum kits that can be accessed via their individual numbers.
 
 - _Struck_: pitched sounds create by striking something like a
-string or a bar
+string, bar, etc
 
 ```
 const grandPiano = new Instrument(0);
