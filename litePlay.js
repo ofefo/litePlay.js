@@ -66,7 +66,7 @@ const globalObj = {
 export class Instrument {
     constructor(pgm, isDrums = false, instr = 10) {
         this.pgm = pgm;
-        this.chn = globalObj.freeChannel++;
+        this.chn = (globalObj.freeChannel++)%1000;
         this.isDrums = isDrums;
         this.what = 60.0;
         this.howLoud = 1;
