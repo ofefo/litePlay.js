@@ -72,7 +72,8 @@ the default instrument playing it,
 lp.instrument(lp.organ)
 ```
 
-the default was set to piano at the start, but we now changed it to organ.
+the default was set to piano at the start, but we now changed it to
+organ. An introduction to instruments is given at the end of the tutorial.
 
 We can also tell what to play. If the sound is from a pitched instrument,
 we can ask it to play a given pitch,
