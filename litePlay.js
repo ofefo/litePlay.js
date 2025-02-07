@@ -679,8 +679,13 @@ export const marimba = new Instrument(12);
 export const xylophone = new Instrument(13);
 export const tubularBells = new Instrument(14);
 export const dulcimer = new Instrument(15);
+export const  tinkleBell = new Instrument(112);
 
-export function onStruck() { return new Instrument(int(rnd(0,15))); }
+export function onStruck() {
+    let num = int(rnd(0,16));
+    if(num > 15) num = 112;
+    return new Instrument(num);
+}
 
 export const drawbarOrgan = new Instrument(16);
 export const percussiveOrgan = new Instrument(17);
@@ -703,8 +708,21 @@ export const mutedElectricGuitar = new Instrument(28);
 export const overdrivenGuitar = new Instrument(29);
 export const  distortionGuitar = new Instrument(30);
 export const  guitarHarmonics = new Instrument(31);
+export const  sitar = new Instrument(105);
+export const  banjo = new Instrument(106);
+export const  shamisen = new Instrument(107);
+export const  koto = new Instrument(108);
+export const  kalimba = new Instrument(109);
+export const  pizzicatoStrings = new Instrument(45);
+export const  orchestralHarp = new Instrument(46);
+export const  harp = orchestralHarp;
 
-export function onPluck() { return new Instrument(int(rnd(24,31))); }
+export function onPluck() {
+    let num = int(rnd(24,38));
+    if(num > 31 && num < 34) num += 13;
+    if(num > 33) num += 71;
+    return new Instrument(num);
+}
 
 export const  acousticBass = new Instrument(32);
 export const  fingerElectricBass = new Instrument(33);
@@ -723,13 +741,13 @@ export const  viola = new Instrument(41);
 export const  cello = new Instrument(42);
 export const  contrabass = new Instrument(43);
 export const  tremoloStrings = new Instrument(44);
-export function onBowed() { return new Instrument(int(rnd(40,44))); }
+export const  fiddle = new Instrument(111);
 
-export const  pizzicatoStrings = new Instrument(45);
-export const  orchestralHarp = new Instrument(46);
-export const  harp = orchestralHarp;
-export const  timpani = new Instrument(47);
-
+export function onBowed() {
+    let num = int(rnd(40,45));
+    if(num > 44) num = 111;
+    return new Instrument(num);
+}
 
 export const  stringEnsemble1 = new Instrument(48);
 export const  strings = stringEnsemble1;
@@ -776,8 +794,13 @@ export const  blownBottle = new Instrument(76);
 export const  shakuhachi = new Instrument(77);
 export const  whistle = new Instrument(78);
 export const  ocarina = new Instrument(79);
+export const  bagPipe = new Instrument(110);
 
-export function onWind() { return new Instrument(int(rnd(64,79))); }
+export function onWind() {
+    let num = int(rnd(64,79));
+    if(num > 79) num = 110;
+    return new Instrument(num);
+}
 
 export const  lead1 = new Instrument(80);
 export const  lead2 = new Instrument(81);
@@ -789,7 +812,6 @@ export const  lead7 = new Instrument(86);
 export const  lead8 = new Instrument(87);
 
 export function onLead() { return new Instrument(int(rnd(80,87))); }
-
 
 export const  pad1 = new Instrument(88);
 export const  pad2 = new Instrument(89);
@@ -814,18 +836,6 @@ export const  fx8 = new Instrument(104);
 
 export function onFx() { return new Instrument(int(rnd(97,104))); }
 
-export const  sitar = new Instrument(105);
-export const  banjo = new Instrument(106);
-export const  shamisen = new Instrument(107);
-export const  koto = new Instrument(108);
-export const  kalimba = new Instrument(109);
-
-export function onPlucke() { return new Instrument(int(rnd(105,109))); }
-
-export const  bagPipe = new Instrument(110);
-export const  fiddle = new Instrument(111);
-export const  tinkleBell = new Instrument(112);
-
 export const  agogo = new Instrument(113);
 export const  steelDrums = new Instrument(114);
 export const  woodblock = new Instrument(115);
@@ -841,8 +851,13 @@ export const  telephoneRing = new Instrument(124);
 export const  helicopter = new Instrument(125);
 export const  applause = new Instrument(126);
 export const  gunshot = new Instrument(127);
+export const  timpani = new Instrument(47);
 
-export function onPerc() { return new Instrument(int(rnd(113,127))); }
+export function onPerc() {
+    let num = int(rnd(113,128));
+    if(num > 127) num = 47;
+    return new Instrument(num);
+}
 
 export const  drums1 = new Instrument(2, true);
 export const  drums = drums1;

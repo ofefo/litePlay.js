@@ -281,6 +281,7 @@ const marimba = new Instrument(12);
 const xylophone = new Instrument(13);
 const tubularBells = new Instrument(14);
 const dulcimer = new Instrument(15);
+const tinkleBell = new Instrument(112);
 ```
 
 - _Sustained_: pitched sounds created by sustaining tones
@@ -309,16 +310,14 @@ const mutedElectricGuitar = new Instrument(28);
 const overdrivenGuitar = new Instrument(29);
 const  distortionGuitar = new Instrument(30);
 const  guitarHarmonics = new Instrument(31);
-```
-
--_Plucke_: pitched sounds from plucked strings on non-Western instruments
-
-```
 const  sitar = new Instrument(105);
 const  banjo = new Instrument(106);
 const  shamisen = new Instrument(107);
 const  koto = new Instrument(108);
 const  kalimba = new Instrument(109);
+const  pizzicatoStrings = new Instrument(45);
+const  orchestralHarp = new Instrument(46);
+const harp = orchestralHarp;
 ```
 
 - _Bass_: various types of pitched sounds for the bass range
@@ -457,23 +456,11 @@ const  applause = new Instrument(126);
 const  gunshot = new Instrument(127);
 ```
 
-- Miscelaneous: miscelaneous other instruments, mostly pitched
-
-```
-export const  pizzicatoStrings = new Instrument(45);
-export const  orchestralHarp = new Instrument(46);
-export const  harp = orchestralHarp;
-const  timpani = new Instrument(47);
-const  bagPipe = new Instrument(110);
-const  fiddle = new Instrument(111);
-const  tinkleBell = new Instrument(112);
-```
-
-- _Drums_: unpitched, and with specific sounds that can be selected. For
-  these, the instrument names are `drums`, `drums1`,`drums2`,
-  `drums3`,  `drums4`, `drums5`, and `drums6`. The sounds can be
-  selected via a _what_ attribute, which can be one of the following
-  defined below:
+- _Drums_: unpitched drum/percussion kits, with specific sounds that
+  can be selected individually. For these, the instrument names are
+  `drums`, `drums1`,`drums2`, `drums3`,  `drums4`, `drums5`, and
+  `drums6`. The sounds can be selected via a _what_ attribute, which
+  can be one of the following as defined below:
 
 ```
 const acousticBassDrum = 35;
