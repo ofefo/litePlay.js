@@ -69,7 +69,7 @@ We can make changes to this sound by setting
 the default instrument playing it,
 
 ```
-lp.instrument(organ)
+lp.instrument(lp.organ)
 ```
 
 the default was set to piano at the start, but we now changed it to organ.
@@ -516,6 +516,5 @@ const openCuica = 79;
 const muteTriangle = 80;
 const openTriangle = 81;
 ```
-
 
 
