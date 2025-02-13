@@ -19,8 +19,15 @@ Not all environments fulfill these. The following three do:
 
 - [p5.js editor](https://editor.p5js.org/): an interactive JS platform, which is designed for developing p5.js multimedia applications, but supports litePlay.js very well. It allows editing of HTML and JS code as well as import other media files into the project. It provides a REPL, and it also supports saving projects in user accounts.
 
-The code in this tutorial can be run in any of the three platforms. Whenever the REPL is mentioned, if not present (e.g. in Playcode), the code can be evaluated directly from the script in the live mode.
+The code in this tutorial can be run in any of the three platforms. Whenever the REPL is mentioned, if not present (e.g. in Playcode), the code can be evaluated directly from the script in the *live* mode.
 
+Note that litePlay.js does not have any means of sound recording itself,
+it is designed strictly as a realtime, interactive, music coding
+environment. To record its output some means of browser audio capture
+needs to be used. At the time of writing the Google Chrome extension
+[Audio Capture](https://chromewebstore.google.com/detail/chrome-audio-capture/ddodkmadjlajpeglabnookegoedbeahj?hl=en)
+has been tested and can be used for this. Other means may also
+available depending on the operating system (e.g. BlackHole on MacOS).
 
 Loading the LitePlay.js module
 -------
