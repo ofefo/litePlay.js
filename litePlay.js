@@ -56,8 +56,9 @@ export function midiProgram(n, chn = 1) {
     if (chn >= 1 && chn <= 16) csound.midiMessage(chn + 191, n, 0);
 }
 
+// litePlay.js global parameters
 const globalObj = {
-    freeChannel: 16,
+    freeChannel: 16, // channels 0 to 15 are for device MIDI
     BPM: 60.0,
     sampnum: 0
 };
@@ -66,7 +67,8 @@ const globalObj = {
 export class Instrument {
     constructor(pgm, isDrums = false, instr = 10) {
         this.pgm = pgm;
-        this.chn = (globalObj.freeChannel++)%1000;
+        this.chn = globalObj.freeChannel;
+        globalObj.freeChannel = globalObj.freeChannel < 1000 ? globalObj.freeChannel + 1 : 16;
         this.isDrums = isDrums;
         this.what = 60.0;
         this.howLoud = 1;
