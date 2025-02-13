@@ -31,25 +31,23 @@ The simplest way to load the litePlay.js module is to add the following script t
 <script  src="https://vlazzarini.github.io/litePlay.js/litePlay.constants.js"></script>
 ```
 
-when the page is loaded, you will have access to various system constants, as well as the following function
-
-```
-lpRun(f)
-```
-
-which loads the module, starts the audio engine, and then calls the function `f()` which is supplied to it. At the simplest, we can have the following JS script code
+When the page is loaded, you will have access to various system constants, as well as the following function:
 
 ```
 lpRun();
 ```
 
-which tells the user that the system is ready to use when a message is printed to the JS console. Alternatively, the function `f()` can be use as the starting point of the litePlay.js application. Or it can simply contain all the code that is to be executed when the script is run,
+which loads the module, starts the audio engine and tells the user that the
+system is ready to use when a message is printed to the JS console.
+Alternatively, a function `f()` can be used as the starting point of the
+litePlay.js application. Or it can simply contain all the code that is to be
+executed when the script is run,
 
 ```
-function code() {
+function f() {
  // we start executing from here ...
 }
-lpRun(code);
+lpRun(f);
 ```
 
 Once the litePlay.js engine is running, we can use its functionality anywhere by prefixing its functions etc with `lp.`.
@@ -60,7 +58,7 @@ The `play()` action
 At the core of litePlay.js we have `play()`. This can be simply run as
 
 ```
-lp.play()
+lp.play();
 ```
 
 to play a sound, and `lp.stop()` to stop it. These code lines can be typed directly on an interactive REPL console or added to the script.
@@ -69,7 +67,7 @@ We can make changes to this sound by setting
 the default instrument playing it,
 
 ```
-lp.instrument(lp.organ)
+lp.instrument(lp.organ);
 ```
 
 the default was set to piano at the start, but we now changed it to
@@ -79,13 +77,19 @@ We can also tell what to play. If the sound is from a pitched instrument,
 we can ask it to play a given pitch,
 
 ```
-lp.play(E4)
+lp.play(E4);
 ```
 
 The pitch symbolic names range from Cm1 ($=C_{-1}$) to G8 ($=G_{8}$),
 in such a way that the middle C of a piano keyboard is set to C4. The
 sound is played immediately and lasts indefinitely (although some
 may decay in intensity over time).
+
+Accidentals are represented by lowercase `s` for _sharp_ and `b` for flat _notes_:
+```
+lp.play(Eb4);
+lp.play(Fs4);
+```
 
 Events
 ---
@@ -171,13 +175,13 @@ expressed in litePlay.js by JS object  that can be manipulated.
 For example, we can create it
 
 ```
-evts = eventList.create([C3, 0.1, 0], [C4, 0.2, 1], [C5, 0.4, 2]);
+evts = lp.eventList.create([C3, 0.1, 0], [C4, 0.2, 1], [C5, 0.4, 2]);
 ```
 
 then we can play it
 
 ```
-evts.play()
+evts.play();
 ```
 
 repeatedly (by calling `play()` on it). The `play()` can take
@@ -211,11 +215,17 @@ from the list, or the last event (if no `index` is given).
 - `eventList.insert(pos, event, ...)` insert one or more events into
 the object, after position `pos`.
 
+```
+evts.add(event, [C4,0.9,3]);    
+evts.remove(0);    
+evts.insert(1, [D4, 0.8, 0.5]);
+```
+
 We can also repeat an `eventList` any number of `times`, `when`
 seconds later from the action,
 
 ```
-evt.repeat(times, when)
+evts.repeat(times, when);
 ```
 
 Both `eventList.play()` and `eventList.repeat()` return the end time
