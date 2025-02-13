@@ -50,7 +50,12 @@ function f() {
 lpRun(f);
 ```
 
-Once the litePlay.js engine is running, we can use its functionality anywhere by prefixing its functions etc with `lp.`.
+Once the litePlay.js engine is running, we can use its functionality
+anywhere by prefixing its functions etc with `lp.`.
+
+An example startup JS script for the online P5.js editor is available
+at this (URL)[https://editor.p5js.org/vlazzarini/sketches/-pzBQCbL9S].
+
 
 The `play()` action
 ---------

@@ -69,7 +69,9 @@ export class Instrument {
     constructor(pgm, isDrums = false, instr = 10) {
         this.pgm = pgm;
         this.chn = globalObj.freeChannel;
-        globalObj.freeChannel = globalObj.freeChannel < globalObj.maxChannel - 1 ? globalObj.freeChannel + 1 : 16;
+        globalObj.freeChannel =
+            globalObj.freeChannel < globalObj.maxChannel - 1 ?
+            globalObj.freeChannel + 1 : 16;
         this.isDrums = isDrums;
         this.what = 60.0;
         this.howLoud = 1;
