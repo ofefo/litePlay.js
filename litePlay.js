@@ -59,6 +59,7 @@ export function midiProgram(n, chn = 1) {
 // litePlay.js global parameters
 const globalObj = {
     freeChannel: 16, // channels 0 to 15 are for device MIDI
+    maxChannel: 100,
     BPM: 60.0,
     sampnum: 0
 };
@@ -68,7 +69,7 @@ export class Instrument {
     constructor(pgm, isDrums = false, instr = 10) {
         this.pgm = pgm;
         this.chn = globalObj.freeChannel;
-        globalObj.freeChannel = globalObj.freeChannel < 1000 ? globalObj.freeChannel + 1 : 16;
+        globalObj.freeChannel = globalObj.freeChannel < globalObj.maxChannel - 1 ? globalObj.freeChannel + 1 : 16;
         this.isDrums = isDrums;
         this.what = 60.0;
         this.howLoud = 1;
@@ -79,7 +80,7 @@ export class Instrument {
 
     score(what, howLoud, when, howLong) {
         let prog = this.pgm;
-        let instr = this.instr + what / 1000000 + this.chn / 1000;
+        let instr = this.instr + what / 1000000 + this.chn / globalObj.maxChannel;
         if (this.isDrums) {
             if (prog == 7) csound.tableSet(26, this.chn, 2); 
             else csound.tableSet(26, this.chn, 0.5);
