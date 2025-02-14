@@ -25,7 +25,7 @@ Note that litePlay.js does not have any means of sound recording itself,
 it is designed strictly as a realtime, interactive, music coding
 environment. To record its output some means of browser audio capture
 needs to be used. At the time of writing the Google Chrome extension
-[Audio Capture](https://chromewebstore.google.com/detail/chrome-audio-capture/ddodkmadjlajpeglabnookegoedbeahj?hl=en)
+[Audio Capture](https://chromewebstore.google.com/detail/chrome-audio-capture/kfokdmfpdnokpmpbjhjbcabgligoelgp)
 has been tested and can be used for this. Other means may also
 available depending on the operating system (e.g. BlackHole on MacOS).
 
