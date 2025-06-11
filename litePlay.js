@@ -888,6 +888,8 @@ export function onDrums() {
     return new Instrument(int(rnd(2,7)), true, int(rnd(35,57)));
 }
 
+export const silently = ms => new Promise(r => setTimeout(r, ms));
+
 // Interface simples em Portugues
 export const toque = play;
 export const bateria = drums1; 
