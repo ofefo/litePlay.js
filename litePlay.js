@@ -897,6 +897,7 @@ export const silently = ms => new Promise(r => setTimeout(r, ms));
 // Interface simples em Portugues
 
 // funcoes
+export const toque = play;
 export const instrumento = instrument;
 export const naBateria = onDrums;
 export const nasTeclas = onStruck;
@@ -912,8 +913,17 @@ export const coaVoz = onVoice;
 export const quieto = silently;
 
 // instrumentos
-export const toque = play;
-export const bateria = drums1;
+class Instrumento extends Instrument {
+    constructor(pgm, isDrums = false, what = 60,0, insno = 10) {
+        super(pgm.number, isDrums, what, insno);
+    }   
+    toque(...evtList){
+        super.play(...evtList);
+    }
+}
+
+
+export const bateria = new Instrumento(2, true, 40);
 export const violino = violin;
 
 
