@@ -895,8 +895,20 @@ export function onDrums() {
 export const silently = ms => new Promise(r => setTimeout(r, ms));
 
 // Interface simples em Portugues
+export const instrumento = instrument;
+export const onDrums = naBateria;
+export const onStruck = emTeclas;
+export const onBowed = nosArcos;
+export const onBass = nosBaixos;
+export const onBlow = nosMetais;
+export const onWind = nosSopros;
+export const onSynth = noSint;
+export const onFx = cosEfeitos;
+export const onPerc = naPercussao;
+export const onVoice = coaVoz;
 export const toque = play;
 export const bateria = drums1; 
-export const violino = violin;   
+export const violino = violin;
+
 
 
