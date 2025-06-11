@@ -895,6 +895,8 @@ export function onDrums() {
 export const silently = ms => new Promise(r => setTimeout(r, ms));
 
 // Interface simples em Portugues
+
+// funcoes
 export const instrumento = instrument;
 export const naBateria = onDrums;
 export const nasTeclas = onStruck;
@@ -905,11 +907,15 @@ export const nosMetais = onBlow;
 export const nosSopros = onWind;
 export const noSint = onSynth;
 export const cosEfeitos = onFx;
-export const naPercussao = onPerc;
+export const naPercussão = onPerc;
 export const coaVoz = onVoice;
+export const quieto = silently;
+
+// instrumentos
 export const toque = play;
-export const bateria = drums1; 
+export const bateria = drums1;
 export const violino = violin;
+
 
 
 
