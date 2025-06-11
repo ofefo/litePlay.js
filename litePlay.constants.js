@@ -145,6 +145,7 @@ const lpLoad = async () => {
 
 // interface em Portugues
 async function leveToque(code = null) {
-    await lpRun(code);
+    let lp = await import(lp_URL);
+    await lt.startEngine();
     lt = lp;
 }
