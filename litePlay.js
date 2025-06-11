@@ -66,18 +66,22 @@ const globalObj = {
 
 // Csound instrument class
 export class Instrument {
-    constructor(pgm, isDrums = false, instr = 10) {
+    constructor(pgm, isDrums = false, what = 60.0, instr = 10) {
         this.pgm = pgm;
         this.chn = globalObj.freeChannel;
         globalObj.freeChannel =
             globalObj.freeChannel < globalObj.maxChannel - 1 ?
             globalObj.freeChannel + 1 : 16;
         this.isDrums = isDrums;
-        this.what = 60.0;
+        this.what_ = what;
         this.howLoud = 1;
         this.howLong = 1;
         this.on = new Uint8Array(128);
         this.instr = instr;
+    }
+
+    what(snd) {
+        this.what_ = what;
     }
 
     score(what, howLoud, when, howLong) {
@@ -133,7 +137,7 @@ export class Instrument {
             dur = 0,
             when = 0, what, mess = "";
         if (evtLst.length == 0) {
-            mess += this.score(this.what,this.howLoud,0,0);
+            mess += this.score(this.what_,this.howLoud,0,0);
         } else {
             for (const evt of evtLst) {
                 if (typeof evt === "object" && typeof evt !== "function") {
@@ -265,10 +269,9 @@ export const sample = {
 }
 
 export class Sampler extends Instrument {
-    constructor(pgm, isDrums = false) {
-        super(pgm.number, isDrums, 12);
+    constructor(pgm, isDrums = false, what = pgm.fo) {
+        super(pgm.number, isDrums, what, 12);
         this.sample = pgm;
-        this.what = pgm.fo;
     }
     play(...evtLst) {
         if(this.sample.bpm >  0) 
@@ -590,9 +593,18 @@ export const eventList = {
 
 // generic play
 export function play(...theList) {
-    if(theList.length >  0)
+    if(theList[0] instanceof lp.Instrument){
+        theList[0].play();
+        return theList[0];
+    }
+    if(theList.length > 0) {
 	eventList.create().play(0, theList);
-    else defInstr.play();
+        return theList;
+    }
+    else {
+        defInstr.play();
+        return defInstr;
+    }
 }
 
 // set default instrument
@@ -864,13 +876,21 @@ export function onPerc() {
     return new Instrument(num);
 }
 
-export const  drums1 = new Instrument(2, true);
+export const  drums1 = new Instrument(2, true, 40);
 export const  drums = drums1;
-export const  drums2 = new Instrument(3, true);
-export const  drums3 = new Instrument(4, true);
-export const  drums4 = new Instrument(5, true);
-export const  drums5 = new Instrument(6, true);
-export const  drums6 = new Instrument(7, true);
+export const  drums2 = new Instrument(3, true, 40);
+export const  drums3 = new Instrument(4, true, 40);
+export const  drums4 = new Instrument(5, true, 40);
+export const  drums5 = new Instrument(6, true, 40);
+export const  drums6 = new Instrument(7, true, 40);
 
-    
-export function onDrums() { return new Instrument(int(rnd(2,7)), true); }
+export function onDrums() {
+  return new Instrument(int(rnd(2,7)), true, int(rnd(35,57));
+}
+
+// Interface simples em Portugues
+export const toque = play;
+export const bateria = drums1; 
+export const violino = violin;   
+
+
