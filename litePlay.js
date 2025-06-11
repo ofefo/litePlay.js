@@ -595,7 +595,7 @@ export const eventList = {
 export function play(...theList) {
     if(typeof theList[0] === 'function')
         return play(theList[0]());
-    if(theList[0] instanceof Instrument){
+    if(isInstr(theList[0])){
         theList[0].play();
         return theList[0];
     }
@@ -611,6 +611,8 @@ export function play(...theList) {
 
 // set default instrument
 export function instrument(instr) {
+    if(typeof theList[0] === 'function')
+        return instrument(theList[0]());
     if(isInstr(instr)) defInstr = instr;
     return defInstr;
 }
