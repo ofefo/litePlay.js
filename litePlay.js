@@ -81,7 +81,7 @@ export class Instrument {
     }
 
     what(snd) {
-        this.what_ = what;
+        this.what_ = snd;
     }
 
     score(what, howLoud, when, howLong) {
@@ -885,7 +885,7 @@ export const  drums5 = new Instrument(6, true, 40);
 export const  drums6 = new Instrument(7, true, 40);
 
 export function onDrums() {
-  return new Instrument(int(rnd(2,7)), true, int(rnd(35,57));
+    return new Instrument(int(rnd(2,7)), true, int(rnd(35,57)));
 }
 
 // Interface simples em Portugues
