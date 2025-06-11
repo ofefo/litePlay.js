@@ -593,6 +593,8 @@ export const eventList = {
 
 // generic play
 export function play(...theList) {
+    if(typeof theList[0] === 'function')
+        return play(theList[0]());
     if(theList[0] instanceof Instrument){
         theList[0].play();
         return theList[0];
