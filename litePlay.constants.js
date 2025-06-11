@@ -142,3 +142,9 @@ const lpLoad = async () => {
     await lp.startEngine();
     return lp;
 };
+
+// interface em Portugues
+async function leveToque(code = null) {
+    await lpRun(code);
+    lt = lp;
+}
