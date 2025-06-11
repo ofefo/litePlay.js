@@ -144,7 +144,7 @@ const lpLoad = async () => {
 };
 
 // interface em Portugues
-sync function leveToque(codigo = null) {
+async function leveToque(codigo = null) {
     lt = await lpLoad();
     if(typeof(codigo) === 'function') codigo();
 }
