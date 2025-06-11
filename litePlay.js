@@ -897,7 +897,7 @@ export const silently = ms => new Promise(r => setTimeout(r, ms));
 // Interface simples em Portugues
 export const instrumento = instrument;
 export const naBateria = onDrums;
-export const emTeclas = onStruck;
+export const nasTeclas = onStruck;
 export const nasCordas = onPluck;
 export const nosArcos = onBowed;
 export const nosBaixos = onBass;
