@@ -924,7 +924,7 @@ class Instrumento extends Instrument {
 
 
 export const bateria = new Instrumento(2, true, 40);
-export const violino = violin;
+export const violino = new Instrumento(40);
 
 
 
