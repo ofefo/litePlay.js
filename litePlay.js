@@ -914,7 +914,7 @@ export const quieto = silently;
 
 // instrumentos
 class Instrumento extends Instrument {
-    constructor(pgm, isDrums = false, what = 60,0, insno = 10) {
+    constructor(pgm, isDrums = false, what = 60, insno = 10) {
         super(pgm.number, isDrums, what, insno);
     }   
     toque(...evtList){
