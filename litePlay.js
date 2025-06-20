@@ -894,9 +894,9 @@ export function onDrums() {
 
 export const silently = ms => new Promise(r => setTimeout(r, ms));
 
-// Interface simples em Portugues
+// Interface simples em Português
 
-// funcoes
+// funções
 export const toque = play;
 export const instrumento = instrument;
 export const naBateria = onDrums;
@@ -922,9 +922,11 @@ class Instrumento extends Instrument {
     }
 }
 
-
+// Duas opções para tradução de instrumentos
+// criando um novo objeto com interface em PT
 export const bateria = new Instrumento(2, true, 40);
-export const violino = new Instrumento(40);
+// apenas fazendo um novo nome em PT para o mesmo objeto
+export const violino = violin;
 
 
 
