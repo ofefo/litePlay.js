@@ -923,8 +923,6 @@ class Instrumento extends Instrument {
 }
 
 
-export const  bateria = new Instrumento(2, true, 40);
-
 export const  pianoDeCauda = new Instrument(0);
 export const  pianoBrilhante = new Instrument(1);
 export const  deCaudaElétrico = new Instrument(2);
