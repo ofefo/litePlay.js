@@ -894,9 +894,9 @@ export function onDrums() {
 
 export const silently = ms => new Promise(r => setTimeout(r, ms));
 
-// Interface simples em Portugues
+// Interface simples em Português
 
-// funcoes
+// funções
 export const toque = play;
 export const instrumento = instrument;
 export const naBateria = onDrums;
