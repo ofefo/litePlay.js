@@ -25,6 +25,7 @@ complete system.
 Running locally
 ---
 To run the project locally, you need to spin up a quick web server.
+
 **Prerequisites:**
 * You must have [Node.js](https://nodejs.org/) installed on your computer.
 
