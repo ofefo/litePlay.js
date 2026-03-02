@@ -3,6 +3,7 @@ const lp_URL = "https://vlazzarini.github.io/litePlay.js/litePlay.js";
 
 // MIDI NOTE constants
 
+const djScratch = 29;
 const acousticBassDrum = 35;
 const kick = acousticBassDrum;
 const bassDrum1 = 36;
@@ -148,3 +149,4 @@ async function leveToque(codigo = null) {
     lt = await lpLoad();
     if(typeof(codigo) === 'function') codigo();
 }
+
