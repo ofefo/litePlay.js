@@ -33,5 +33,12 @@ To run the project locally, you need to spin up a quick web server.
 1. **Open your terminal** on the root folder of this repository.
 2. **Start the local server** by running the following command (no installation
    required):
-   ```bash
-   npx serve
+  
+  ```bash
+   npx served
+   ```
+3. In this context, all litePlay's exports are available to use without the
+   need to add its prefix:
+   ```JavaScript
+   play(C4);
+   ```
