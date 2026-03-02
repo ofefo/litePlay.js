@@ -35,7 +35,7 @@ To run the project locally, you need to spin up a quick web server.
    required):
   
   ```bash
-   npx served
+   npx serve
    ```
 3. In this context, all litePlay's exports are available to use without the
    need to add its prefix:
