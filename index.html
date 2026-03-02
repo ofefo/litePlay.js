@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<meta name="Description" content="litePlay">
+	<meta charset="utf-8"/>
+	<script src="./litePlay.dev.js"></script>
+<style>
+body {
+	font-size: 24px;	
+	margin-top: 5%;
+	margin-bottom: 5%;
+}
+ 
+.button {
+        padding: 10px;
+        border-radius: 10px;
+        -moz-border-radius: 10px;
+        -webkit-border-radius: 10px;
+        margin:10px
+}
+</style>
+</head>
+<body>
+	<div style="display: block; text-align: center; width: 100%;">
+		<h1>litePlay</h1>
+		<p>Before starting, make sure to press the <b>Start</b> button to start litePlay engine.
+		<br>You can run your code bt writting it bellow and than hitting <b>Run</b>.
+		<br>Use the <b>Stop</b> button to pause everything.</p>
+		<textarea id="code-editor" style="width: 50%; height: 500px; font-size: 24px; font-family: monospace; background: #1e1e1e; color: #d4d4d4; padding: 10px;"></textarea>
+	<div style="display: block; text-align: center; width: 100%;">
+		<button class="button" id="start-btn">START</button>
+		<button class="button" id="run-btn">▶ RUN</button>
+		<button class="button" id="stop-btn">■ STOP</button>
+	</div>
+	</div>
+	<script charset="utf-8">
+		// Start litePlay
+		let liteplayEngine = null;
+    
+    		// --- START BUTTON ---
+    		const startLP = async (event) => {
+    		    if (event) event.preventDefault();
+		    // Initialize liteplay only if it hasn't been already
+		    if (!liteplayEngine) {
+    		            console.log("Starting litePlay...");
+    		            liteplayEngine = await lpLoad(); 
+			    setTimeout(() => {
+			    console.log("litePlay is now ready!");}, 1000);
+
+    		            // Expose all of litePlay.js exports (play, stop, grandPiano, etc.) 
+    		            // to the global window so the textarea code can find them.
+    		            Object.assign(window, liteplayEngine);
+			    }
+		}
+
+    		const runLP = async (event) => {
+    		    if (event) event.preventDefault(); 
+		    try{
+    		        // Grab the text from the code editor
+    		        const codeEditor = document.getElementById('code-editor');
+    		        const lpCode = codeEditor.value;
+
+    		        // Evaluate the string as actual JavaScript
+    		        eval(lpCode);
+
+    		    } catch (error) {
+    		        console.error("Failed to execute the code:", error);
+    		    }
+    		}
+
+    		// --- STOP BUTTON ---
+    		const stopLP = async (event) => {
+    		    if (event) event.preventDefault();
+    		    if (liteplayEngine) {
+    		        console.log("Stopping audio...");
+    		        // Call stop() directly from the loaded engine module
+    		        liteplayEngine.stop();
+    		    }
+    		}
+
+    		const startButton = document.querySelector('#start-btn');
+    		startButton.addEventListener('click', startLP);
+
+    		const runButton = document.querySelector('#run-btn');
+    		runButton.addEventListener('click', runLP);
+    		
+    		const stopButton = document.querySelector('#stop-btn');
+    		stopButton.addEventListener('click', stopLP);
+</script>
+</body>
+</html>
