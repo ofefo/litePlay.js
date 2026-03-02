@@ -622,7 +622,8 @@ export function stop() {
 }
 
 
-export const rnd = (min, max) => { return min + (max-min)*random(); };
+export const rnd = (min, max) => {
+	return Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min))}
 
 const lowmin = 0.01;
 const lowmax = 0.1;
@@ -662,7 +663,6 @@ export const now = () => { return rnd(immediatemin,immediatemax); };
 export const soon = () => { return rnd(soonmin, soonmax); };
 export const later = () => { return rnd(latermin, latermax); };
 
-
 const lowpmin = 12.0;
 const lowpmax = 48.0;
 const midpmin = 48.0;
@@ -676,6 +676,12 @@ export function hiPitch()  { return rnd(hipmin, hipmax); }
 export const lowpitch = lowPitch;
 export const midpitch = midPitch;
 export const hipitch = hiPitch;
+
+//to do: group instruments by timbre or Hornbostel-Sachs classification
+//const drumspmin = 35.0;
+//const drumspmax = 81.0;
+//export function drumsPitch()  { return rnd(drumspmin, drumspmax); }
+//export const drumspitch = drumsPitch;
 
 export function onSomething() { return new Instrument(int(rnd(0, 127))); }
 
