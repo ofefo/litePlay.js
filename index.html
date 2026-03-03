@@ -14,20 +14,31 @@ body {
  
 .button {
         padding: 10px;
-        border-radius: 10px;
-        -moz-border-radius: 10px;
-        -webkit-border-radius: 10px;
-        margin:10px
+        border-radius: 5px;
+        margin: 1%;
+}
+
+.code {
+	width: 50%; 
+	height: 500px; 
+	font-size: 24px; 
+	font-family: monospace; 
+	background: #1e1e1e; 
+	color: #d4d4d4; 
+	padding: 10px;
 }
 </style>
 </head>
 <body>
 	<div style="display: block; text-align: center; width: 100%;">
 		<h1>litePlay</h1>
-		<p>Before starting, make sure to press the <b>Start</b> button to start litePlay engine.
-		<br>You can run your code bt writting it bellow and than hitting <b>Run</b>.
-		<br>Use the <b>Stop</b> button to pause everything.</p>
-		<textarea id="code-editor" style="width: 50%; height: 500px; font-size: 24px; font-family: monospace; background: #1e1e1e; color: #d4d4d4; padding: 10px;"></textarea>
+		<div style="text-align: left; margin-left: 25%">
+		<p>Before starting, make sure to press the <b>Start</b> button to start the engine.
+		<br>You can run your code by writting it bellow and than hitting <b>Run</b>.
+		<br>Use the <b>Stop</b> button to pause everything.
+		<br>New to litePlay? See the <a href="https://vlazzarini.github.io/litePlay.js/tutorial.html" target="_blank">tutorial</a>.</p>
+		</div>
+		<textarea class="code" id="code-editor"></textarea>
 	<div style="display: block; text-align: center; width: 100%;">
 		<button class="button" id="start-btn">START</button>
 		<button class="button" id="run-btn">▶ RUN</button>
@@ -42,16 +53,19 @@ body {
     		const startLP = async (event) => {
     		    if (event) event.preventDefault();
 		    // Initialize liteplay only if it hasn't been already
+		    try {
 		    if (!liteplayEngine) {
     		            console.log("Starting litePlay...");
     		            liteplayEngine = await lpLoad(); 
-			    setTimeout(() => {
-			    console.log("litePlay is now ready!");}, 1000);
+			    console.log("litePlay is now ready!");
 
     		            // Expose all of litePlay.js exports (play, stop, grandPiano, etc.) 
     		            // to the global window so the textarea code can find them.
     		            Object.assign(window, liteplayEngine);
 			    }
+    		} catch (error) {
+    		        console.error("Failed to start litePlay:", error);
+		}
 		}
 
     		const runLP = async (event) => {
