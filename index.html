@@ -128,7 +128,7 @@ body {
 		// Create a temporary hidden link and click it to trigger download
 		const a = document.createElement('a'); 
 		a.href = url;
-		a.download = 'my_litePlay_track' + String(downloadN) + '.js'; // Default file name
+		a.download = 'litePlayCode' + String(downloadN) + '.js'; // Default file name
 		document.body.appendChild(a);
 		a.click();
 			
