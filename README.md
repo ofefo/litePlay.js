@@ -21,3 +21,24 @@ You can start by looking at the following sketches in the P5.js editor:
 A [start-up tutorial](./tutorial.md) is available, with an overview of
 the system. This is a work-in-progress, which aims to cover the
 complete system.
+
+Running locally
+---
+To run the project locally, you need to spin up a quick web server.
+
+**Prerequisites:**
+* You must have [Node.js](https://nodejs.org/) installed on your computer.
+
+**Steps to run:**
+1. **Open your terminal** on the root folder of this repository.
+2. **Start the local server** by running the following command (no installation
+   required):
+  
+  ```bash
+   npx serve
+   ```
+3. In this context, all litePlay's exports are available to use without the
+   need to add its prefix:
+   ```JavaScript
+   play(C4);
+   ```
