@@ -15,7 +15,7 @@ body {
 .button {
         padding: 10px;
         border-radius: 5px;
-        margin: 1%;
+        margin: .5%;
 }
 
 .code {
@@ -40,9 +40,10 @@ body {
 		</div>
 		<textarea class="code" id="code-editor"></textarea>
 	<div style="display: block; text-align: center; width: 100%;">
-		<button class="button" id="start-btn">START</button>
-		<button class="button" id="run-btn">▶ RUN</button>
-		<button class="button" id="stop-btn">■ STOP</button>
+		<button class="button" id="start-btn">&#9650; <b>START</b></button>
+		<button class="button" id="run-btn">&#9654; <b>RUN</button>
+		<button class="button" id="stop-btn">&#9724; <b>STOP</b></button>
+		<button class="button" id="save-btn">&#9660; <b>SAVE</b></button>
 	</div>
 	</div>
 	<script charset="utf-8">
@@ -63,9 +64,28 @@ body {
     		            // to the global window so the textarea code can find them.
     		            Object.assign(window, liteplayEngine);
 			    }
-    		} catch (error) {
+		} catch (error) {
     		        console.error("Failed to start litePlay:", error);
 		}
+		}
+		
+		// Inject an execution counter into loops
+		function protectCode(code) {
+			const maxIterations = 1000; // Max allowed loop cycles per run
+			
+			// Inject a counter variable at the top
+			let safeCode = `let _loopCount = 0;\n` + code;
+			
+			// Regex to find "while(...){" or "for(...){"
+			const loopRegex = /(while\s*\(.*?\)\s*\{|for\s*\(.*?\)\s*\{)/g;
+			
+			// Inject the counter check right inside the loop's opening bracket
+			safeCode = safeCode.replace(loopRegex, `$1
+				if (++_loopCount > ${maxIterations}) {
+					throw new Error("Infinite loop detected! Execution stopped.");
+				}
+			`);
+			return safeCode;
 		}
 
     		const runLP = async (event) => {
@@ -74,12 +94,15 @@ body {
     		        // Grab the text from the code editor
     		        const codeEditor = document.getElementById('code-editor');
     		        const lpCode = codeEditor.value;
-
+			if (lpCode == "") throw "Empty!"
+			const safeCode = protectCode(lpCode);
     		        // Evaluate the string as actual JavaScript
-    		        eval(lpCode);
+			eval(safeCode);
+
 
     		    } catch (error) {
-    		        console.error("Failed to execute the code:", error);
+			await console.error("Failed to execute the code:", error);
+			if (error instanceof ReferenceError) console.warn("Have you started litePlay first?");
     		    }
     		}
 
@@ -89,9 +112,31 @@ body {
     		    if (liteplayEngine) {
     		        console.log("Stopping audio...");
     		        // Call stop() directly from the loaded engine module
-    		        liteplayEngine.stop();
+			await liteplayEngine.stop();
+    		        console.log("Audio stopped.");
     		    }
     		}
+
+		// --- SAVE BUTTON ---
+		const saveCode = () => {
+		let downloadN = 0;
+		const text = document.getElementById('code-editor').value;
+		
+		// Create a virtual file (Blob) containing the code
+		const blob = new Blob([text], { type: 'text/javascript' });
+		const url = URL.createObjectURL(blob);
+		// Create a temporary hidden link and click it to trigger download
+		const a = document.createElement('a'); 
+		a.href = url;
+		a.download = 'litePlayCode' + String(downloadN) + '.js'; // Default file name
+		document.body.appendChild(a);
+		a.click();
+			
+		
+		// Clean up
+		document.body.removeChild(a);
+		URL.revokeObjectURL(url);
+		}
 
     		const startButton = document.querySelector('#start-btn');
     		startButton.addEventListener('click', startLP);
@@ -101,6 +146,9 @@ body {
     		
     		const stopButton = document.querySelector('#stop-btn');
     		stopButton.addEventListener('click', stopLP);
+    		
+		const saveButton = document.querySelector('#save-btn');
+    		saveButton.addEventListener('click', saveCode);
 </script>
 </body>
 </html>

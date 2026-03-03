@@ -19,6 +19,8 @@ Not all environments fulfill these. The following three do:
 
 - [p5.js editor](https://editor.p5js.org/): an interactive JS platform, which is designed for developing p5.js multimedia applications, but supports litePlay.js very well. It allows editing of HTML and JS code as well as import other media files into the project. It provides a REPL, and it also supports saving projects in user accounts.
 
+- [litePlay online editor](https://vlazzarini.github.io/litePlay.js/): a simple editor designed to test experimental features with REPL. It supports JS Code inside the textarea, and litePlay's functions can be called without the prefix. It can saves code by downloading it to your computer. Uploading media files is currently not supported.
+
 The code in this tutorial can be run in any of the three platforms. Whenever the REPL is mentioned, if not present (e.g. in Playcode), the code can be evaluated directly from the script in the *live* mode.
 
 Note that litePlay.js does not have any means of sound recording itself,
@@ -486,6 +488,7 @@ const  gunshot = new Instrument(127);
   can be one of the following as defined below:
 
 ```
+const djScratch = 29;
 const acousticBassDrum = 35;
 const kick = acousticBassDrum;
 const bassDrum1 = 36;
@@ -539,5 +542,3 @@ const openCuica = 79;
 const muteTriangle = 80;
 const openTriangle = 81;
 ```
-
-
