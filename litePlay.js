@@ -638,7 +638,6 @@ export const soft = softLevel;
 export const midlevel = midLevel;
 export const loud = loudLevel;
 
-
 const shortmin = 0.05;
 const shortmax = 0.2;
 const middurmin = 0.2;
@@ -648,9 +647,9 @@ const longmax = 5;
 export const shortDuration = () => { return rnd(shortmin,shortmax); };
 export const midDuration = () => { return rnd(middurmin, middurmax); };
 export const longDuration = () => { return rnd(longmin, longmax); };
-export const shortdur = shortDuration;
-export const middur = midDuration;
-export const longdir = longDuration;
+export const shortDur = shortDuration;
+export const midDur = midDuration;
+export const longDur = longDuration;
 
 const immediatemin = 0.01;
 const immediatemax = 0.5;
@@ -673,9 +672,6 @@ const hipmax = 96.0;
 export function lowPitch() { return rnd(lowpmin,lowpmax); }
 export function midPitch()  { return rnd(midpmin, midpmax); }
 export function hiPitch()  { return rnd(hipmin, hipmax); }
-export const lowpitch = lowPitch;
-export const midpitch = midPitch;
-export const hipitch = hiPitch;
 export const highPitch = hiPitch;
 
 //to do: group instruments by timbre or Hornbostel-Sachs classification
