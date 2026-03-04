@@ -625,6 +625,10 @@ export function stop() {
 export const rnd = (min, max) => {
 	return Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min))}
 
+export const choose = (array) => {
+  let index = Math.floor(Math.random() * array.length);
+  return array[index];}
+
 const lowmin = 0.01;
 const lowmax = 0.1;
 const midmin = 0.1;
@@ -674,11 +678,13 @@ export function midPitch()  { return rnd(midpmin, midpmax); }
 export function hiPitch()  { return rnd(hipmin, hipmax); }
 export const highPitch = hiPitch;
 
-//to do: group instruments by timbre or Hornbostel-Sachs classification
-//const drumspmin = 35.0;
-//const drumspmax = 81.0;
-//export function drumsPitch()  { return rnd(drumspmin, drumspmax); }
-//export const drumspitch = drumsPitch;
+//percussion instruments by Hornbostel-Sachs classification
+export const membranophoneList = [35, 36, 40, 41, 43, 45, 47, 48, 50, 63, 64, 65, 66];
+export const idiophoneList = [29, 34, 37, 39, 42, 44, 46, 49, 51, 52, 53, 54, 55, 57, 58, 59, 67, 68, 71, 72, 81];
+export function rndMembranophone()  { return choose(membranophoneList)};
+export function rndIdiophone()  { return choose(idiophoneList)};
+export const membranophone = rndMembranophone;
+export const idiophone = rndIdiophone;
 
 export function onSomething() { return new Instrument(int(rnd(0, 127))); }
 
@@ -914,6 +920,24 @@ export const cosEfeitos = onFx;
 export const naPercussão = onPerc;
 export const coaVoz = onVoice;
 export const quieto = silently;
+export const escolha = choose;
+
+// geradores
+export const fraco = softLevel;
+export const mezzo = midLevel;
+export const forte = loudLevel;
+
+export const curta = shortDuration;
+export const média = midDuration;
+export const longa = longDuration;
+
+export const agora = now;
+export const emBreve = soon;
+export const depois = later;
+
+export const grave = lowPitch;
+export const médio = midPitch;
+export const agudo = highPitch;
 
 // instrumentos
 class Instrumento extends Instrument {
@@ -1059,3 +1083,6 @@ export const bateria3 = drums3;
 export const bateria4 = drums4;
 export const bateria5 = drums5;
 export const bateria6 = drums6;
+
+export const membranofone = membranophone;
+export const idiofone = idiophone;
