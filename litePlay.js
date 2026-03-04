@@ -638,7 +638,6 @@ export const soft = softLevel;
 export const midlevel = midLevel;
 export const loud = loudLevel;
 
-
 const shortmin = 0.05;
 const shortmax = 0.2;
 const middurmin = 0.2;
@@ -648,9 +647,9 @@ const longmax = 5;
 export const shortDuration = () => { return rnd(shortmin,shortmax); };
 export const midDuration = () => { return rnd(middurmin, middurmax); };
 export const longDuration = () => { return rnd(longmin, longmax); };
-export const shortdur = shortDuration;
-export const middur = midDuration;
-export const longdir = longDuration;
+export const shortDur = shortDuration;
+export const midDur = midDuration;
+export const longDur = longDuration;
 
 const immediatemin = 0.01;
 const immediatemax = 0.5;
@@ -673,10 +672,6 @@ const hipmax = 96.0;
 export function lowPitch() { return rnd(lowpmin,lowpmax); }
 export function midPitch()  { return rnd(midpmin, midpmax); }
 export function hiPitch()  { return rnd(hipmin, hipmax); }
-export const lowpitch = lowPitch;
-export const midpitch = midPitch;
-export const hipitch = hiPitch;
-export const highpitch = hiPitch;
 export const highPitch = hiPitch;
 
 //to do: group instruments by timbre or Hornbostel-Sachs classification
@@ -690,25 +685,25 @@ export function onSomething() { return new Instrument(int(rnd(0, 127))); }
 
 // instrument collection
 export const grandPiano = new Instrument(0);
-export const  piano = grandPiano;
+export const piano = grandPiano;
 let defInstr = piano;
-export const  brightPiano = new Instrument(1);
-export const  electricGrand = new Instrument(2);
-export const  honkyPiano = new Instrument(3);
-export const  electricPiano = new Instrument(4);
-export const  electricPiano2 = new Instrument(5);
-export const  harpsichord = new Instrument(6);
-export const  clavinet = new Instrument(7);
+export const brightPiano = new Instrument(1);
+export const electricGrand = new Instrument(2);
+export const honkyPiano = new Instrument(3);
+export const electricPiano = new Instrument(4);
+export const electricPiano2 = new Instrument(5);
+export const harpsichord = new Instrument(6);
+export const clavinet = new Instrument(7);
 
-export const  celesta = new Instrument(8);
-export const  glockenspiel = new Instrument(9);
+export const celesta = new Instrument(8);
+export const glockenspiel = new Instrument(9);
 export const musicBox = new Instrument(10);
 export const vibraphone = new Instrument(11);
 export const marimba = new Instrument(12);
 export const xylophone = new Instrument(13);
 export const tubularBells = new Instrument(14);
 export const dulcimer = new Instrument(15);
-export const  tinkleBell = new Instrument(112);
+export const tinkleBell = new Instrument(112);
 
 export function onStruck() {
     let num = int(rnd(0,16));
@@ -735,16 +730,16 @@ export const jazzElectricGuitar = new Instrument(26);
 export const clearElectricGuitar = new Instrument(27);
 export const mutedElectricGuitar = new Instrument(28);
 export const overdrivenGuitar = new Instrument(29);
-export const  distortionGuitar = new Instrument(30);
-export const  guitarHarmonics = new Instrument(31);
-export const  sitar = new Instrument(105);
-export const  banjo = new Instrument(106);
-export const  shamisen = new Instrument(107);
-export const  koto = new Instrument(108);
-export const  kalimba = new Instrument(109);
-export const  pizzicatoStrings = new Instrument(45);
-export const  orchestralHarp = new Instrument(46);
-export const  harp = orchestralHarp;
+export const distortionGuitar = new Instrument(30);
+export const guitarHarmonics = new Instrument(31);
+export const sitar = new Instrument(105);
+export const banjo = new Instrument(106);
+export const shamisen = new Instrument(107);
+export const koto = new Instrument(108);
+export const kalimba = new Instrument(109);
+export const pizzicatoStrings = new Instrument(45);
+export const orchestralHarp = new Instrument(46);
+export const harp = orchestralHarp;
 
 export function onPluck() {
     let num = int(rnd(24,38));
@@ -753,24 +748,24 @@ export function onPluck() {
     return new Instrument(num);
 }
 
-export const  acousticBass = new Instrument(32);
-export const  fingerElectricBass = new Instrument(33);
-export const  pickElectricBass = new Instrument(34);
-export const  fretlessBass = new Instrument(35);
-export const  bass = fretlessBass;
-export const  slapBass1 = new Instrument(36);
-export const  slapBass2 = new Instrument(37);
-export const  synthBass1 = new Instrument(38);
-export const  synthBass2 = new Instrument(39);
+export const acousticBass = new Instrument(32);
+export const fingerElectricBass = new Instrument(33);
+export const pickElectricBass = new Instrument(34);
+export const fretlessBass = new Instrument(35);
+export const bass = fretlessBass;
+export const slapBass1 = new Instrument(36);
+export const slapBass2 = new Instrument(37);
+export const synthBass1 = new Instrument(38);
+export const synthBass2 = new Instrument(39);
 
 export function onBass() { return new Instrument(int(rnd(32,39))); }
 
-export const  violin = new Instrument(40);
-export const  viola = new Instrument(41);
-export const  cello = new Instrument(42);
-export const  contrabass = new Instrument(43);
-export const  tremoloStrings = new Instrument(44);
-export const  fiddle = new Instrument(111);
+export const violin = new Instrument(40);
+export const viola = new Instrument(41);
+export const cello = new Instrument(42);
+export const contrabass = new Instrument(43);
+export const tremoloStrings = new Instrument(44);
+export const fiddle = new Instrument(111);
 
 export function onBowed() {
     let num = int(rnd(40,45));
@@ -778,52 +773,52 @@ export function onBowed() {
     return new Instrument(num);
 }
 
-export const  stringEnsemble1 = new Instrument(48);
-export const  strings = stringEnsemble1;
-export const  stringEnsemble2 = new Instrument(49);
-export const  synthStrings1 = new Instrument(50);
-export const  synthStrings2 = new Instrument(51);
+export const stringEnsemble1 = new Instrument(48);
+export const strings = stringEnsemble1;
+export const stringEnsemble2 = new Instrument(49);
+export const synthStrings1 = new Instrument(50);
+export const synthStrings2 = new Instrument(51);
 
 export function onEnsemble() { return new Instrument(int(rnd(48,51))); }
 
-export const  choirAahs = new Instrument(52);
-export const  voiceOohs = new Instrument(53);
-export const  synthVoice = new Instrument(54);
+export const choirAahs = new Instrument(52);
+export const voiceOohs = new Instrument(53);
+export const synthVoice = new Instrument(54);
 
 export function onVoice() { return new Instrument(int(rnd(52,54))); }
 
-export const  orchestralHit = new Instrument(55);
+export const orchestralHit = new Instrument(55);
 
-export const  trumpet = new Instrument(56);
-export const  trombone = new Instrument(57);
-export const  tuba = new Instrument(58);
-export const  mutedTrumpet = new Instrument(59);
-export const  frenchHorn = new Instrument(60);
-export const  horn = frenchHorn;
-export const  brassSection = new Instrument(61);
-export const  brass = brassSection;
-export const  synthBrass1 = new Instrument(62);
-export const  synthBrass2 = new Instrument(63);
+export const trumpet = new Instrument(56);
+export const trombone = new Instrument(57);
+export const tuba = new Instrument(58);
+export const mutedTrumpet = new Instrument(59);
+export const frenchHorn = new Instrument(60);
+export const horn = frenchHorn;
+export const brassSection = new Instrument(61);
+export const brass = brassSection;
+export const synthBrass1 = new Instrument(62);
+export const synthBrass2 = new Instrument(63);
 
 export function onBlow() { return new Instrument(int(rnd(56,63))); }
 
-export const  sopranoSax = new Instrument(64);
-export const  altoSax = new Instrument(65);
-export const  tenorSax = new Instrument(66);
-export const  baritoneSax = new Instrument(67);
-export const  oboe = new Instrument(68);
-export const  englishHorn = new Instrument(69);
-export const  bassoon = new Instrument(70);
-export const  clarinet = new Instrument(71);
-export const  piccolo = new Instrument(72);
-export const  flute = new Instrument(73);
-export const  recorder = new Instrument(74);
-export const  panFlute = new Instrument(75);
-export const  blownBottle = new Instrument(76);
-export const  shakuhachi = new Instrument(77);
-export const  whistle = new Instrument(78);
-export const  ocarina = new Instrument(79);
-export const  bagPipe = new Instrument(110);
+export const sopranoSax = new Instrument(64);
+export const altoSax = new Instrument(65);
+export const tenorSax = new Instrument(66);
+export const baritoneSax = new Instrument(67);
+export const oboe = new Instrument(68);
+export const englishHorn = new Instrument(69);
+export const bassoon = new Instrument(70);
+export const clarinet = new Instrument(71);
+export const piccolo = new Instrument(72);
+export const flute = new Instrument(73);
+export const recorder = new Instrument(74);
+export const panFlute = new Instrument(75);
+export const blownBottle = new Instrument(76);
+export const shakuhachi = new Instrument(77);
+export const whistle = new Instrument(78);
+export const ocarina = new Instrument(79);
+export const bagPipe = new Instrument(110);
 
 export function onWind() {
     let num = int(rnd(64,79));
@@ -831,56 +826,56 @@ export function onWind() {
     return new Instrument(num);
 }
 
-export const  lead1 = new Instrument(80);
-export const  lead2 = new Instrument(81);
-export const  lead3 = new Instrument(82);
-export const  lead4 = new Instrument(83);
-export const  lead5 = new Instrument(84);
-export const  lead6 = new Instrument(85);
-export const  lead7 = new Instrument(86);
-export const  lead8 = new Instrument(87);
+export const lead1 = new Instrument(80);
+export const lead2 = new Instrument(81);
+export const lead3 = new Instrument(82);
+export const lead4 = new Instrument(83);
+export const lead5 = new Instrument(84);
+export const lead6 = new Instrument(85);
+export const lead7 = new Instrument(86);
+export const lead8 = new Instrument(87);
 
 export function onLead() { return new Instrument(int(rnd(80,87))); }
 
-export const  pad1 = new Instrument(88);
-export const  pad2 = new Instrument(89);
-export const  pad3 = new Instrument(90);
-export const  pad4 = new Instrument(91);
-export const  pad5 = new Instrument(92);
-export const  synth = pad5;
-export const  pad6 = new Instrument(93);
-export const  pad7 = new Instrument(94);
-export const  pad8 = new Instrument(96);
+export const pad1 = new Instrument(88);
+export const pad2 = new Instrument(89);
+export const pad3 = new Instrument(90);
+export const pad4 = new Instrument(91);
+export const pad5 = new Instrument(92);
+export const synth = pad5;
+export const pad6 = new Instrument(93);
+export const pad7 = new Instrument(94);
+export const pad8 = new Instrument(96);
 
 export function onSynth() { return new Instrument(int(rnd(88,96))); }
 
-export const  fx1 = new Instrument(97);
-export const  fx2 = new Instrument(98);
-export const  fx3 = new Instrument(99);
-export const  fx4 = new Instrument(100);
-export const  fx5 = new Instrument(101);
-export const  fx6 = new Instrument(102);
-export const  fx7 = new Instrument(103);
-export const  fx8 = new Instrument(104);
+export const fx1 = new Instrument(97);
+export const fx2 = new Instrument(98);
+export const fx3 = new Instrument(99);
+export const fx4 = new Instrument(100);
+export const fx5 = new Instrument(101);
+export const fx6 = new Instrument(102);
+export const fx7 = new Instrument(103);
+export const fx8 = new Instrument(104);
 
 export function onFx() { return new Instrument(int(rnd(97,104))); }
 
-export const  agogo = new Instrument(113);
-export const  steelDrums = new Instrument(114);
-export const  woodblock = new Instrument(115);
-export const  taikoDrum = new Instrument(116);
-export const  melodicTom = new Instrument(117);
-export const  synthDrum = new Instrument(118);
-export const  reverseCymbal = new Instrument(119);
-export const  guitarFretNoise = new Instrument(120);
-export const  breathNoise = new Instrument(121);
-export const  seaShore = new Instrument(122);
-export const  birdTweet = new Instrument(123);
-export const  telephoneRing = new Instrument(124);
-export const  helicopter = new Instrument(125);
-export const  applause = new Instrument(126);
-export const  gunshot = new Instrument(127);
-export const  timpani = new Instrument(47);
+export const agogo = new Instrument(113);
+export const steelDrums = new Instrument(114);
+export const woodblock = new Instrument(115);
+export const taikoDrum = new Instrument(116);
+export const melodicTom = new Instrument(117);
+export const synthDrum = new Instrument(118);
+export const reverseCymbal = new Instrument(119);
+export const guitarFretNoise = new Instrument(120);
+export const breathNoise = new Instrument(121);
+export const seaShore = new Instrument(122);
+export const birdTweet = new Instrument(123);
+export const telephoneRing = new Instrument(124);
+export const helicopter = new Instrument(125);
+export const applause = new Instrument(126);
+export const gunshot = new Instrument(127);
+export const timpani = new Instrument(47);
 
 export function onPerc() {
     let num = int(rnd(113,128));
@@ -888,13 +883,13 @@ export function onPerc() {
     return new Instrument(num);
 }
 
-export const  drums1 = new Instrument(2, true, 40);
-export const  drums = drums1;
-export const  drums2 = new Instrument(3, true, 40);
-export const  drums3 = new Instrument(4, true, 40);
-export const  drums4 = new Instrument(5, true, 40);
-export const  drums5 = new Instrument(6, true, 40);
-export const  drums6 = new Instrument(7, true, 40);
+export const drums1 = new Instrument(2, true, 40);
+export const drums = drums1;
+export const drums2 = new Instrument(3, true, 40);
+export const drums3 = new Instrument(4, true, 40);
+export const drums4 = new Instrument(5, true, 40);
+export const drums5 = new Instrument(6, true, 40);
+export const drums6 = new Instrument(7, true, 40);
 
 export function onDrums() {
     return new Instrument(int(rnd(2,7)), true, int(rnd(35,57)));
@@ -930,22 +925,22 @@ class Instrumento extends Instrument {
     }
 }
 
-export const  pianoDeCauda = grandPiano;
-export const  pianoBrilhante = brightPiano;
-export const  deCaudaElétrico = electricGrand;
-export const  pianoRachado = honkyPiano; //honky?
-export const  pianoElétrico = electricPiano;
-export const  pianoElétrico2 = electricPiano2;
-export const  cravo = harpsichord;
-export const  clavinete = clavinet;
-export const  cravoElétrico = clavinet;
+export const pianoDeCauda = grandPiano;
+export const pianoBrilhante = brightPiano;
+export const deCaudaElétrico = electricGrand;
+export const pianoRachado = honkyPiano; //honky?
+export const pianoElétrico = electricPiano;
+export const pianoElétrico2 = electricPiano2;
+export const cravo = harpsichord;
+export const clavinete = clavinet;
+export const cravoElétrico = clavinet;
 
-export const  caixaDeMúsica = musicBox;
-export const  vibrafone = vibraphone;
-export const  xilofone = xylophone;
-export const  carrilhão = tubularBells; //sinos tubulares?
-export const  sininho = tinkleBell;
-export const  sino = tinkleBell;
+export const caixaDeMúsica = musicBox;
+export const vibrafone = vibraphone;
+export const xilofone = xylophone;
+export const carrilhão = tubularBells; //sinos tubulares?
+export const sininho = tinkleBell;
+export const sino = tinkleBell;
 
 export const órgãoElétrico = drawbarOrgan; //hammond?
 export const órgãoPercussivo = percussiveOrgan;
@@ -957,110 +952,110 @@ export const acordeão = accordion;
 export const gaita = harmonic;
 export const acordeãoDeTango = tangoAccordion;
 
-export const  violão = nylonAcousticGuitar;
-export const  vilãoDeNáilon = nylonAcousticGuitar;
-export const  violãoDeAço = steelAcousticGuitar;
-export const  guitarraDeJazz = jazzElectricGuitar;
-export const  guitarraLimpa = clearElectricGuitar;
-export const  guitarraAbafada = mutedElectricGuitar;
-export const  guitarraOverdrive = overdrivenGuitar;
-export const  guitarraDistorcida = distortionGuitar;
-export const  guitarraHarmônicos = guitarHarmonics;
-export const  samisém = shamisen;
-export const  cordasPizzicato = pizzicatoStrings;
-export const  harpaOrquestral = orchestralHarp;
-export const  harpa = orchestralHarp;
+export const violão = nylonAcousticGuitar;
+export const vilãoDeNáilon = nylonAcousticGuitar;
+export const violãoDeAço = steelAcousticGuitar;
+export const guitarraDeJazz = jazzElectricGuitar;
+export const guitarraLimpa = clearElectricGuitar;
+export const guitarraAbafada = mutedElectricGuitar;
+export const guitarraOverdrive = overdrivenGuitar;
+export const guitarraDistorcida = distortionGuitar;
+export const guitarraHarmônicos = guitarHarmonics;
+export const samisém = shamisen;
+export const cordasPizzicato = pizzicatoStrings;
+export const harpaOrquestral = orchestralHarp;
+export const harpa = orchestralHarp;
 
-export const  baixoAcústico = acousticBass;
-export const  baixoElétrico = fingerElectricBass;
-export const  baixoElétricoPalhetado = pickElectricBass;
-export const  baixoFretless = fretlessBass;
-export const  baixo = fretlessBass;
-export const  baixoSlap1 = slapBass1;
-export const  baixoSlap2 = slapBass2;
-export const  baixoSintetizado1 = synthBass1;
-export const  baixoSintetizado2 = synthBass2;
+export const baixoAcústico = acousticBass;
+export const baixoElétrico = fingerElectricBass;
+export const baixoElétricoPalhetado = pickElectricBass;
+export const baixoFretless = fretlessBass;
+export const baixo = fretlessBass;
+export const baixoSlap1 = slapBass1;
+export const baixoSlap2 = slapBass2;
+export const baixoSintetizado1 = synthBass1;
+export const baixoSintetizado2 = synthBass2;
 
-export const  violino = violin;
-export const  violoncelo = cello;
-export const  celo = violoncelo;
-export const  contrabaixo = contrabass;
-export const  cordasTremolo = tremoloStrings;
+export const violino = violin;
+export const violoncelo = cello;
+export const celo = violoncelo;
+export const contrabaixo = contrabass;
+export const cordasTremolo = tremoloStrings;
 
-export const  cordas = stringEnsemble1;
-export const  cordas2 = stringEnsemble2;
-export const  cordasSintetizadas1 = synthStrings1;
-export const  cordasSintetizadas2 = synthStrings2;
+export const cordas = stringEnsemble1;
+export const cordas2 = stringEnsemble2;
+export const cordasSintetizadas1 = synthStrings1;
+export const cordasSintetizadas2 = synthStrings2;
 
-export const  coralAahs = choirAahs;
-export const  coralOohs = voiceOohs;
-export const  vozSintetizada = synthVoice;
+export const coralAahs = choirAahs;
+export const coralOohs = voiceOohs;
+export const vozSintetizada = synthVoice;
 
-export const  golpeOrquestral = orchestralHit;
-export const  golpe = orchestralHit;
+export const golpeOrquestral = orchestralHit;
+export const golpe = orchestralHit;
 
-export const  trompete = trumpet;
-export const  trompeteAbafado = mutedTrumpet;
-export const  trompeteComSurdina = mutedTrumpet;
-export const  trompaFrancesa = frenchHorn;
-export const  trompa = trompaFrancesa;
-export const  seçãoDeMetais = brassSection;
-export const  metais = seçãoDeMetais;
-export const  metalSintetizado1 = synthBrass1;
-export const  metalSintetizado2 = synthBrass2;
+export const trompete = trumpet;
+export const trompeteAbafado = mutedTrumpet;
+export const trompeteComSurdina = mutedTrumpet;
+export const trompaFrancesa = frenchHorn;
+export const trompa = trompaFrancesa;
+export const seçãoDeMetais = brassSection;
+export const metais = seçãoDeMetais;
+export const metalSintetizado1 = synthBrass1;
+export const metalSintetizado2 = synthBrass2;
 
-export const  saxSoprando = sopranoSax;
-export const  saxAlto = altoSax;
-export const  saxTenor = tenorSax;
-export const  saxBarítono = baritoneSax;
-export const  oboé = oboe;
-export const  corneInglês = englishHorn;
-export const  fagote = bassoon;
-export const  clarineta = clarinet;
-export const  clarinete = clarinet;
-export const  pícolo = piccolo;
-export const  flautaTransversal = flute;
-export const  flauta = flute;
-export const  flautaDoce = recorder;
-export const  flautaDePã = panFlute;
-export const  garrafaSoprada = blownBottle;
-export const  garrafa = garrafaSoprada;
-export const  assobio = whistle;
-export const  assovio = assobio;
-export const  gaitaDeFole = bagPipe;
+export const saxSoprando = sopranoSax;
+export const saxAlto = altoSax;
+export const saxTenor = tenorSax;
+export const saxBarítono = baritoneSax;
+export const oboé = oboe;
+export const corneInglês = englishHorn;
+export const fagote = bassoon;
+export const clarineta = clarinet;
+export const clarinete = clarinet;
+export const pícolo = piccolo;
+export const flautaTransversal = flute;
+export const flauta = flute;
+export const flautaDoce = recorder;
+export const flautaDePã = panFlute;
+export const garrafaSoprada = blownBottle;
+export const garrafa = garrafaSoprada;
+export const assobio = whistle;
+export const assovio = assobio;
+export const gaitaDeFole = bagPipe;
 
-export const  efeito1 = fx1;
-export const  efeito2 = fx2;
-export const  efeito3 = fx3;
-export const  efeito4 = fx4;
-export const  efeito5 = fx5;
-export const  efeito6 = fx6;
-export const  efeito7 = fx6;
-export const  efeito8 = fx8;
+export const efeito1 = fx1;
+export const efeito2 = fx2;
+export const efeito3 = fx3;
+export const efeito4 = fx4;
+export const efeito5 = fx5;
+export const efeito6 = fx6;
+export const efeito7 = fx6;
+export const efeito8 = fx8;
 
-export const  agogô = agogo;
-export const  tamborDeAço = steelDrums;
-export const  blocoDeMadeira = woodblock;
-export const  bloco = blocoDeMadeira;
-export const  taiko = taikoDrum;
-export const  tomTom = melodicTom;
-export const  bateriaSintetizada = synthDrum;
-export const  pratoReverso = reverseCymbal;
-export const  trasteDeGuitarra = guitarFretNoise;
-export const  traste = trasteDeGuitarra;
-export const  respiração = breathNoise;
-export const  ondaDoMar = seaShore;
-export const  pássaro = birdTweet;
-export const  telefone = telephoneRing;
-export const  helicóptero = helicopter;
-export const  aplausos = applause;
-export const  tiro = gunshot;
-export const  tímpano = timpani;
+export const agogô = agogo;
+export const tamborDeAço = steelDrums;
+export const blocoDeMadeira = woodblock;
+export const bloco = blocoDeMadeira;
+export const taiko = taikoDrum;
+export const tomTom = melodicTom;
+export const bateriaSintetizada = synthDrum;
+export const pratoReverso = reverseCymbal;
+export const trasteDeGuitarra = guitarFretNoise;
+export const traste = trasteDeGuitarra;
+export const respiração = breathNoise;
+export const ondaDoMar = seaShore;
+export const pássaro = birdTweet;
+export const telefone = telephoneRing;
+export const helicóptero = helicopter;
+export const aplausos = applause;
+export const tiro = gunshot;
+export const tímpano = timpani;
 
-export const  bateria1 = drums1;
-export const  bateria = drums1;
-export const  bateria2 = drums2;
-export const  bateria3 = drums3;
-export const  bateria4 = drums4;
-export const  bateria5 = drums5;
-export const  bateria6 = drums6;
+export const bateria1 = drums1;
+export const bateria = drums1;
+export const bateria2 = drums2;
+export const bateria3 = drums3;
+export const bateria4 = drums4;
+export const bateria5 = drums5;
+export const bateria6 = drums6;
