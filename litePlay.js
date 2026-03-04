@@ -676,6 +676,8 @@ export function hiPitch()  { return rnd(hipmin, hipmax); }
 export const lowpitch = lowPitch;
 export const midpitch = midPitch;
 export const hipitch = hiPitch;
+export const highpitch = hiPitch;
+export const highPitch = hiPitch;
 
 //to do: group instruments by timbre or Hornbostel-Sachs classification
 //const drumspmin = 35.0;
