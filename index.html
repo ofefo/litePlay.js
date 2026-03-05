@@ -5,6 +5,11 @@
 	<meta name="Description" content="litePlay">
 	<meta charset="utf-8"/>
 	<script src="./litePlay.dev.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+	<!-- add code mirror -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/monokai.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
 <style>
 body {
 	font-size: 18px;	
@@ -29,14 +34,14 @@ div.text{
 	filter: brightness(.8);
 }
 
-.code {
-	width: 95%; 
+.CodeMirror {
+	width: 96%; 
 	height: 500px; 
 	font-size: 18px; 
 	font-family: monospace; 
-	background: #1e1e1e; 
-	color: #d4d4d4; 
-	padding: 10px;
+	text-align: left; /* Ensures code aligns left */
+	margin: 0 auto; /* Centers the editor in the div */
+	border-radius: 5px;
 }
 
 .console {
@@ -93,7 +98,7 @@ div.text{
 
 			if (consoleOutput) {
 				consoleOutput.value += message + '\n';
-				consoleOutput.scrollTop = consoleOutput.scrollHeight; 
+				consoleOutput.scrollTop = consoleOutput.scrollHeight;
 			}
 		};
 
@@ -108,6 +113,14 @@ div.text{
 				consoleOutput.scrollTop = consoleOutput.scrollHeight;
 			}
 		};
+
+		const editor = CodeMirror.fromTextArea(document.getElementById("code-editor"), {
+			mode: "javascript",
+			theme: "monokai",
+			lineNumbers: true,
+			indentUnit: 4,
+			tabSize: 4
+		});
 
 		// Start litePlay
 		let liteplayEngine = null;
@@ -150,21 +163,20 @@ div.text{
 			return safeCode;
 		}
 
-    		const runLP = async (event) => {
-    		    if (event) event.preventDefault(); 
-		    try{
-    		        // Grab the text from the code editor
-    		        const codeEditor = document.getElementById('code-editor');
-    		        const lpCode = codeEditor.value;
+		const runLP = async (event) => {
+		if (event) event.preventDefault();
+			try {
+    		        // Grab the text from CodeMirror
+    		        const lpCode = editor.getValue();
+			
 			if (lpCode == "") throw "Empty!"
 			const safeCode = protectCode(lpCode);
-    		        // Evaluate the string as actual JavaScript
+    		     	// Evaluate the string as actual 
 			eval(safeCode);
 
-
-    		    } catch (error) {
-			await console.error("Failed to execute the code:", error);
-    		    }
+    		} catch (error) {
+		    	await console.error("Failed to execute the code:", error);
+    		}
     		}
 
     		// --- STOP BUTTON ---
@@ -181,16 +193,12 @@ div.text{
 		// --- SAVE BUTTON ---
 		let downloadN = 0;
 		const saveCode = () => {
-		const text = document.getElementById('code-editor').value;
-		
-		// Create a virtual file (Blob) containing the code
+		const text = editor.getValue();
 		const blob = new Blob([text], { type: 'text/javascript' });
 		const url = URL.createObjectURL(blob);
-
-		// Create a temporary hidden link and click it to trigger download
 		const a = document.createElement('a'); 
 		a.href = url;
-		a.download = 'litePlay' + String(downloadN) + '.js'; // Default file name
+		a.download = 'litePlay' + String(downloadN) + '.js';
 		document.body.appendChild(a);
 		a.click();
 		document.body.removeChild(a);
