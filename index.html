@@ -19,8 +19,15 @@ div.text{
  
 .button {
         padding: 10px;
+	transition: filter .5s ease;
         border-radius: 5px;
+	cursor: pointer;
         margin: .5%;
+}
+
+.button:hover {
+	filter: brightness(.8);
+
 }
 
 .code {
@@ -31,6 +38,24 @@ div.text{
 	background: #1e1e1e; 
 	color: #d4d4d4; 
 	padding: 10px;
+}
+
+@keyframes flash-yellow {
+    0% { background-color: #f0f0f0; }
+    50% { background-color: #ffeb3b; }
+    100% { background-color: #f0f0f0; }
+}
+
+.needs-start {
+    animation: flash-yellow 1.5s infinite;
+    font-weight: bold;
+}
+
+.ready-green {
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+    transition: background-color 1s ease;
 }
 </style>
 </head>
@@ -45,7 +70,7 @@ div.text{
 		</div>
 		<textarea class="code" id="code-editor"></textarea>
 	<div style="display: block; text-align: center; width: 100%;">
-		<button class="button" id="start-btn">&#9650; <b>START</b></button>
+		<button class="button needs-start" id="start-btn">&#9650; <b>START</b></button>
 		<button class="button" id="run-btn">&#9654; <b>RUN</button>
 		<button class="button" id="stop-btn">&#9724; <b>STOP</b></button>
 		<button class="button" id="save-btn">&#9660; <b>SAVE</b></button>
@@ -58,12 +83,16 @@ div.text{
     		// --- START BUTTON ---
     		const startLP = async (event) => {
     		    if (event) event.preventDefault();
+		    const startBtn = document.getElementById('start-btn');
+		    const runBtn = document.getElementById('run-btn');
 		    // Initialize liteplay only if it hasn't been already
 		    try {
 		    if (!liteplayEngine) {
     		            console.log("Starting litePlay...");
     		            liteplayEngine = await lpLoad(); 
 			    console.log("litePlay is now ready!");
+			    startBtn.classList.remove('needs-start');
+			    runBtn.classList.add('ready-green');
 
     		            // Expose all of litePlay.js exports (play, stop, grandPiano, etc.) 
     		            // to the global window so the textarea code can find them.
