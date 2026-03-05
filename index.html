@@ -27,7 +27,6 @@ div.text{
 
 .button:hover {
 	filter: brightness(.8);
-
 }
 
 .code {
@@ -38,17 +37,6 @@ div.text{
 	background: #1e1e1e; 
 	color: #d4d4d4; 
 	padding: 10px;
-}
-
-@keyframes flash-yellow {
-    0% { background-color: #f0f0f0; }
-    50% { background-color: #ffeb3b; }
-    100% { background-color: #f0f0f0; }
-}
-
-.needs-start {
-    animation: flash-yellow 1.5s infinite;
-    font-weight: bold;
 }
 
 .ready-green {
@@ -63,14 +51,12 @@ div.text{
 	<div style="display: block; text-align: center; width: 100%;">
 		<h1>litePlay</h1>
 		<div class="text">
-		<p>Before starting, make sure to press the <b>Start</b> button to start the engine.
 		<br>You can run your code by writting it bellow and than hitting <b>Run</b>.
 		<br>Use the <b>Stop</b> button to pause everything.
 		<br>New to litePlay? Read the <a href="https://vlazzarini.github.io/litePlay.js/tutorial.html" target="_blank">tutorial</a>.</p>
 		</div>
 		<textarea class="code" id="code-editor"></textarea>
 	<div style="display: block; text-align: center; width: 100%;">
-		<button class="button needs-start" id="start-btn">&#9650; <b>START</b></button>
 		<button class="button" id="run-btn">&#9654; <b>RUN</button>
 		<button class="button" id="stop-btn">&#9724; <b>STOP</b></button>
 		<button class="button" id="save-btn">&#9660; <b>SAVE</b></button>
@@ -80,28 +66,26 @@ div.text{
 		// Start litePlay
 		let liteplayEngine = null;
     
-    		// --- START BUTTON ---
-    		const startLP = async (event) => {
-    		    if (event) event.preventDefault();
-		    const startBtn = document.getElementById('start-btn');
-		    const runBtn = document.getElementById('run-btn');
-		    // Initialize liteplay only if it hasn't been already
-		    try {
-		    if (!liteplayEngine) {
-    		            console.log("Starting litePlay...");
-    		            liteplayEngine = await lpLoad(); 
-			    console.log("litePlay is now ready!");
-			    startBtn.classList.remove('needs-start');
-			    runBtn.classList.add('ready-green');
+		// AUTO-LOAD ENGINE ON PAGE LOAD
+		window.addEventListener('load', async () => {
+			try {
+				console.log("Loading litePlay engine in the background...");
+				
+				// Initialize the engine immediately
+				liteplayEngine = await lpLoad(); 
+				
+				// Expose all of litePlay.js exports to the global window
+				Object.assign(window, liteplayEngine);
+				console.log("litePlay engine loaded and ready!");
 
-    		            // Expose all of litePlay.js exports (play, stop, grandPiano, etc.) 
-    		            // to the global window so the textarea code can find them.
-    		            Object.assign(window, liteplayEngine);
-			    }
-		} catch (error) {
-    		        console.error("Failed to start litePlay:", error);
-		}
-		}
+				// Make the Run button green to show it's ready
+				const runBtn = document.getElementById('run-btn');
+				if (runBtn) runBtn.classList.add('ready-green');
+
+			} catch (error) {
+				console.error("Failed to auto-start litePlay:", error);
+			}
+		});	
 		
 		// Inject an execution counter into loops
 		function protectCode(code) {
@@ -152,28 +136,24 @@ div.text{
     		}
 
 		// --- SAVE BUTTON ---
-		const saveCode = () => {
 		let downloadN = 0;
+		const saveCode = () => {
 		const text = document.getElementById('code-editor').value;
 		
 		// Create a virtual file (Blob) containing the code
 		const blob = new Blob([text], { type: 'text/javascript' });
 		const url = URL.createObjectURL(blob);
+
 		// Create a temporary hidden link and click it to trigger download
 		const a = document.createElement('a'); 
 		a.href = url;
-		a.download = 'litePlayCode' + String(downloadN) + '.js'; // Default file name
+		a.download = 'litePlay' + String(downloadN) + '.js'; // Default file name
 		document.body.appendChild(a);
 		a.click();
-			
-		
-		// Clean up
 		document.body.removeChild(a);
 		URL.revokeObjectURL(url);
+		downloadN++;
 		}
-
-    		const startButton = document.querySelector('#start-btn');
-    		startButton.addEventListener('click', startLP);
 
     		const runButton = document.querySelector('#run-btn');
     		runButton.addEventListener('click', runLP);
