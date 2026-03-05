@@ -39,6 +39,20 @@ div.text{
 	padding: 10px;
 }
 
+.console {
+	width: 95%;
+	height: 150px;
+	font-size: 16px;
+	font-family: monospace;
+	background: #000; 
+	color: #0f0; 
+	padding: 10px; 
+	margin-top: 10px;
+	border: none; 
+	border-radius: 5px; 
+	resize: none;
+}
+
 .ready-green {
     background-color: #4CAF50;
     color: white;
@@ -56,6 +70,9 @@ div.text{
 		<br>New to litePlay? Read the <a href="https://vlazzarini.github.io/litePlay.js/tutorial.html" target="_blank">tutorial</a>.</p>
 		</div>
 		<textarea class="code" id="code-editor"></textarea>
+		<br>
+		<textarea id="console-output" readonly class="console"placeholder="Console
+			output will appear here."></textarea>
 	<div style="display: block; text-align: center; width: 100%;">
 		<button class="button" id="run-btn">&#9654; <b>RUN</button>
 		<button class="button" id="stop-btn">&#9724; <b>STOP</b></button>
@@ -63,15 +80,42 @@ div.text{
 	</div>
 	</div>
 	<script charset="utf-8">
+		const consoleOutput = document.getElementById('console-output');
+		const originalLog = console.log;
+		const originalError = console.error;
+
+		console.log = function(...args) {
+			originalLog.apply(console, args);
+			
+			const message = args.map(arg => {
+				return typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg);
+			}).join(' ');
+
+			if (consoleOutput) {
+				consoleOutput.value += message + '\n';
+				consoleOutput.scrollTop = consoleOutput.scrollHeight; 
+			}
+		};
+
+		console.error = function(...args) {
+			originalError.apply(console, args);
+			const message = args.map(arg => {
+				return typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg);
+			}).join(' ');
+			
+			if (consoleOutput) {
+				consoleOutput.value += "ERROR: " + message + '\n';
+				consoleOutput.scrollTop = consoleOutput.scrollHeight;
+			}
+		};
+
 		// Start litePlay
 		let liteplayEngine = null;
     
-		// AUTO-LOAD ENGINE ON PAGE LOAD
 		window.addEventListener('load', async () => {
 			try {
-				console.log("Loading litePlay engine in the background...");
+				console.log("Loading litePlay engine...");
 				
-				// Initialize the engine immediately
 				liteplayEngine = await lpLoad(); 
 				
 				// Expose all of litePlay.js exports to the global window
@@ -120,7 +164,6 @@ div.text{
 
     		    } catch (error) {
 			await console.error("Failed to execute the code:", error);
-			if (error instanceof ReferenceError) console.warn("Have you started litePlay first?");
     		    }
     		}
 
