@@ -288,6 +288,11 @@ garev1 = 0
 garev2 = 0
 endin
 
+instr 200
+turnoff2 instr 1, 0, 1
+turnoff2 instr 10, 0, 1
+endin
+
 //ifn ftgen 8,0,1024,7,0,1024,0
 /*instr 101
  tableiw 0.5,100,17

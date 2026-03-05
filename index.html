@@ -188,7 +188,7 @@ div.text{
     		    if (liteplayEngine) {
     		        console.log("Stopping audio...");
     		        // Call stop() directly from the loaded engine module
-			await liteplayEngine.stop();
+			await reset();
     		        console.log("Audio stopped.");
     		    }
     		}

@@ -621,6 +621,11 @@ export function stop() {
     defInstr.stop();
 }
 
+export async function reset() {
+	if(csound) {
+		await csound.inputMessage("i 200 0 0.1");
+	}
+}
 
 export const rnd = (min, max) => {
 	return Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min))}
