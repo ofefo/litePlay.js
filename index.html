@@ -39,8 +39,8 @@ div.text{
 	height: 500px; 
 	font-size: 18px; 
 	font-family: monospace; 
-	text-align: left; /* Ensures code aligns left */
-	margin: 0 auto; /* Centers the editor in the div */
+	text-align: left;
+	margin: 0 auto;
 	border-radius: 5px;
 }
 
@@ -100,7 +100,7 @@ div.text{
 				consoleOutput.value += message + '\n';
 				consoleOutput.scrollTop = consoleOutput.scrollHeight;
 			}
-		};
+		}
 
 		console.error = function(...args) {
 			originalError.apply(console, args);
@@ -112,7 +112,7 @@ div.text{
 				consoleOutput.value += "ERROR: " + message + '\n';
 				consoleOutput.scrollTop = consoleOutput.scrollHeight;
 			}
-		};
+		}
 
 		const editor = CodeMirror.fromTextArea(document.getElementById("code-editor"), {
 			mode: "javascript",
@@ -120,12 +120,14 @@ div.text{
 			lineNumbers: true,
 			indentUnit: 4,
 			tabSize: 4
-		});
+		})
 
 		// Start litePlay
 		let liteplayEngine = null;
     
-		window.addEventListener('load', async () => {
+		document.addEventListener('pointerdown', async () => {
+
+		if (!liteplayEngine) {
 			try {
 				console.log("Loading litePlay engine...");
 				
@@ -133,7 +135,7 @@ div.text{
 				
 				// Expose all of litePlay.js exports to the global window
 				Object.assign(window, liteplayEngine);
-				console.log("litePlay engine loaded and ready!");
+				console.log("litePlay is ready!");
 
 				// Make the Run button green to show it's ready
 				const runBtn = document.getElementById('run-btn');
@@ -142,7 +144,8 @@ div.text{
 			} catch (error) {
 				console.error("Failed to auto-start litePlay:", error);
 			}
-		});	
+		}
+		}, {once: true});
 		
 		// Inject an execution counter into loops
 		function protectCode(code) {
