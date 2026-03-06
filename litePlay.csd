@@ -281,16 +281,16 @@ tablew ign,p6,9
 tablew p5,p6,10
 endin
 
+instr 200
+turnoff2 1, 0, 1
+turnoff2 10, 0, 1
+endin
+
 instr 100
 a1, a2 freeverb garev1, garev2, 0.7, 0.35
 outs a1, a2
 garev1 = 0
 garev2 = 0
-endin
-
-instr 200
-turnoff2 instr 1, 0, 1
-turnoff2 instr 10, 0, 1
 endin
 
 //ifn ftgen 8,0,1024,7,0,1024,0
