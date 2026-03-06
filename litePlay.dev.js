@@ -115,7 +115,7 @@ const As0 = As[1], As1 = As[2], As2 = As[3], As3 = As[4], As4 = As[5],
 const Bb = As;
 const Bb0 = Bb[1], Bb1 = Bb[2], Bb2 = Bb[3], Bb3 = Bb[4], Bb4 = Bb[5],
       Bb5 = Bb[6], Bb6 = Bb[7], Bb7 = Bb[8], Bbm1 = Bb[0];
-const B = notes(12);
+const B = notes(11);
 const B0 = B[1], B1 = B[2], B2 = B[3], B3 = B[4], B4 = B[5],
       B5 = B[6], B6 = B[7], B7 = B[8], Bm1 = B[0];
 const Bs = C;
