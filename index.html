@@ -74,21 +74,21 @@ div.text{
 	<div style="display: block; text-align: center; width: 100%;">
 		<h1>litePlay</h1>
 		<div class="text">
-		<p>
-		<br>Welcome to litePlay!
-		<br>Write your code bellow and hit <b>Run</b> or type <b>Ctrl+Enter</b>.
-		<br>Use the <b>Stop</b> button to pause everything.
-		<br>New to litePlay? Read the <b><a href="https://vlazzarini.github.io/litePlay.js/tutorial.html" target="_blank">tutorial</a></b>.</p>
+			<p>
+			<br>Welcome to litePlay!
+			<br>Write your code bellow and hit <b>Run</b> or type <b>Ctrl+Enter</b>.
+			<br>Use the <b>Stop</b> button to pause everything.
+			<br>New to litePlay? Read the <b><a href="https://vlazzarini.github.io/litePlay.js/tutorial.html" target="_blank">tutorial</a></b>.</p>
 		</div>
 		<textarea class="code" id="code-editor"></textarea>
 		<br>
-		<textarea id="console-output" readonly class="console"placeholder="Click anywhere to start litePlay."></textarea>
-	<div style="display: block; text-align: center; width: 100%;">
-		<button class="button" id="run-btn">&#9654; <b>RUN</button>
-		<button class="button" id="stop-btn">&#9724; <b>STOP</b></button>
-		<button class="button" id="save-btn">&#9660; <b>SAVE</b></button>
-	</div>
-	</div>
+		<textarea id="console-output" autocomplete="off" readonly class="console" placeholder="Click anywhere to start litePlay."></textarea>
+		<div style="display: block; text-align: center; width: 100%;">
+			<button class="button" id="run-btn">&#9654; <b>RUN</button>
+			<button class="button" id="stop-btn">&#9724; <b>STOP</b></button>
+			<button class="button" id="save-btn">&#9660; <b>SAVE</b></button>
+		</div>
+		</div>
 	<script charset="utf-8">
 		//console output -> textarea
 		const consoleOutput = document.getElementById('console-output');
