@@ -10,6 +10,10 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/monokai.min.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
+	<!-- add hint library (autocomplete on codemirror) -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/hint/show-hint.min.css" crossorigin="anonymous">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/hint/show-hint.min.js" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/hint/javascript-hint.min.js" crossorigin="anonymous"></script>
 <style>
 body {
 	font-size: 18px;	
@@ -70,14 +74,14 @@ div.text{
 	<div style="display: block; text-align: center; width: 100%;">
 		<h1>litePlay</h1>
 		<div class="text">
-		<br>You can run your code by writting it bellow and than hitting <b>Run</b>.
+		<br>Welcome to litePlay!
+		<br>Write your code bellow and hit <b>Run</b> or type <b>Ctrl+Enter</b>.
 		<br>Use the <b>Stop</b> button to pause everything.
-		<br>New to litePlay? Read the <a href="https://vlazzarini.github.io/litePlay.js/tutorial.html" target="_blank">tutorial</a>.</p>
+		<br>New to litePlay? Read the <b><a href="https://vlazzarini.github.io/litePlay.js/tutorial.html" target="_blank">tutorial</a></b>.</p>
 		</div>
 		<textarea class="code" id="code-editor"></textarea>
 		<br>
-		<textarea id="console-output" readonly class="console"placeholder="Console
-			output will appear here."></textarea>
+		<textarea id="console-output" readonly class="console"placeholder="Click anywhere to start litePlay."></textarea>
 	<div style="display: block; text-align: center; width: 100%;">
 		<button class="button" id="run-btn">&#9654; <b>RUN</button>
 		<button class="button" id="stop-btn">&#9724; <b>STOP</b></button>
@@ -85,44 +89,62 @@ div.text{
 	</div>
 	</div>
 	<script charset="utf-8">
+		//console output -> textarea
 		const consoleOutput = document.getElementById('console-output');
 		const originalLog = console.log;
 		const originalError = console.error;
-
+		
 		console.log = function(...args) {
-			originalLog.apply(console, args);
+			originalLog.apply(console, args);//make them variables
 			
 			const message = args.map(arg => {
-				return typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg);
+				if (typeof arg === 'object') return JSON.stringify(arg, null, 2); 
+				return String(arg);
 			}).join(' ');
 
 			if (consoleOutput) {
 				consoleOutput.value += message + '\n';
 				consoleOutput.scrollTop = consoleOutput.scrollHeight;
 			}
-		}
-
+		};
+		
 		console.error = function(...args) {
 			originalError.apply(console, args);
+			
 			const message = args.map(arg => {
-				return typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg);
+				if (arg instanceof Error) return arg.message || arg.toString();
+				if (typeof arg === 'object') return JSON.stringify(arg, null, 2);
+				return String(arg);
 			}).join(' ');
 			
 			if (consoleOutput) {
 				consoleOutput.value += "ERROR: " + message + '\n';
 				consoleOutput.scrollTop = consoleOutput.scrollHeight;
 			}
-		}
+		};
 
+		//replace textarea for CodeMirror 
 		const editor = CodeMirror.fromTextArea(document.getElementById("code-editor"), {
 			mode: "javascript",
 			theme: "monokai",
 			lineNumbers: true,
 			indentUnit: 4,
-			tabSize: 4
+			tabSize: 4,
+			extraKeys: { 
+				"Ctrl-Enter": function(cm) {runLP();}, //run with ctrl+enter
+				"Cmd-Enter": function(cm) {runLP();}
+			}
 		})
 
-		// Start litePlay
+		//auto-trigger for the autocomplete
+		editor.on("keyup", function (cm, event) {
+			if (!cm.state.completionActive && event.keyCode >= 65 && event.keyCode <= 90) {
+				cm.showHint({ completeSingle: false }); //prevent automatic insertion when there's only one option left
+			}
+		});
+
+
+		//start litePlay
 		let liteplayEngine = null;
     
 		document.addEventListener('pointerdown', async () => {
@@ -147,17 +169,14 @@ div.text{
 		}
 		}, {once: true});
 		
-		// Inject an execution counter into loops
+		//prevent code to running loops for more than N cycles
 		function protectCode(code) {
 			const maxIterations = 1000; // Max allowed loop cycles per run
 			
-			// Inject a counter variable at the top
 			let safeCode = `let _loopCount = 0;\n` + code;
 			
-			// Regex to find "while(...){" or "for(...){"
 			const loopRegex = /(while\s*\(.*?\)\s*\{|for\s*\(.*?\)\s*\{)/g;
 			
-			// Inject the counter check right inside the loop's opening bracket
 			safeCode = safeCode.replace(loopRegex, `$1
 				if (++_loopCount > ${maxIterations}) {
 					throw new Error("Infinite loop detected! Execution stopped.");
@@ -165,35 +184,33 @@ div.text{
 			`);
 			return safeCode;
 		}
-
+		
+		//run button
 		const runLP = async (event) => {
 		if (event) event.preventDefault();
 			try {
-    		        // Grab the text from CodeMirror
     		        const lpCode = editor.getValue();
 			
-			if (lpCode == "") throw "Empty!"
+			if (lpCode == "") throw "Empty! Write something!"
 			const safeCode = protectCode(lpCode);
-    		     	// Evaluate the string as actual 
 			eval(safeCode);
 
     		} catch (error) {
-		    	await console.error("Failed to execute the code:", error);
+		    	await console.error(error);
     		}
     		}
 
-    		// --- STOP BUTTON ---
+    		//stop button 
     		const stopLP = async (event) => {
     		    if (event) event.preventDefault();
     		    if (liteplayEngine) {
     		        console.log("Stopping audio...");
-    		        // Call stop() directly from the loaded engine module
 			await reset();
     		        console.log("Audio stopped.");
     		    }
     		}
 
-		// --- SAVE BUTTON ---
+		//save button
 		let downloadN = 0;
 		const saveCode = () => {
 		const text = editor.getValue();
