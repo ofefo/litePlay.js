@@ -84,7 +84,7 @@ div.text{
 		<br>
 		<textarea id="console-output" autocomplete="off" readonly class="console" placeholder="Click anywhere to start litePlay."></textarea>
 		<div style="display: block; text-align: center; width: 100%;">
-			<button class="button" id="run-btn">&#9654; <b>RUN</button>
+			<button class="button" id="run-btn">&#9654; <b>RUN</b></button>
 			<button class="button" id="stop-btn">&#9724; <b>STOP</b></button>
 			<button class="button" id="save-btn">&#9660; <b>SAVE</b></button>
 		</div>
@@ -212,19 +212,26 @@ div.text{
     		}
 
 		//save button
-		let downloadN = 0;
 		const saveCode = () => {
+
+		const now = new Date();
+		const year = now.getFullYear();
+		const month = String(now.getMonth() + 1).padStart(2, '0');
+		const day = String(now.getDate()).padStart(2, '0');
+		const hours = String(now.getHours()).padStart(2, '0');
+		const minutes = String(now.getMinutes()).padStart(2, '0');
+		const datetime = `${year}-${month}-${day}_${hours}-${minutes}`;
+
 		const text = editor.getValue();
 		const blob = new Blob([text], { type: 'text/javascript' });
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement('a'); 
 		a.href = url;
-		a.download = 'litePlay' + String(downloadN) + '.js';
+		a.download = 'litePlay' + datetime + '.js';
 		document.body.appendChild(a);
 		a.click();
 		document.body.removeChild(a);
 		URL.revokeObjectURL(url);
-		downloadN++;
 		}
 
     		const runButton = document.querySelector('#run-btn');
