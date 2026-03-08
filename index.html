@@ -4,12 +4,16 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 	<meta name="Description" content="litePlay">
 	<meta charset="utf-8"/>
+	<title>litePlay</title>
+
 	<script src="./litePlay.dev.js"></script>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+
 	<!-- add code mirror -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/monokai.min.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
+
 	<!-- add hint library (autocomplete on codemirror) -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/hint/show-hint.min.css" crossorigin="anonymous">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/hint/show-hint.min.js" crossorigin="anonymous"></script>
@@ -185,6 +189,16 @@ div.text{
 			`);
 			return safeCode;
 		}
+
+		const activeTimeouts = [];
+		const originalSetTimeout = window.setTimeout;
+		
+		//override setTimeout to remember its ID
+		window.setTimeout = function(func, delay, ...args) {
+		    const id = originalSetTimeout(func, delay, ...args);
+		    activeTimeouts.push(id);
+		    return id;
+		};
 		
 		//run button
 		const runLP = async (event) => {
@@ -204,6 +218,10 @@ div.text{
     		//stop button 
     		const stopLP = async (event) => {
     		    if (event) event.preventDefault();
+
+		    activeTimeouts.forEach(id => clearTimeout(id)); //clear all timeOuts
+		    activeTimeouts.length = 0;
+		
     		    if (liteplayEngine) {
     		        console.log("Stopping audio...");
 			await reset();
@@ -234,14 +252,14 @@ div.text{
 		URL.revokeObjectURL(url);
 		}
 
-    		const runButton = document.querySelector('#run-btn');
-    		runButton.addEventListener('click', runLP);
-    		
-    		const stopButton = document.querySelector('#stop-btn');
-    		stopButton.addEventListener('click', stopLP);
-    		
+		const runButton = document.querySelector('#run-btn');
+		runButton.addEventListener('click', runLP);
+		
+		const stopButton = document.querySelector('#stop-btn');
+		stopButton.addEventListener('click', stopLP);
+		
 		const saveButton = document.querySelector('#save-btn');
-    		saveButton.addEventListener('click', saveCode);
+		saveButton.addEventListener('click', saveCode);
 </script>
 </body>
 </html>
