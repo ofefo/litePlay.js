@@ -133,6 +133,7 @@ aenv linenr iamp,0,p8,0.01
 imicro = 2^(frac(p4)/12)
 kbend table p7,14
 a1, a2 sfplay p5, int(p4), aenv*0.0001, imicro*kbend, p6, 0, 0, 2
+print p6
 kv table p7, 2
 
 iatt table p7,19
