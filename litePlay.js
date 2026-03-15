@@ -628,6 +628,10 @@ export async function reset() {
 }
 
 export const rnd = (min, max) => {
+	return Math.random() * (max - min) + min;
+}
+
+export const rndInt = (min, max) => {
 	return Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min))}
 
 export const choose = (array) => {
@@ -692,7 +696,6 @@ export const membranophone = rndMembranophone;
 export const idiophone = rndIdiophone;
 
 export function onSomething() { return new Instrument(rnd(0, 127)); }
-
 
 // instrument collection
 export const grandPiano = new Instrument(0);
@@ -913,6 +916,7 @@ export const silently = ms => new Promise(r => setTimeout(r, ms));
 // funções
 export const toque = play;
 export const instrumento = instrument;
+export const emAlgo = onSomething;
 export const naBateria = onDrums;
 export const nasTeclas = onStruck;
 export const nasCordas = onPluck;
@@ -920,7 +924,7 @@ export const nosArcos = onBowed;
 export const nosBaixos = onBass;
 export const nosMetais = onBlow;
 export const nosSopros = onWind;
-export const noSint = onSynth;
+export const noSintetizador = onSynth;
 export const nosEfeitos = onFx;
 export const naPercussão = onPerc;
 export const naVoz = onVoice;
