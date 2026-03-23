@@ -58,6 +58,6 @@ npx serve
 play(C4);
 ```
 
-litePlay.js 
+litePlay.js editor
 ---
 A dedicated online editor for litePlay is available [here](https://vlazzarini.github.io/litePlay.js/).
