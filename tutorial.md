@@ -290,16 +290,16 @@ string, bar, etc
 
 ```
 const grandPiano = new Instrument(0);
-const  piano = grandPiano;
-const  brightPiano = new Instrument(1);
-const  electricGrand = new Instrument(2);
-const  honkyPiano = new Instrument(3);
-const  electricPiano = new Instrument(4);
-const  electricPiano2 = new Instrument(5);
-const  harpsichord = new Instrument(6);
-const  clavinet = new Instrument(7);
-const  celesta = new Instrument(8);
-const  glockenspiel = new Instrument(9);
+const piano = grandPiano;
+const brightPiano = new Instrument(1);
+const electricGrand = new Instrument(2);
+const honkyPiano = new Instrument(3);
+const electricPiano = new Instrument(4);
+const electricPiano2 = new Instrument(5);
+const harpsichord = new Instrument(6);
+const clavinet = new Instrument(7);
+const celesta = new Instrument(8);
+const glockenspiel = new Instrument(9);
 const musicBox = new Instrument(10);
 const vibraphone = new Instrument(11);
 const marimba = new Instrument(12);
@@ -333,15 +333,15 @@ const jazzElectricGuitar = new Instrument(26);
 const clearElectricGuitar = new Instrument(27);
 const mutedElectricGuitar = new Instrument(28);
 const overdrivenGuitar = new Instrument(29);
-const  distortionGuitar = new Instrument(30);
-const  guitarHarmonics = new Instrument(31);
-const  sitar = new Instrument(105);
-const  banjo = new Instrument(106);
-const  shamisen = new Instrument(107);
-const  koto = new Instrument(108);
-const  kalimba = new Instrument(109);
-const  pizzicatoStrings = new Instrument(45);
-const  orchestralHarp = new Instrument(46);
+const distortionGuitar = new Instrument(30);
+const guitarHarmonics = new Instrument(31);
+const sitar = new Instrument(105);
+const banjo = new Instrument(106);
+const shamisen = new Instrument(107);
+const koto = new Instrument(108);
+const kalimba = new Instrument(109);
+const pizzicatoStrings = new Instrument(45);
+const orchestralHarp = new Instrument(46);
 const harp = orchestralHarp;
 ```
 

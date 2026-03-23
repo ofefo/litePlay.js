@@ -627,12 +627,9 @@ export async function reset() {
 	}
 }
 
-export const rnd = (min, max) => {
-	return Math.random() * (max - min) + min;
-}
+export const rnd = (min, max) => Math.random() * (max - min) + min;
 
-export const rndInt = (min, max) => {
-	return Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min))}
+export const rndInt = (min, max) => Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min));
 
 export const choose = (array) => {
   let index = Math.floor(Math.random() * array.length);
