@@ -1,7 +1,6 @@
 litePlay.js
 ======
 
-
 This [repo](https://github.com/vlazzarini/litePlay.js) contains the
 source files for litePlay.js, an experimental platform for lite
 coding, is based on the following off-the-shelf technologies
@@ -21,6 +20,21 @@ You can start by looking at the following sketches in the P5.js editor:
 A [start-up tutorial](./tutorial.md) is available, with an overview of
 the system. This is a work-in-progress, which aims to cover the
 complete system.
+
+To use it in a web page, add this tag to the HTML page header:
+
+```
+<script  src="https://vlazzarini.github.io/litePlay.js/litePlay.constants.js"></script>
+```
+
+To play the default piano sound in litePlay, try: 
+```
+function f() {
+	lp.play(C4); 
+}
+
+lpRun(f);
+```
 
 Running locally
 ---
@@ -43,3 +57,7 @@ npx serve
 ```JavaScript
 play(C4);
 ```
+
+litePlay.js 
+---
+A dedicated online editor for litePlay is available [here](https://vlazzarini.github.io/litePlay.js/).
