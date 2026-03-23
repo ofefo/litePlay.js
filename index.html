@@ -139,7 +139,7 @@ div.text{
 				"Ctrl-Enter": function(cm) {runLP();}, //run with ctrl+enter
 				"Cmd-Enter": function(cm) {runLP();}
 			}
-		})
+		});
 
 		//auto-trigger for the autocomplete
 		editor.on("keyup", function (cm, event) {
@@ -176,17 +176,16 @@ div.text{
 		
 		//prevent code to running loops for more than N cycles
 		function protectCode(code) {
-			const maxIterations = 1000; // Max allowed loop cycles per run
+			const maxIterations = 1000; //max allowed loop cycles per run
 			
 			let safeCode = `let _loopCount = 0;\n` + code;
 			
 			const loopRegex = /(while\s*\(.*?\)\s*\{|for\s*\(.*?\)\s*\{)/g;
 			
-			safeCode = safeCode.replace(loopRegex, `$1
-				if (++_loopCount > ${maxIterations}) {
-					throw new Error("Infinite loop detected! Execution stopped.");
-				}
-			`);
+			safeCode = safeCode.replace(loopRegex, `$1 if
+			(++_loopCount > ${maxIterations}) {throw new
+			Error("Infinite loop detected! Execution stopped.");
+			}`);
 			return safeCode;
 		}
 
