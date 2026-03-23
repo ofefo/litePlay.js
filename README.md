@@ -39,6 +39,7 @@ To run the project locally, you need to spin up a quick web server.
    ```
 3. In this context, all litePlay's exports are available to use without the
    need to add its prefix:
+ 
    ```JavaScript
    play(C4);
    ```
