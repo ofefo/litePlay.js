@@ -94,16 +94,16 @@ div.text{
 		</div>
 		</div>
 	<script charset="utf-8">
-		//console output -> textarea
+		// send console output to textarea
 		const consoleOutput = document.getElementById('console-output');
 		const originalLog = console.log;
 		const originalError = console.error;
 		
 		console.log = function(...args) {
-			originalLog.apply(console, args);//make them variables
+			originalLog.apply(console, args); // make them variables
 			
 			const message = args.map(arg => {
-				if (typeof arg === 'object') return JSON.stringify(arg, null, 2); 
+				if (typeof arg === 'object') return JSON.stringify(arg, null, 2);
 				return String(arg);
 			}).join(' ');
 
@@ -157,9 +157,8 @@ div.text{
 		if (!liteplayEngine) {
 			try {
 				console.log("Loading litePlay engine...");
-				
 				liteplayEngine = await lpLoad(); 
-				
+
 				// Expose all of litePlay.js exports to the global window
 				Object.assign(window, liteplayEngine);
 				console.log("litePlay is ready!");
@@ -180,7 +179,7 @@ div.text{
 			
 			let safeCode = `let _loopCount = 0;\n` + code;
 			
-			const loopRegex = /(while\s*\(.*?\)\s*\{|for\s*\(.*?\)\s*\{)/g;
+			const loopRegex = /(while\s*\(.*?\)\s*\{|for\s*\(.*?\)\s*\{)/g; //regex to find while and for loops brackets
 			
 			safeCode = safeCode.replace(loopRegex, `$1 if
 			(++_loopCount > ${maxIterations}) {throw new
@@ -232,12 +231,12 @@ div.text{
 		const saveCode = () => {
 
 		const now = new Date();
-		const year = now.getFullYear();
-		const month = String(now.getMonth() + 1).padStart(2, '0');
-		const day = String(now.getDate()).padStart(2, '0');
-		const hours = String(now.getHours()).padStart(2, '0');
-		const minutes = String(now.getMinutes()).padStart(2, '0');
-		const datetime = `${year}-${month}-${day}_${hours}-${minutes}`;
+		const year = now.getFullYear().toString();
+		const month = (now.getMonth()+1).toString();
+		const day = now.getDate().toString();
+		const hours = now.getHours().toString();
+		const minutes = now.getMinutes().toString();
+		const datetime = `${year}_${month}_${day}_${hours}_${minutes}`;
 
 		const text = editor.getValue();
 		const blob = new Blob([text], { type: 'text/javascript' });
