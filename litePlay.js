@@ -2,9 +2,9 @@
 const csoundjs =
       "https://cdn.jsdelivr.net/npm/@csound/browser@6.18.5/dist/csound.js";
 // csound is the Csound engine object (null as we start)
-let csound = null;
+export let csound = null;
 // audio context
-let audio_context = null;
+export let audio_context = null;
 // source URL for assets
 const srcurl =  "https://vlazzarini.github.io/litePlay.js/";
 // CSD file name

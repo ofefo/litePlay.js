@@ -31,11 +31,12 @@ div.text{
 }
  
 .button {
-        padding: 10px;
+        padding: 14px;
 	transition: filter .5s ease;
         border-radius: 5px;
 	cursor: pointer;
-        margin: .5%;
+        margin: .1%;
+	margin-top: .5%;
 }
 
 .button:hover {
@@ -72,6 +73,14 @@ div.text{
     font-weight: bold;
     transition: background-color 1s ease;
 }
+
+.ready-red {
+    background-color: #A84732;
+    color: white;
+    font-weight: bold;
+    transition: background-color 1s ease;
+}
+
 </style>
 </head>
 <body>
@@ -88,9 +97,15 @@ div.text{
 		<br>
 		<textarea id="console-output" autocomplete="off" readonly class="console" placeholder="Click anywhere to start litePlay."></textarea>
 		<div style="display: block; text-align: center; width: 100%;">
-			<button class="button" id="run-btn">&#9654; <b>RUN</b></button>
-			<button class="button" id="stop-btn">&#9724; <b>STOP</b></button>
-			<button class="button" id="save-btn">&#9660; <b>SAVE</b></button>
+			<div style="margin-right: 1%; display: inline;">
+				<button class="button" id="run-btn">&#9654; <b>RUN</b></button>
+				<button class="button" id="stop-btn">&#9724; <b>STOP</b></button>
+				<button class="button" id="save-btn">&#9660; <b>SAVE CODE</b></button>
+			</div>
+			<div style="display: inline;">
+				<button class="button" id="rec-btn">&#9673; <b>REC</b></button>
+				<button class="button" id="stopRec-btn">&#9689; <b>STOP REC</b></button>
+			</div>
 		</div>
 		</div>
 	<script charset="utf-8">
@@ -167,6 +182,9 @@ div.text{
 				const runBtn = document.getElementById('run-btn');
 				if (runBtn) runBtn.classList.add('ready-green');
 
+				const recBtn = document.getElementById('rec-btn');
+				if (recBtn) recBtn.classList.add('ready-red');
+
 			} catch (error) {
 				console.error("Failed to auto-start litePlay:", error);
 			}
@@ -231,12 +249,7 @@ div.text{
 		const saveCode = () => {
 
 		const now = new Date();
-		const year = now.getFullYear().toString();
-		const month = (now.getMonth()+1).toString();
-		const day = now.getDate().toString();
-		const hours = now.getHours().toString();
-		const minutes = now.getMinutes().toString();
-		const datetime = `${year}_${month}_${day}_${hours}_${minutes}`;
+		const datetime = `${now.getFullYear()}_${now.getMonth()+1}_${now.getDate()}_${now.getHours()}_${now.getMinutes()}`;
 
 		const text = editor.getValue();
 		const blob = new Blob([text], { type: 'text/javascript' });
@@ -250,6 +263,66 @@ div.text{
 		URL.revokeObjectURL(url);
 		}
 
+		// recording feature
+		let mediaRecorder = null;
+		let audioChunks = [];
+		let destNode = null;
+		let connectedCsoundNode = null;
+		
+		async function startRecording() {
+		    if (!audio_context || !csound || mediaRecorder?.state === "recording") {
+		        console.error("Engine not ready or already recording.");
+		        return;
+		    }
+		
+		    try {
+		        destNode = audio_context.createMediaStreamDestination();
+		        connectedCsoundNode = await csound.getNode();
+		        connectedCsoundNode.connect(destNode);
+		        mediaRecorder = new MediaRecorder(destNode.stream);
+		        audioChunks = [];
+		
+		        mediaRecorder.ondataavailable = (event) => {
+		            if (event.data.size > 0) {
+		                audioChunks.push(event.data);
+		            }
+		        };
+		
+		        mediaRecorder.onstop = () => {
+		            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+		            const audioUrl = URL.createObjectURL(audioBlob);
+		            
+		            const now = new Date();
+		            const datetime = `${now.getFullYear()}_${now.getMonth()+1}_${now.getDate()}_${now.getHours()}_${now.getMinutes()}`;
+		            
+		            const link = document.createElement('a');
+		            link.href = audioUrl;
+		            link.download = 'litePlay_' + datetime + '.wav';
+		            document.body.appendChild(link);
+		            link.click();
+		            link.remove(); 
+		            
+		            if (connectedCsoundNode) {
+		                connectedCsoundNode.disconnect(destNode);
+		                connectedCsoundNode = null;
+		            }
+		        };
+		
+		        mediaRecorder.start();
+		        console.log("Recording started...");
+		
+		    } catch (err) {
+		        console.error("Failed to start recording: ", err);
+		    }
+		}
+		
+		function stopRecording() {
+		    if (mediaRecorder && mediaRecorder.state === "recording") {
+		        mediaRecorder.stop();
+		        console.log("Recording stopped! Downloading file...");
+		    }
+		}
+		
 		const runButton = document.querySelector('#run-btn');
 		runButton.addEventListener('click', runLP);
 		
@@ -258,6 +331,13 @@ div.text{
 		
 		const saveButton = document.querySelector('#save-btn');
 		saveButton.addEventListener('click', saveCode);
+
+		const recButton = document.querySelector('#rec-btn');
+		recButton.addEventListener('click', startRecording);
+
+		const stopRecButton = document.querySelector('#stopRec-btn');
+		stopRecButton.addEventListener('click', stopRecording);
+
 </script>
 </body>
 </html>
