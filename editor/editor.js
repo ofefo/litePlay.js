@@ -196,7 +196,7 @@ async function startRecording() {
 		
 function stopRecording() {
 	if (mediaRecorder && mediaRecorder.state === "recording") {
-		await mediaRecorder.stop();
+		mediaRecorder.stop();
 		console.log("Recording stopped! Downloading file...");
 	}
 }
