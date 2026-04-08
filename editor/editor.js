@@ -177,13 +177,13 @@ async function startRecording() {
 		};
 		
 		mediaRecorder.onstop = () => {
-			const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+			const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
 			const audioUrl = URL.createObjectURL(audioBlob);
 			const now = new Date();
 			const datetime = `${now.getFullYear()}_${now.getMonth()+1}_${now.getDate()}_${now.getHours()}-${now.getMinutes()}`;
 			const link = document.createElement('a');
 			link.href = audioUrl;
-			link.download = 'litePlay_' + datetime + '.wav';
+			link.download = 'litePlay_' + datetime + '.webm';
 			document.body.appendChild(link);
 			    link.click();
 			    link.remove(); 
