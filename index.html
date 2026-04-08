@@ -8,16 +8,6 @@
 
 	<script src="./editor/litePlay.dev.js"></script>
 
-	<!-- add code mirror -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/monokai.min.css">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
-
-	<!-- add hint library (autocomplete on codemirror) -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/hint/show-hint.min.css" crossorigin="anonymous">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/hint/show-hint.min.js" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/hint/javascript-hint.min.js" crossorigin="anonymous"></script>
 	<link rel="stylesheet" crossorigin href="./editor/style.css">
 </head>
 <body>
@@ -26,11 +16,14 @@
 		<div class="text">
 			<p>
 			<br>Welcome to litePlay!
-			<br>Write your code bellow and hit <b>Run</b> or type <b>Ctrl+Enter</b>.
-			<br>Use the <b>Stop</b> button to pause everything.
+			<br>Write your code bellow and hit <b>RUN</b> or type <b>Ctrl+Enter</b>.
+			<br>Use the <b>STOP</b> button or type <b>Ctrl+.</b> to pause everything.
+			<br>You can record audio with the <b>REC</b> button or by typing <b>Ctrl+r</b>.
 			<br>New to litePlay? Read the <b><a href="https://vlazzarini.github.io/litePlay.js/tutorial.html" target="_blank">tutorial</a></b>.</p>
 		</div>
-		<textarea class="code" id="code-editor"></textarea>
+		
+		<div id="editor-container" class="code"></div>
+		
 		<br>
 		<textarea id="console-output" autocomplete="off" readonly class="console" placeholder="Click anywhere to start litePlay."></textarea>
 		<div style="display: block; text-align: center; width: 100%;">
@@ -45,6 +38,6 @@
 			</div>
 		</div>
 	</div>
-<script src="./editor/editor.js"></script>
+	<script type="module" src="./editor/editor.js"></script>
 </body>
 </html>

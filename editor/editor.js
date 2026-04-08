@@ -1,56 +1,112 @@
+import { basicSetup } from "https://esm.sh/codemirror";
+import { EditorView, keymap } from "https://esm.sh/@codemirror/view";
+import { EditorState, Prec } from "https://esm.sh/@codemirror/state";
+import { javascript, javascriptLanguage } from "https://esm.sh/@codemirror/lang-javascript";
+import { autocompletion } from "https://esm.sh/@codemirror/autocomplete";
+import { oneDark } from "https://esm.sh/@codemirror/theme-one-dark";
+
+// override function to print output in console
 const consoleOutput = document.getElementById('console-output');
 const originalLog = console.log;
-const originalError = console.error;
-		
+
 console.log = function(...args) {
-	originalLog.apply(console, args); // make them variables
-			
-	const message = args.map(arg => {
-		if (typeof arg === 'object') return JSON.stringify(arg, null, 2);
-		return String(arg);
-	}).join(' ');
-
-	if (consoleOutput) {
-		consoleOutput.value += message + '\n';
-		consoleOutput.scrollTop = consoleOutput.scrollHeight;
-	}
+	originalLog.apply(console, args);
+    	const message = args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : String(arg)).join(' ');
+    	if (consoleOutput) {
+        	consoleOutput.value += message + '\n';
+        	consoleOutput.scrollTop = consoleOutput.scrollHeight;
+    }
 };
-		
+
+// override function to print errors in console
+const originalError = console.error;
 console.error = function(...args) {
-	originalError.apply(console, args);
-			
-	const message = args.map(arg => {
-		if (arg instanceof Error) return arg.message || arg.toString();
-		if (typeof arg === 'object') return JSON.stringify(arg, null, 2);
-		return String(arg);
-	}).join(' ');
-			
-	if (consoleOutput) {
-		consoleOutput.value += "ERROR: " + message + '\n';
-		consoleOutput.scrollTop = consoleOutput.scrollHeight;
-	}
+    originalError.apply(console, args);
+    const message = args.map(arg => arg instanceof Error ? arg.message : String(arg)).join(' ');
+    if (consoleOutput) {
+        consoleOutput.value += "ERROR: " + message + '\n';
+        consoleOutput.scrollTop = consoleOutput.scrollHeight;
+    }
 };
 
-// replace textarea for CodeMirror 
-const editor = CodeMirror.fromTextArea(document.getElementById("code-editor"), {
-	mode: "javascript",
-	theme: "monokai",
-	lineNumbers: true,
-	indentUnit: 4,
-	tabSize: 4,
-	extraKeys: { 
-		"Ctrl-Enter": function(cm) {runLP();}, //run with ctrl+enter
-		"Cmd-Enter": function(cm) {runLP();}
-	}
+// run and stop litePlay (must be before startState)
+function runLP() {
+	try {
+        	const currentCode = editor.state.doc.toString();
+        	if (currentCode.trim() === "") throw new Error("Empty! Write something!");
+        
+        	eval(currentCode);
+		return true;
+    	} catch (error) {
+    	    	console.error(error);
+    	    	return true;
+    	}
+}
+
+// stop button 
+const stopLP = async (event) => {
+    	if (liteplayEngine) {
+    		console.log("Stopping audio...");
+		await reset();
+    		console.log("Audio stopped.");
+    	}
+}
+
+// import constants for autocompletion
+import * as litePlayLang from "../litePlay.js";
+const lpKeys = Object.keys(litePlayLang);
+
+function litePlayCompletions(context) {
+    let word = context.matchBefore(/[a-zA-Z0-9_À-ÿ]+/);
+    if (!word && !context.explicit) return null;
+
+    return {
+        from: word ? word.from : context.pos,
+        options: lpKeys.map(keyword => {
+            // Check the actual type of the exported item
+            const itemValue = litePlayLang[keyword];
+            const jsType = typeof itemValue;
+            
+            // Map JS types to CodeMirror autocomplete types
+            let cmType = "variable";
+            if (jsType === "function") cmType = "function";
+            else if (jsType === "number" || jsType === "string") cmType = "constant";
+            else if (jsType === "object") cmType = "class";
+
+            return {
+                label: keyword,
+                type: cmType,
+                detail: jsType,
+                info: "litePlay"
+            };
+        })
+    };
+}
+
+// CM startState
+const startState = EditorState.create({
+	extensions: [
+        	basicSetup,
+        	oneDark,
+        	javascript(),
+		javascriptLanguage.data.of({
+			autocomplete: litePlayCompletions
+	        }),
+		autocompletion(), 
+		Prec.highest(
+			keymap.of([
+				{ key: "Mod-Enter", run: runLP },
+				{ key: "Mod-.", run: stopLP },
+				{ key: "Mod-r", run: startRecording },
+			])
+		),
+	]
 });
 
-// auto-trigger for the autocomplete
-editor.on("keyup", function (cm, event) {
-	if (!cm.state.completionActive && event.keyCode >= 65 && event.keyCode <= 90) {
-		cm.showHint({ completeSingle: false }); //prevent automatic insertion when there's only one option left
-	}
+let editor = new EditorView({
+    state: startState,
+    parent: document.getElementById("editor-container") 
 });
-
 
 // start litePlay
 let liteplayEngine = null;
@@ -65,7 +121,7 @@ document.addEventListener('pointerdown', async () => {
 			Object.assign(window, liteplayEngine);
 			console.log("litePlay is ready!");
 
-			// make the Run button green to show it's ready
+			// change button colors when ready
 			const runBtn = document.getElementById('run-btn');
 			if (runBtn) runBtn.classList.add('ready-green');
 
@@ -78,60 +134,12 @@ document.addEventListener('pointerdown', async () => {
 	}
 }, {once: true});
 		
-// prevent code to running loops for more than N cycles
-function protectCode(code) {
-	const maxIterations = 1000; //max allowed loop cycles per run
-	let safeCode = `let _loopCount = 0;\n` + code;
-	const loopRegex = /(while\s*\(.*?\)\s*\{|for\s*\(.*?\)\s*\{)/g; //regex to find while and for loops brackets
-	safeCode = safeCode.replace(loopRegex, `$1 if
-			(++_loopCount > ${maxIterations}) {throw new
-			Error("Infinite loop detected! Execution stopped.");
-			}`);
-	return safeCode;
-}
-
-// override setTimeout to remember its ID
-const activeTimeouts = [];
-const originalSetTimeout = window.setTimeout;
-		
-window.setTimeout = function(func, delay, ...args) {
-	const id = originalSetTimeout(func, delay, ...args);
-	activeTimeouts.push(id);
-	return id;
-};
-		
-// run button
-const runLP = async (event) => {
-	if (event) event.preventDefault();
-	try {
-		const lpCode = editor.getValue();
-		if (lpCode == "") throw "Empty! Write something!"
-		const safeCode = protectCode(lpCode);
-		eval(safeCode);
-	} catch (error) {
-		    	await console.error(error);
-    	}
-}
-
-// stop button 
-const stopLP = async (event) => {
-	if (event) event.preventDefault();
-	activeTimeouts.forEach(id => clearTimeout(id)); //clear all timeOuts
-	activeTimeouts.length = 0;
-		
-    	if (liteplayEngine) {
-    		console.log("Stopping audio...");
-		await reset();
-    		console.log("Audio stopped.");
-    	}
-}
-
-//save button
+// save button
 const saveCode = () => {
 	const now = new Date();
 	const datetime = `${now.getFullYear()}_${now.getMonth()+1}_${now.getDate()}_${now.getHours()}-${now.getMinutes()}`;
 
-	const text = editor.getValue();
+	const text = editor.state.doc.toString();
 	const blob = new Blob([text], { type: 'text/javascript' });
 	const url = URL.createObjectURL(blob);
 	const a = document.createElement('a'); 
