@@ -1,0 +1,61 @@
+body {
+	font-size: 18px;	
+	margin-top: 5%;
+	margin-bottom: 5%;
+}
+
+div.text{
+	text-align: left;
+	margin-left: 2.5%;
+}
+ 
+.button {
+        padding: 14px;
+	transition: filter .5s ease;
+        border-radius: 5px;
+	cursor: pointer;
+        margin: .1%;
+	margin-top: .5%;
+}
+
+.button:hover {
+	filter: brightness(.8);
+}
+
+.CodeMirror {
+	width: 96%; 
+	height: 500px; 
+	font-size: 18px; 
+	font-family: monospace; 
+	text-align: left;
+	margin: 0 auto;
+	border-radius: 5px;
+}
+
+.console {
+	width: 95%;
+	height: 150px;
+	font-size: 16px;
+	font-family: monospace;
+	background: #2e2e2e; 
+	color: #0f0; 
+	padding: 10px; 
+	margin-top: 10px;
+	border: none; 
+	border-radius: 5px; 
+	resize: none;
+}
+
+.ready-green {
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+    transition: background-color 1s ease;
+}
+
+.ready-red {
+    background-color: #A84732;
+    color: white;
+    font-weight: bold;
+    transition: background-color 1s ease;
+}

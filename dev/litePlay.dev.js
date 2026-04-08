@@ -1,5 +1,5 @@
 // litePlay URL
-const lp_URL = "./litePlay.js";
+const lp_URL = "../litePlay.js";
 
 // MIDI NOTE constants
 
