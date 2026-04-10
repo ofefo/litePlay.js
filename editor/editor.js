@@ -1,9 +1,13 @@
+// code mirror
 import { basicSetup } from "https://esm.sh/codemirror";
 import { EditorView, keymap } from "https://esm.sh/@codemirror/view";
 import { EditorState, Prec } from "https://esm.sh/@codemirror/state";
 import { javascript, javascriptLanguage } from "https://esm.sh/@codemirror/lang-javascript";
 import { autocompletion } from "https://esm.sh/@codemirror/autocomplete";
 import { oneDark } from "https://esm.sh/@codemirror/theme-one-dark";
+// extendable media recorder
+import { MediaRecorder, register } from "https://esm.sh/extendable-media-recorder";
+import { connect } from "https://esm.sh/extendable-media-recorder-wav-encoder";
 
 // override function to print output in console
 const consoleOutput = document.getElementById('console-output');
@@ -63,11 +67,11 @@ function litePlayCompletions(context) {
     return {
         from: word ? word.from : context.pos,
         options: lpKeys.map(keyword => {
-            // Check the actual type of the exported item
+            // check the actual type of the exported item
             const itemValue = litePlayLang[keyword];
             const jsType = typeof itemValue;
             
-            // Map JS types to CodeMirror autocomplete types
+            // map JS types to CodeMirror autocomplete types
             let cmType = "variable";
             if (jsType === "function") cmType = "function";
             else if (jsType === "number" || jsType === "string") cmType = "constant";
@@ -151,62 +155,71 @@ const saveCode = () => {
 	URL.revokeObjectURL(url);
 }
 
-// recording feature
+// recording feature (extendable mediaRecorder)
 let mediaRecorder = null;
 let audioChunks = [];
-let destNode = null;
 let connectedCsoundNode = null;
-		
+let destNode = null;
+let encoderRegistered = false;
+
 async function startRecording() {
-	if (!audio_context || !csound || mediaRecorder?.state === "recording") {
-	console.error("Engine not ready or already recording.");
-	return;
-	}
-		
-	try {
-		destNode = audio_context.createMediaStreamDestination();
-		connectedCsoundNode = await csound.getNode();
-		connectedCsoundNode.connect(destNode);
-		mediaRecorder = new MediaRecorder(destNode.stream);
-		audioChunks = [];
-		
-		mediaRecorder.ondataavailable = (event) => {
-			if (event.data.size > 0) {
-				audioChunks.push(event.data);
-		            }
-		};
-		
-		mediaRecorder.onstop = () => {
-			const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-			const audioUrl = URL.createObjectURL(audioBlob);
-			const now = new Date();
-			const datetime = `${now.getFullYear()}_${now.getMonth()+1}_${now.getDate()}_${now.getHours()}-${now.getMinutes()}`;
-			const link = document.createElement('a');
-			link.href = audioUrl;
-			link.download = 'litePlay_' + datetime + '.webm';
-			document.body.appendChild(link);
-			    link.click();
-			    link.remove(); 
-			    
-			    if (connectedCsoundNode) {
-			        connectedCsoundNode.disconnect(destNode);
-			        connectedCsoundNode = null;
-			    }
-		};
-		
-		mediaRecorder.start();
-		console.log("Recording started...");
-		
-		} catch (err) {
-			console.error("Failed to start recording: ", err);
-		}
-};
-		
+    	if (!window.audio_context || !window.csound || (mediaRecorder && mediaRecorder.state === "recording")) {
+    	    	console.error("Engine not ready or already recording.");
+    	    	return;
+    	}
+    	    
+    	try {
+    	    	if (!encoderRegistered) {
+    	    	    	console.log("Registering WAV encoder...");
+    	    	    	await register(await connect());
+    	    	    	encoderRegistered = true;
+    	    	}
+
+    	    	connectedCsoundNode = await window.csound.getNode();
+    	    	destNode = window.audio_context.createMediaStreamDestination();
+    	    	connectedCsoundNode.connect(destNode);
+    	    	mediaRecorder = new MediaRecorder(destNode.stream, { mimeType: 'audio/wav' });
+    	    	audioChunks = [];
+
+    	    	mediaRecorder.ondataavailable = (event) => {
+    	    	    	if (event.data.size > 0) {
+    	    	    	    audioChunks.push(event.data);
+    	    	    	}
+    	    	};
+
+    	    	mediaRecorder.onstop = () => {
+    	    	    	const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+    	    	    	const audioUrl = URL.createObjectURL(audioBlob);
+    	    	    	
+    	    	    	const now = new Date();
+    	    	    	const datetime = `${now.getFullYear()}_${now.getMonth()+1}_${now.getDate()}_${now.getHours()}-${now.getMinutes()}`;
+    	    	    	const link = document.createElement('a');
+    	    	    	
+    	    	    	link.href = audioUrl;
+    	    	    	link.download = 'litePlay_' + datetime + '.wav';
+    	    	    	document.body.appendChild(link);
+    	    	    	link.click();
+    	    	    	link.remove(); 
+    	    	    	URL.revokeObjectURL(audioUrl);
+    	    	    	
+    	    	    	if (connectedCsoundNode && destNode) {
+    	    	    	    connectedCsoundNode.disconnect(destNode);
+    	    	    	}
+    	    	};
+    	    
+    		mediaRecorder.start();
+    		console.log("Recording started...");
+    	    
+    	} catch (err) {
+    	    console.error("Failed to start recording: ", err);
+    	}
+}
+
 function stopRecording() {
-	if (mediaRecorder && mediaRecorder.state === "recording") {
-		mediaRecorder.stop();
-		console.log("Recording stopped! Downloading file...");
-	}
+    if (mediaRecorder && mediaRecorder.state === "recording") {
+        mediaRecorder.stop();
+        console.log("Recording stopped! Downloading sound file...");
+    }
 }
 
 // buttons actions
