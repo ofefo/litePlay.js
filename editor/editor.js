@@ -170,7 +170,6 @@ async function startRecording() {
     	    
     	try {
     	    	if (!encoderRegistered) {
-    	    	    	console.log("Registering WAV encoder...");
     	    	    	await register(await connect());
     	    	    	encoderRegistered = true;
     	    	}
