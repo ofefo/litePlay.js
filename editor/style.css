@@ -2,11 +2,13 @@ body {
 	font-size: 18px;	
 	margin-top: 2%;
 	margin-bottom: 5%;
+	font-family: monospace;
 }
 
 div.text{
 	text-align: left;
 	margin-left: 2%;
+  	color: #282c34;
 }
  
 .button {
@@ -32,7 +34,7 @@ div.text{
 }
 
 .cm-scroller { 
-    overflow: auto; 
+    	overflow: auto; 
 }
 
 .console {
@@ -49,15 +51,35 @@ div.text{
 }
 
 .ready-green {
-    background-color: #4CAF50;
-    color: white;
-    font-weight: bold;
-    transition: background-color 1s ease;
+    	background-color: #4CAF50;
+    	color: white;
+    	font-weight: bold;
+    	transition: background-color 1s ease;
 }
 
 .ready-red {
-    background-color: #A84732;
-    color: white;
-    font-weight: bold;
-    transition: background-color 1s ease;
+    	background-color: #A84732;
+    	color: white;
+    	font-weight: bold;
+    	transition: background-color 1s ease;
+}
+
+a:link {
+	color: green;
+	text-decoration: none;
+}
+
+a:visited {
+	color: green;
+  	text-decoration: none;
+}
+
+a:hover {
+	color: green;
+  	text-decoration: underline;
+}
+
+a:active {
+  	color:red;
+  	text-decoration: underline;
 }
