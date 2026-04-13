@@ -177,15 +177,22 @@ async function startRecording() {
     	    	connectedCsoundNode = await window.csound.getNode();
     	    	destNode = window.audio_context.createMediaStreamDestination();
     	    	connectedCsoundNode.connect(destNode);
-    	    	mediaRecorder = new MediaRecorder(destNode.stream, { mimeType: 'audio/wav' });
-    	    	audioChunks = [];
 
+		const targetSampleRate = 41000;
+		const resampleContext = new (window.AudioContext || window.webkitAudioContext)({sampleRate: targetSampleRate});
+		const sourceNode = resampleContext.createMediaStreamSource(destNode.stream);
+		const resampledDestNode = resampleContext.createMediaStreamDestination();
+
+		sourceNode.connect(resampledDestNode);
+		mediaRecorder = new MediaRecorder(resampledDestNode.stream, { mimeType: 'audio/wav' });
+
+    	    	audioChunks = [];
     	    	mediaRecorder.ondataavailable = (event) => {
     	    	    	if (event.data.size > 0) {
     	    	    	    audioChunks.push(event.data);
     	    	    	}
     	    	};
-
+		
     	    	mediaRecorder.onstop = () => {
     	    	    	const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
     	    	    	const audioUrl = URL.createObjectURL(audioBlob);
@@ -202,8 +209,12 @@ async function startRecording() {
     	    	    	URL.revokeObjectURL(audioUrl);
     	    	    	
     	    	    	if (connectedCsoundNode && destNode) {
-    	    	    	    connectedCsoundNode.disconnect(destNode);
+    	    	    	    	connectedCsoundNode.disconnect(destNode);
     	    	    	}
+
+			if (resampleContext.state !== 'closed') {
+                        	resampleContext.close();
+			}
     	    	};
     	    
     		mediaRecorder.start();
