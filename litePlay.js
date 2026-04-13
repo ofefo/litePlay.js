@@ -912,6 +912,7 @@ export const silently = ms => new Promise(r => setTimeout(r, ms));
 
 // funções
 export const toque = play;
+export const pare = stop;
 export const instrumento = instrument;
 export const emAlgo = onSomething;
 export const naBateria = onDrums;
