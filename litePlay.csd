@@ -321,6 +321,7 @@ instr 200
 	turnoff2 10, 0, 0
 	turnoff2 100, 0, 0
 	turnoff2 99, 0, 0
+	schedule(99, 1, -1)
 endin
 
 
