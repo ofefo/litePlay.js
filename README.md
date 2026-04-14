@@ -16,14 +16,14 @@ You can start by looking at the following sketches in the P5.js editor:
 
 [Sequencer example](https://editor.p5js.org/vlazzarini/sketches/c4PhzF39r)
 
-A [start-up tutorial](./tutorial.md) is available, with an overview of
-the system. This is a work-in-progress, which aims to cover the
-complete system.
+LitePlay's [documentation](https://g-ubimus.github.io/litePlay.docs/) is
+available both in English and Portuguese. This is a work-in-progress, which
+aims to cover the complete system.
 
 To use it in a web page, add this tag to the HTML page header:
 
 ```
-<script  src="https://vlazzarini.github.io/litePlay.js/litePlay.constants.js"></script>
+<script  src="https://g-ubimus.github.io/litePlay.js/litePlay.constants.js"></script>
 ```
 
 To play the default piano sound in litePlay, try: 
@@ -59,4 +59,4 @@ play(C4);
 
 litePlay.js editor
 ---
-A dedicated online editor for litePlay is available [here](https://vlazzarini.github.io/litePlay.js/).
+A dedicated online editor for litePlay is available [here](https://g-ubimus.github.io/litePlay.js/).
