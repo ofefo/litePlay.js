@@ -297,10 +297,10 @@ endin
 
 // master output
 instr 99
-	aSafeLeft = tanh(gaLeft)
-	aSafeRight = tanh(gaRight)
+	a1 clip gaLeft, 0, .99
+	a2 clip gaReft, 0, .99
 	
-	outs aSafeLeft, aSafeRight
+	outs a1, a2
 	clear gaLeft, gaRight
 endin
 
@@ -321,7 +321,7 @@ instr 200
 	turnoff2 10, 0, 0
 	turnoff2 100, 0, 0
 	turnoff2 99, 0, 0
-	schedule(99, 1, -1)
+	schedule(99, .1, -1) // restart master output after .1 seconds
 endin
 
 
