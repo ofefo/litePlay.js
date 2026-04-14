@@ -14,12 +14,19 @@ loop_le   ichn, 1, 16, lp1
 pgmassign 0, 0
 gisf sfload "gm.sf2"
 sfpassign  0, gisf
+
+//master output
+gaLeft init 0
+gaRight init 0
+maxalloc 99, 1
+
+//reverb 
 garev1 init 0
 garev2 init 0
-/* this instrument parses MIDI input
-   to trigger the GM soundfont synthesis
-   instrument (instr 10
-*/
+// this instrument parses MIDI input
+//   to trigger the GM soundfont synthesis
+//   instrument (instr 10
+//
 instr 1
 idkit = 317 /* drum-kit preset was 317*/
 tableiw idkit, 9, 1
@@ -128,41 +135,42 @@ endin
 gicf = log(sr/2)
 /* this is the GM soundfont synthesizer instrument */
 instr 10
-
-iatt table p7,23
-idec table p7,24
-isus table p7,25
-irel table p7,26
-
-iamp tablei p5, 5
-aenv madsr iatt+1/kr, idec, isus, irel
-imicro = 2^(frac(p4)/12)
-kbend table p7,14
-a1, a2 sfplay p5, int(p4), iamp*aenv*0.0002, imicro*kbend, p6, 0, 0, 2
-kv table p7, 2
-
-iatt table p7,19
-idec table p7,20
-isus table p7,21
-irel table p7,22
-kcfi table p7,17
-kres table p7,18
-kcfi += madsr(iatt+1/kr,idec,isus,irel)*table(p7,27)
-kcf = exp((kcfi < 1 ? kcfi : 1)*gicf)
-a1f vclpf a1,kcf,kres
-a2f vclpf a2,kcf,kres
-a1 = a1f
-a2 = a2f
-
-kvol tablei kv, 5 
-kpan  table p7, 3
-kpan = (kpan - 64)/128
-a1 *= kvol*(0.5-kpan/2)
-a2 *= kvol*(0.5+kpan/2)
-krev table p7,8
-garev1 += a1*krev
-garev2 += a2*krev
-       outs a1, a2 
+	iatt table p7,23
+	idec table p7,24
+	isus table p7,25
+	irel table p7,26
+	
+	iamp tablei p5, 5
+	aenv madsr iatt+1/kr, idec, isus, irel
+	imicro = 2^(frac(p4)/12)
+	kbend table p7,14
+	a1, a2 sfplay p5, int(p4), iamp*aenv*0.0002, imicro*kbend, p6, 0, 0, 2
+	kv table p7, 2
+	
+	iatt table p7,19
+	idec table p7,20
+	isus table p7,21
+	irel table p7,22
+	kcfi table p7,17
+	kres table p7,18
+	kcfi += madsr(iatt+1/kr,idec,isus,irel)*table(p7,27)
+	kcf = exp((kcfi < 1 ? kcfi : 1)*gicf)
+	a1f vclpf a1,kcf,kres
+	a2f vclpf a2,kcf,kres
+	a1 = a1f
+	a2 = a2f
+	
+	kvol tablei kv, 5 
+	kpan  table p7, 3
+	kpan = (kpan - 64)/128
+	a1 *= kvol*(0.5-kpan/2)
+	a2 *= kvol*(0.5+kpan/2)
+	krev table p7,8
+	garev1 += a1*krev
+	garev2 += a2*krev
+	//send to master
+	gaLeft = gaLeft + a1
+	gaRight = gaRight + a2
 endin
 
 // sample playback
@@ -199,7 +207,9 @@ a2 *= (0.5+kpan/2)
 krev table p7,8
 garev1 += a1*krev
 garev2 += a2*krev
-       outs a1, a2
+	//send to master
+	gaLeft = gaLeft + a1
+	gaRight = gaRight + a2
 if kend == 0 then
  kend = (iln - irel*2.1)/(ipitch*kpitch)  
  if timeinsts() >= kend then
@@ -264,7 +274,10 @@ a2 *= (0.5+kpan/2)
 krev table p7,8
 garev1 += a1*krev
 garev2 += a2*krev
-       outs a1*.2, a2*.2
+	
+	//send to master
+	gaLeft = gaLeft + (a1*.2)
+	gaRight = gaRight + (a2*.2)
 if kend == 0 then
  kend = (iln - ire*2.1)/ksp;///(ipitch*ksp)  
  if timeinsts() >= kend then
@@ -282,17 +295,34 @@ tablew ign,p6,9
 tablew p5,p6,10
 endin
 
-instr 200
-turnoff2 1, 0, 1
-turnoff2 10, 0, 1
+// master output
+instr 99
+	aSafeLeft = tanh(gaLeft)
+	aSafeRight = tanh(gaRight)
+	
+	outs aSafeLeft, aSafeRight
+	clear gaLeft, gaRight
 endin
 
+// reverb
 instr 100
-a1, a2 freeverb garev1, garev2, 0.7, 0.35
-outs a1, a2
-garev1 = 0
-garev2 = 0
+	a1, a2 freeverb garev1, garev2, 0.7, 0.35
+
+	//send to master
+	gaLeft = gaLeft + a1
+	gaRight = gaRight + a2
+	garev1 = 0
+	garev2 = 0
 endin
+
+// turn sustained sounds of when reset() is called
+instr 200
+	turnoff2 1, 0, 0
+	turnoff2 10, 0, 0
+	turnoff2 100, 0, 0
+	turnoff2 99, 0, 0
+endin
+
 
 //ifn ftgen 8,0,1024,7,0,1024,0
 /*instr 101
@@ -346,6 +376,7 @@ f27 0 1024 7 0 1024 0  /* fil env amount */
 
 
 i 1 0 z
+i 99 0 z
 i 100 0 z
 e
 </CsScore>

@@ -6,7 +6,7 @@ export let csound = null;
 // audio context
 export let audio_context = null;
 // source URL for assets
-const srcurl =  "https://vlazzarini.github.io/litePlay.js/";
+const srcurl =  "https://g-ubimus.github.io/litePlay.js/";
 // CSD file name
 const csd = "./litePlay.csd";
 const sfont = "./gm.sf2";
