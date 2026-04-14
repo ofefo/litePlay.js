@@ -624,7 +624,7 @@ export function stop() {
 export async function reset() {
 	if(csound) {
 		await csound.inputMessage("i 200 0 0.1");
-		await csound.inputMessage("i 99 0 -1");
+		csound.inputMessage("i 99 0 z");
 	}
 }
 
