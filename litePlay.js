@@ -939,7 +939,7 @@ export const média = midDuration;
 export const longa = longDuration;
 
 export const agora = now;
-export const emBreve = soon;
+export const logo = soon;
 export const depois = later;
 
 export const grave = lowPitch;
