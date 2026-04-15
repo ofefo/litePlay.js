@@ -911,6 +911,7 @@ export const silently = ms => new Promise(r => setTimeout(r, ms));
 // Interface simples em Português
 
 // funções
+Instrument.prototype.toque = Instrument.prototype.play;
 export const toque = play;
 export const pare = stop;
 export const instrumento = instrument;
