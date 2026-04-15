@@ -298,7 +298,7 @@ endin
 // master output
 instr 99
 	a1 clip gaLeft, 0, .99
-	a2 clip gaReft, 0, .99
+	a2 clip gaRight, 0, .99
 	
 	outs a1, a2
 	clear gaLeft, gaRight
