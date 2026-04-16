@@ -17,6 +17,7 @@ div.text{
 	transition: filter .5s ease;
 	cursor: pointer;
 	margin-top: .1%;
+	border-radius: 0;
 }
 
 .button:hover {
