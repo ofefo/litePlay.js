@@ -258,7 +258,7 @@ const mlConsole = document.getElementById('ml-console');
 // Create the callback function to handle incoming data
 function handleNewMusicalEvent(eventData) {
     // Format the array as a string so it looks nice in the console
-    const textOutput = `[${eventData[0]}, ${eventData[1]}, ${eventData[2]}, []]\n`;
+    const textOutput = `Event: [${eventData[0]}, ${eventData[1]}, ${eventData[2]}, []]\n`;
     
     if (mlConsole) {
         mlConsole.value += textOutput;

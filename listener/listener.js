@@ -1,19 +1,30 @@
 import Essentia from 'https://unpkg.com/essentia.js@0.1.3/dist/essentia.js-core.es.min.js';
 import { EssentiaWASM } from 'https://unpkg.com/essentia.js@0.1.3/dist/essentia-wasm.es.js';
 
+// --- System Variables ---
 let essentia = null;
 let isListening = false;
 let workletNode = null;
 let micSource = null;
 
-// The global array to hold the sequence of events
+// --- Analysis State ---
+const onsetThreshold = 0.02; 
+let isSounding = false;
+let eventStartTime = 0;
+let framePitches = [];
+let frameLoudness = [];
+let currentPhrase = [];
+let lastNoteEndTime = 0;
+let recentPauses = [];
+let silenceThreshold = 0.5;
+
+// --- Global Exposes ---
+window.allEvents = [];  
+window.lastMelody = []; 
 window.lastEvent = [];
 
 /**
  * Toggles the machine listening state.
- * @param {AudioContext} audioCtx - The active audio context from litePlay
- * @param {Function} onEventDetected - Callback function triggered when a note ends
- * @returns {boolean} - Returns true if currently listening, false otherwise
  */
 export async function toggleListening(audioCtx, onEventDetected) {
 	if (isListening) {
@@ -21,71 +32,28 @@ export async function toggleListening(audioCtx, onEventDetected) {
 		return false;
 	}
 
-	// Initialize Essentia if not yet 
-	if (!essentia) {
-		essentia = new Essentia(EssentiaWASM);
-	}
+	if (!essentia) essentia = new Essentia(EssentiaWASM);
 
 	try {
-		// Load the background processor module
 		await audioCtx.audioWorklet.addModule('./listener/processor.js');
 
-		// Get mic input
 		const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
 		micSource = audioCtx.createMediaStreamSource(stream);
-
-		// Create the Worklet Node
 		workletNode = new AudioWorkletNode(audioCtx, 'audio-capture-processor');
 		
-		// State Machine Variables
-		const onsetThreshold = 0.02; 
-		let isSounding = false;
-		let eventStartTime = 0;
-		let framePitches = [];
-		let frameLoudness = [];
-
-		// Handle incoming buffers from the Worklet thread
-		workletNode.port.onmessage = function(event) {
-			const inputData = event.data;
-			const vectorData = essentia.arrayToVector(inputData);
+		// Central audio processing hub
+		workletNode.port.onmessage = (event) => {
+			const vectorData = essentia.arrayToVector(event.data);
 			const rms = essentia.RMS(vectorData).rms;
+            const currentTime = audioCtx.currentTime;
 
 			if (rms > onsetThreshold) {
-				// status: note on
-				if (!isSounding) {
-					isSounding = true;
-					eventStartTime = audioCtx.currentTime;
-					// reset arrays
-					framePitches = [];
-					frameLoudness = [];
-				}
-
-				// get pitch data from spectrum 
-				const spectrum = essentia.Spectrum(vectorData).spectrum;
-				const pitchInfo = essentia.PitchYinFFT(spectrum);
-				
-				if (pitchInfo.pitchConfidence > 0.6) {
-					framePitches.push(pitchInfo.pitch);
-				}
-				frameLoudness.push(rms);
-
+				handleSoundingFrame(vectorData, rms, currentTime);
 			} else {
-				// status: note off
-				if (isSounding) {
-					isSounding = false;
-					const duration = audioCtx.currentTime - eventStartTime;
-					// Ignore sounds shorter than 10ms
-					if (duration > 0.01) {
-						const eventData = processEventData(framePitches, frameLoudness, duration);
-						window.lastEvent.push(eventData);
-						// Send the data back to the UI
-						if (onEventDetected) onEventDetected(eventData);
-					}
-				}
+				handleSilentFrame(currentTime, onEventDetected);
 			}
-		};
-		
-		// 5. Connect the routing
+		}; 
+
 		micSource.connect(workletNode);
 		isListening = true;
 		return true;
@@ -96,6 +64,125 @@ export async function toggleListening(audioCtx, onEventDetected) {
 	}
 }
 
+// -----------------------------------------------------------------
+// Core Processing Modules
+// -----------------------------------------------------------------
+
+function handleSoundingFrame(vectorData, rms, currentTime) {
+    if (!isSounding) {
+        triggerNoteOn(currentTime);
+    }
+    extractFeatures(vectorData, rms);
+}
+
+function handleSilentFrame(currentTime, onEventDetected) {
+    if (isSounding) {
+        triggerNoteOff(currentTime, onEventDetected);
+    } else {
+        checkPhraseCompletion(currentTime);
+    }
+}
+
+// -----------------------------------------------------------------
+// Sub-Routines
+// -----------------------------------------------------------------
+
+function triggerNoteOn(currentTime) {
+    isSounding = true;
+    eventStartTime = currentTime;
+    
+    if (lastNoteEndTime > 0) {
+        updateDynamicThreshold(currentTime);
+    }
+
+    framePitches = [];
+    frameLoudness = [];
+}
+
+function triggerNoteOff(currentTime, onEventDetected) {
+    isSounding = false;
+    const duration = currentTime - eventStartTime;
+        
+    if (duration > 0.01) {
+        const eventData = processEventData(framePitches, frameLoudness, duration);
+        saveEventData(eventData);
+
+        if (onEventDetected) onEventDetected(eventData);
+    }
+        
+    lastNoteEndTime = currentTime;
+}
+
+function extractFeatures(vectorData, rms) {
+    const spectrum = essentia.Spectrum(vectorData).spectrum;
+    const pitchInfo = essentia.PitchYinFFT(spectrum);
+    
+    if (pitchInfo.pitchConfidence > 0.8) {
+        framePitches.push(pitchInfo.pitch);
+    }
+    frameLoudness.push(rms);
+}
+
+function updateDynamicThreshold(currentTime) {
+    const pauseDuration = currentTime - lastNoteEndTime;
+    recentPauses.push(pauseDuration);
+    
+    if (recentPauses.length > 10) recentPauses.shift();
+    
+    const avgPause = recentPauses.reduce((a, b) => a + b, 0) / recentPauses.length;
+    silenceThreshold = Math.max(0.5, Math.min(avgPause * 1.5, 2));
+}
+
+function checkPhraseCompletion(currentTime) {
+    if (currentPhrase.length === 0 || lastNoteEndTime === 0) return;
+
+    const timeSinceLastNote = currentTime - lastNoteEndTime;
+    if (timeSinceLastNote > silenceThreshold) {
+        finalizePhrase();
+    }
+}
+
+function finalizePhrase() {
+    window.lastMelody = [...currentPhrase]; 
+    currentPhrase = []; 
+    
+    const mlConsole = document.getElementById('ml-console');
+    if (mlConsole) {
+        const logText = `> Phrase grouped: ${window.lastMelody.length} events. (Threshold: ${silenceThreshold.toFixed(2)}s)\n`;
+        const arrayText = JSON.stringify(window.lastMelody) + "\n\n";
+        mlConsole.value += logText + arrayText;
+        mlConsole.scrollTop = mlConsole.scrollHeight; 
+    }
+}
+
+function saveEventData(eventData) {
+    window.lastEvent = eventData;
+    window.lastPitch = eventData[0];
+    window.lastAmp = eventData[1];
+    window.lastDur = eventData[2];
+    
+    window.allEvents.push(eventData); 
+    currentPhrase.push(eventData); 
+}
+
+function processEventData(pitches, loudnesses, duration) {
+	const avgLoudness = loudnesses.reduce((a, b) => a + b, 0) / loudnesses.length;
+	let avgPitchHz = 0;
+	let midiValue = 0; 
+	
+	if (pitches.length > 0) {
+		avgPitchHz = pitches.reduce((a, b) => a + b, 0) / pitches.length;
+		midiValue = parseFloat((69 + 12 * Math.log2(avgPitchHz / 440)).toFixed(2));
+	}
+	
+	return [
+		midiValue, 
+		parseFloat(avgLoudness.toFixed(4)), 
+		parseFloat(duration.toFixed(3)), 
+		[] 
+	];
+}
+
 function stopListening() {
 	if (workletNode && micSource) {
 		micSource.disconnect();
@@ -104,23 +191,4 @@ function stopListening() {
 		micSource = null;
 	}
 	isListening = false;
-}
-
-function processEventData(pitches, loudnesses, duration) {
-	const avgLoudness = loudnesses.reduce((a, b) => a + b, 0) / loudnesses.length;
-	let avgPitchHz = 0;
-	let midiValue = 0; // 0 represents unpitched sound
-	
-	if (pitches.length > 0) {
-		avgPitchHz = pitches.reduce((a, b) => a + b, 0) / pitches.length;
-		midiValue = parseFloat((69 + 12 * Math.log2(avgPitchHz / 440)).toFixed(2));
-	}
-	
-	// [ MIDI, Loudness (rounded), Duration (rounded), [MFCC Array Placeholder] ]
-	return [
-		midiValue, 
-		parseFloat(avgLoudness.toFixed(4)), 
-		parseFloat(duration.toFixed(3)), 
-		[] 
-	];
 }
