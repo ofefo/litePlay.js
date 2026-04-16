@@ -8,7 +8,8 @@ import { oneDark } from "https://esm.sh/@codemirror/theme-one-dark";
 // extendable media recorder
 import { MediaRecorder, register } from "https://esm.sh/extendable-media-recorder";
 import { connect } from "https://esm.sh/extendable-media-recorder-wav-encoder";
-import { toggleListening } from "./listener.js"; // Adjust path if necessary
+// add essentia
+import { toggleListening } from "./listener.js";
 
 // override function to print output in console
 const consoleOutput = document.getElementById('console-output');
@@ -248,11 +249,6 @@ recButton.addEventListener('click', startRecording);
 
 const stopRecButton = document.querySelector('#stopRec-btn');
 stopRecButton.addEventListener('click', stopRecording);
-
-
-
-
-
 
 // Get UI elements
 const mlConsole = document.getElementById('ml-console');
