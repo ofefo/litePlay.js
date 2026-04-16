@@ -7,61 +7,74 @@ body {
 
 div.text{
 	text-align: left;
-	margin-left: 2%;
+	font-size: 20px;
+	margin-left: 0%;
   	color: #282c34;
 }
  
 .button {
-        padding: 12px;
+	padding: .2% 100px;
 	transition: filter .5s ease;
-        border-radius: 5px;
 	cursor: pointer;
-        margin: .1%;
-	margin-top: .5%;
+	margin-top: .1%;
 }
 
 .button:hover {
 	filter: brightness(.8);
 }
 
+.editor-row {
+	display: flex;
+	width: 100%;
+	margin: 0 auto;
+	height: 200px;
+	margin-top: .1%;
+}
+
+.cm-container {
+	height: 100%;
+}
+
+/* --- UPDATED ELEMENTS --- */
 .cm-editor {
-	width: 90%; 
+	width: 100%;
 	height: 500px;
-	flex: 7;
 	font-size: 18px; 
 	font-family: monospace; 
 	text-align: left;
-	margin: 0 auto;
+	margin: 0;         /* Removed auto margin so it touches the right side */
 }
 
 .cm-scroller { 
-    	overflow: auto; 
+	overflow: auto; 
 }
 
 .listenc {
-	width: 60%;
-	height: 500px;
-	flex: 3;
-	font-size: 16px;
+	flex: 5;
+	height: 200px;
+	font-size: 18px; 
 	font-family: monospace;
 	background: #282c34;
-	color: #0f0;
+	color: #fff;
 	border: none;
 	resize: none;
-	margin: 0 auto;
+	margin: 0;         /* Ensures it touches the other console */ 
+	box-sizing: border-box; /* Prevents padding from breaking the layout */
 }
 
 .console {
-	width: 95%;
+	flex: 5;
+	width: 100%;
 	height: 200px;
-	font-size: 16px;
+	font-size: 18px; 
 	font-family: monospace;
-	background: #282c34; 
-	color: #0f0; 
-	padding: 10px; 
-	margin: 0 auto;
-	border: none; 
+	background: #282c34;
+	color: #fff;
+	border: none;
 	resize: none;
+	margin: 0 auto;    /* Centers it to align with the row above */
+	display: block;    /* Required for margin: 0 auto to work on a textarea */
+	box-sizing: border-box;
 }
 
 .ready-green {
