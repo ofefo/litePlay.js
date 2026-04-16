@@ -25,7 +25,7 @@ div.text{
 }
 
 .cm-editor {
-	width: 96%; 
+	width: 95%; 
 	height: 500px; 
 	font-size: 18px; 
 	font-family: monospace; 
@@ -35,6 +35,19 @@ div.text{
 
 .cm-scroller { 
     	overflow: auto; 
+}
+
+.listenc {
+	width: 95%;
+	height: 200px;
+	font-size: 16px;
+	font-family: monospace;
+	background: #282c34; 
+	color: #0f0; 
+	padding: 10px; 
+	margin-top: 1%;
+	border: none; 
+	resize: none;
 }
 
 .console {

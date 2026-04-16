@@ -22,8 +22,14 @@
 			<br>New to litePlay? Read the <b><a href="https://g-ubimus.github.io/litePlay.docs/" target="_blank">docs</a></b>.</p>
 		</div>
 		
-		<div id="editor-container" class="code"></div>
-		
+		<div style="display: flex; gap: 1px; width: 100%; margin-bottom: 10px;">
+				<div id="editor-container" class="code" style="flex: 7;"></div>
+		<div>
+		<textarea id="ml-console" autocomplete="off" readonly
+			class="listenc" style="flex: 3;" placeholder="Machine Listening output will appear here..."></textarea>
+		<button class="button" id="listen-btn">&#128066; <b>LISTEN</b></button>
+		</div>
+		</div>
 		<br>
 		<textarea id="console-output" autocomplete="off" readonly class="console" placeholder="Click anywhere to start litePlay."></textarea>
 		<div style="display: block; text-align: center; width: 100%;">

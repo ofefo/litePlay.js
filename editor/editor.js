@@ -8,6 +8,7 @@ import { oneDark } from "https://esm.sh/@codemirror/theme-one-dark";
 // extendable media recorder
 import { MediaRecorder, register } from "https://esm.sh/extendable-media-recorder";
 import { connect } from "https://esm.sh/extendable-media-recorder-wav-encoder";
+import { toggleListening } from "./listener.js"; // Adjust path if necessary
 
 // override function to print output in console
 const consoleOutput = document.getElementById('console-output');
@@ -247,3 +248,42 @@ recButton.addEventListener('click', startRecording);
 
 const stopRecButton = document.querySelector('#stopRec-btn');
 stopRecButton.addEventListener('click', stopRecording);
+
+
+
+
+
+
+// Get UI elements
+const mlConsole = document.getElementById('ml-console');
+const listenBtn = document.getElementById('listen-btn');
+
+// Create the callback function to handle incoming data
+function handleNewMusicalEvent(eventData) {
+    // Format the array as a string so it looks nice in the console
+    const textOutput = `[${eventData[0]}, ${eventData[1]}, ${eventData[2]}, []]\n`;
+    
+    if (mlConsole) {
+        mlConsole.value += textOutput;
+        mlConsole.scrollTop = mlConsole.scrollHeight; // Auto-scroll to bottom
+    }
+}
+
+// Bind the button
+listenBtn.addEventListener('click', async () => {
+    // Ensure litePlay has initialized the audio_context
+    if (!window.audio_context) {
+        console.error("Start the litePlay engine first!");
+        return;
+    }
+
+    const isNowListening = await toggleListening(window.audio_context, handleNewMusicalEvent);
+    
+    if (isNowListening) {
+        listenBtn.innerHTML = "&#9724; <b>STOP LISTENING</b>";
+        listenBtn.style.color = "red";
+    } else {
+        listenBtn.innerHTML = "&#128066; <b>LISTEN</b>";
+        listenBtn.style.color = ""; // reset to default
+    }
+});
