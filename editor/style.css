@@ -25,8 +25,9 @@ div.text{
 }
 
 .cm-editor {
-	width: 95%; 
-	height: 500px; 
+	width: 90%; 
+	height: 500px;
+	flex: 7;
 	font-size: 18px; 
 	font-family: monospace; 
 	text-align: left;
@@ -38,16 +39,16 @@ div.text{
 }
 
 .listenc {
-	width: 95%;
-	height: 200px;
+	width: 60%;
+	height: 500px;
+	flex: 3;
 	font-size: 16px;
 	font-family: monospace;
-	background: #282c34; 
-	color: #0f0; 
-	padding: 10px; 
-	margin-top: 1%;
-	border: none; 
+	background: #282c34;
+	color: #0f0;
+	border: none;
 	resize: none;
+	margin: 0 auto;
 }
 
 .console {
@@ -58,7 +59,7 @@ div.text{
 	background: #282c34; 
 	color: #0f0; 
 	padding: 10px; 
-	margin-top: 1%;
+	margin: 0 auto;
 	border: none; 
 	resize: none;
 }
@@ -96,3 +97,4 @@ a:active {
   	color:red;
   	text-decoration: underline;
 }
+
