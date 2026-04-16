@@ -108,7 +108,7 @@ function processEventData(pitches, loudnesses, duration) {
     
     if (pitches.length > 0) {
         avgPitchHz = pitches.reduce((a, b) => a + b, 0) / pitches.length;
-        midiValue = Math.round(69 + 12 * Math.log2(avgPitchHz / 440)); 
+        midiValue = (69 + 12 * Math.log2(avgPitchHz / 440)).toFixed(2);
     }
     
     // [ MIDI, Loudness (rounded), Duration (rounded), [MFCC Array Placeholder] ]
