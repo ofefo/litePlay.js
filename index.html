@@ -22,20 +22,19 @@
 			<br>New to litePlay? Read the <b><a href="https://g-ubimus.github.io/litePlay.docs/" target="_blank">docs</a></b>.</p>
 		</div>
 		
-		<div id="editor-container" class="code"></div>
-		
-		<br>
-		<textarea id="console-output" autocomplete="off" readonly class="console" placeholder="Click anywhere to start litePlay."></textarea>
-		<div style="display: block; text-align: center; width: 100%;">
-			<div style="margin-right: 1%; display: inline;">
+		<div style="display: block; text-align: left; width: 100%;">
+			<div style="display: inline;">
 				<button class="button" id="run-btn">&#9654; <b>RUN</b></button>
 				<button class="button" id="stop-btn">&#9724; <b>STOP</b></button>
 				<button class="button" id="save-btn">&#9660; <b>SAVE CODE</b></button>
-			</div>
-			<div style="display: inline;">
 				<button class="button" id="rec-btn">&#9673; <b>REC</b></button>
 				<button class="button" id="stopRec-btn">&#9689; <b>STOP REC</b></button>
 			</div>
+		</div>
+		<div id="editor-container" class="cm-container"></div>
+		<div class="editor-row"> 
+		<br>
+		<textarea id="console-output" autocomplete="off" readonly class="console" placeholder="Click anywhere to start litePlay."></textarea>
 		</div>
 	</div>
 	<script type="module" src="./editor/editor.js"></script>
