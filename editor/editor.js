@@ -101,7 +101,6 @@ const startState = EditorState.create({
 			keymap.of([
 				{ key: "Mod-Enter", run: runLP },
 				{ key: "Mod-.", run: stopLP },
-				{ key: "Mod-r", run: startRecording },
 			])
 		),
 	]
