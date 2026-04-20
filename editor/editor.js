@@ -6,8 +6,8 @@ import { javascript, javascriptLanguage } from "https://esm.sh/@codemirror/lang-
 import { autocompletion } from "https://esm.sh/@codemirror/autocomplete";
 import { oneDark } from "https://esm.sh/@codemirror/theme-one-dark";
 // extendable media recorder
-import { MediaRecorder, register } from "https://esm.sh/extendable-media-recorder";
-import { connect } from "https://esm.sh/extendable-media-recorder-wav-encoder";
+import { MediaRecorder, register } from "https://cdn.jsdelivr.net/npm/extendable-media-recorder/+esm";
+import { connect } from "https://cdn.jsdelivr.net/npm/extendable-media-recorder-wav-encoder/+esm";
 
 // override function to print output in console
 const consoleOutput = document.getElementById('console-output');
