@@ -269,10 +269,11 @@ const Bs0 = Bs[1],
   Bsm1 = Bs[0];
 const O = -999;
 
-const quarterTone = 0.25;
+const quarterTone = 0.5;
 const thirdTone = 0.333;
-const oneCent = 0.01;
+const eigthTone = 0.25;
 const tenCent = 0.1;
+const oneCent = 0.01;
 
 const lpRun = (code = null) => {
   import(lp_URL).then((val) => {
