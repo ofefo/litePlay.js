@@ -628,6 +628,29 @@ export const choose = (array) => {
   return array[index];
 };
 
+export function midiToName(midiValue) {
+  if (midiValue < 0 || midiValue > 127)
+    return console.log("Pitch out of bounds (0-127).");
+  const pitchClasses = [
+    "C",
+    "Cs",
+    "D",
+    "Ds/Eb",
+    "E",
+    "F",
+    "Fs/Gb",
+    "G",
+    "Gs/Ab",
+    "A",
+    "As/Bb",
+    "B",
+  ];
+  let pitch = pitchClasses[midiValue % 12];
+  let octave = Math.floor(midiValue / 12) - 1;
+  let octaveName = octave === -1 ? "-1" : octave;
+  return console.log(pitch + octaveName);
+}
+
 const lowmin = 0.01;
 const lowmax = 0.1;
 const midmin = 0.1;
