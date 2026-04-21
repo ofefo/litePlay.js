@@ -611,6 +611,7 @@ export function stop() {
 
 export async function reset() {
   if (csound) {
+    sequencer.stop();
     await csound.inputMessage("i 200 0 0.1");
   }
 }
