@@ -363,13 +363,21 @@ export const sequencer = {
           amp,
           theInstr = this.instr,
           dur = theInstr.isDrums ? 0 : this.bbs;
+
         for (let i = 0; i < 1 / bbs; i++) {
           let evt = what[this.n];
           amp = this.amp;
           this.n = this.n != what.length - 1 ? this.n + 1 : 0;
+
+          // If the step is a dynamic function, unwrap it.
+          // This allows it to evaluate to a single note OR a full chord array.
+          if (typeof evt === "function") {
+            evt = evt();
+          }
+          // --------------------------
+
           if (typeof evt !== "object") {
-            if (typeof evt === "function") pp = evt();
-            else pp = evt;
+            pp = evt;
             if (sched >= 0 && pp >= 0 && this.on)
               theInstr.play([pp, amp, sched + i * bbs, dur]);
           } else {
@@ -397,7 +405,7 @@ export const sequencer = {
                 if (typeof instr_ === "function") theInstr = instr_();
                 else theInstr = instr_;
                 theInstr = isInstr(theInstr) ? theInstr : this.instr;
-                dur = dur > 0 ? dur : theInstr.isDrums ? 0 : t;
+                dur = dur > 0 ? dur : theInstr.isDrums ? 0 : this.bbs;
               }
               if (sched >= 0 && pp >= 0 && this.on)
                 theInstr.play([pp, amp, sched + i * bbs, dur]);
@@ -416,25 +424,22 @@ export const sequencer = {
                   if (typeof gain === "function") amp *= gain();
                   else amp *= gain;
                 }
-
                 if (el.length > 2) {
                   let offs = el[2];
                   if (typeof offs === "function") sched += offs();
                   else sched += offs;
                 }
-
                 if (el.length > 3) {
                   let dur_ = el[3];
                   if (typeof dur_ === "function") dur = dur_();
                   else dur = dur_;
                 }
-
                 if (el.length > 4) {
                   let instr_ = el[4];
                   if (typeof instr_ === "function") theInstr = instr_();
                   else theInstr = instr_;
                   theInstr = isInstr(theInstr) ? theInstr : this.instr;
-                  dur = dur > 0 ? dur : theInstr.isDrums ? 0 : t;
+                  dur = dur > 0 ? dur : theInstr.isDrums ? 0 : this.bbs;
                 }
 
                 if (sched >= 0 && pp >= 0 && this.on)
