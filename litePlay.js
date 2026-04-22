@@ -369,28 +369,65 @@ export const sequencer = {
           amp = this.amp;
           this.n = this.n != what.length - 1 ? this.n + 1 : 0;
 
-          // If the step is a dynamic function, unwrap it.
-          // This allows it to evaluate to a single note OR a full chord array.
           if (typeof evt === "function") {
             evt = evt();
           }
 
-          // subdivision trigger
+          // nested subdivisions
           if (evt && evt.isSub) {
-            let subFrac = bbs / evt.notes.length; // Divide the time equally
-            for (let k = 0; k < evt.notes.length; k++) {
-              let subNote = evt.notes[k];
-              let subOffs = k * subFrac;
-              if (subNote >= 0 && sched >= 0 && this.on) {
-                // Add (i * bbs) to ensure it triggers at the correct loop step
-                theInstr.play([
-                  subNote,
-                  amp,
-                  sched + i * bbs + subOffs,
-                  theInstr.isDrums ? 0 : subFrac,
-                ]);
+            const subSub = (item, offsetStart, duration) => {
+              // Unwrap dynamic functions inside the subdivision
+              if (typeof item === "function") item = item();
+
+              if (item && item.isSub) {
+                // If it's another sub, divide the time again
+                let stepDur = duration / item.notes.length;
+                for (let k = 0; k < item.notes.length; k++) {
+                  subSub(item.notes[k], offsetStart + k * stepDur, stepDur);
+                }
+              } else if (typeof item === "number" && item >= 0) {
+                // If it's a standard note
+                if (sched >= 0 && this.on) {
+                  theInstr.play([
+                    item,
+                    amp,
+                    sched + i * bbs + offsetStart,
+                    theInstr.isDrums ? 0 : duration,
+                  ]);
+                }
+              } else if (Array.isArray(item)) {
+                // If it's a parameter array inside a sub [pitch, amp, offset, dur]
+                let p = typeof item[0] === "function" ? item[0]() : item[0];
+                let a =
+                  item.length > 1
+                    ? amp *
+                      (typeof item[1] === "function" ? item[1]() : item[1])
+                    : amp;
+                let o =
+                  item.length > 2
+                    ? typeof item[2] === "function"
+                      ? item[2]()
+                      : item[2]
+                    : 0;
+                let d =
+                  item.length > 3
+                    ? typeof item[3] === "function"
+                      ? item[3]()
+                      : item[3]
+                    : duration;
+                if (sched >= 0 && p >= 0 && this.on) {
+                  theInstr.play([
+                    p,
+                    a,
+                    sched + i * bbs + offsetStart + o,
+                    theInstr.isDrums ? 0 : d,
+                  ]);
+                }
               }
-            }
+            };
+
+            // Kick off the recursion for this beat
+            subSub(evt, 0, bbs);
           } else if (typeof evt !== "object") {
             pp = evt;
             if (sched >= 0 && pp >= 0 && this.on)
