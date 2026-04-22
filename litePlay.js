@@ -623,9 +623,10 @@ export const rndInt = (min, max) =>
     Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min),
   );
 
-export const choose = (array) => {
-  let index = Math.floor(Math.random() * array.length);
-  return array[index];
+export const choose = (...options) => {
+  if (options.length === 1 && Array.isArray(options[0])) options = options[0];
+  let index = Math.floor(Math.random() * options.length);
+  return options[index];
 };
 
 export function midiToName(midiValue) {
