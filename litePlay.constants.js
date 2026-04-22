@@ -271,7 +271,7 @@ const O = -999;
 
 const quarterTone = 0.5;
 const thirdTone = 0.333;
-const eigthTone = 0.25;
+const eighthTone = 0.25;
 const tenCent = 0.1;
 const oneCent = 0.01;
 

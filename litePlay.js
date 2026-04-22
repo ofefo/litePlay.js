@@ -1161,3 +1161,9 @@ export const bateria6 = drums6;
 
 export const membranofone = membranophone;
 export const idiofone = idiophone;
+
+export const quartoTom = quarterTone;
+export const terçoTom = thirdTone;
+export const oitavoTom = eighthTone;
+export const dezCent = tenCent;
+export const umCent = oneCent;
