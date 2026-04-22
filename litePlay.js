@@ -374,9 +374,24 @@ export const sequencer = {
           if (typeof evt === "function") {
             evt = evt();
           }
-          // --------------------------
 
-          if (typeof evt !== "object") {
+          // subdivision trigger
+          if (evt && evt.isSub) {
+            let subFrac = bbs / evt.notes.length; // Divide the time equally
+            for (let k = 0; k < evt.notes.length; k++) {
+              let subNote = evt.notes[k];
+              let subOffs = k * subFrac;
+              if (subNote >= 0 && sched >= 0 && this.on) {
+                // Add (i * bbs) to ensure it triggers at the correct loop step
+                theInstr.play([
+                  subNote,
+                  amp,
+                  sched + i * bbs + subOffs,
+                  theInstr.isDrums ? 0 : subFrac,
+                ]);
+              }
+            }
+          } else if (typeof evt !== "object") {
             pp = evt;
             if (sched >= 0 && pp >= 0 && this.on)
               theInstr.play([pp, amp, sched + i * bbs, dur]);
@@ -620,6 +635,9 @@ export async function reset() {
     await csound.inputMessage("i 200 0 0.1");
   }
 }
+
+// sub() function to have subdivisions for the rhythms in the sequencer
+export const sub = (...notes) => ({ isSub: true, notes });
 
 export const rnd = (min, max) => Math.random() * (max - min) + min;
 
