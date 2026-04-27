@@ -271,18 +271,21 @@ recButton.addEventListener("click", startRecording);
 const stopRecButton = document.querySelector("#stopRec-btn");
 stopRecButton.addEventListener("click", stopRecording);
 
-// Get UI elements
+// Machine listening
 const mlConsole = document.getElementById("ml-console");
 let hasListenerStarted = false;
 
 // Create the callback function to handle incoming data
 function handleNewMusicalEvent(eventData) {
-  // Format the array as a string so it looks nice in the console
   const textOutput = `Event: [${eventData[0]}, ${eventData[1]}, ${eventData[2]}, []]\n`;
+
+  const mlConsole = document.getElementById("ml-console");
 
   if (mlConsole) {
     mlConsole.value += textOutput;
     mlConsole.scrollTop = mlConsole.scrollHeight; // Auto-scroll to bottom
+  } else {
+    console.warn("Could not find the ML console in the HTML!");
   }
 }
 
@@ -292,16 +295,13 @@ function startListener() {
     return;
   }
 
-  // GUARD: If it's already running, do nothing on subsequent clicks
   if (hasListenerStarted) return;
 
-  // Start the listener
   const isNowListening = toggleListening(
     window.audio_context,
     handleNewMusicalEvent,
   );
 
-  // Lock the guard variable
   if (isNowListening) {
     hasListenerStarted = true;
     console.log("Machine Listening successfully running in background.");
