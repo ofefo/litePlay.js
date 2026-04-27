@@ -144,10 +144,11 @@ document.addEventListener(
 
         const recBtn = document.getElementById("rec-btn");
         if (recBtn) recBtn.classList.add("ready-red");
+
+        startListener();
       } catch (error) {
         console.error("Failed to auto-start litePlay:", error);
       }
-      startListener();
     }
   },
   { once: true },
@@ -272,6 +273,7 @@ stopRecButton.addEventListener("click", stopRecording);
 
 // Get UI elements
 const mlConsole = document.getElementById("ml-console");
+let hasListenerStarted = false;
 
 // Create the callback function to handle incoming data
 function handleNewMusicalEvent(eventData) {
@@ -284,16 +286,24 @@ function handleNewMusicalEvent(eventData) {
   }
 }
 
-// Bind the button
 function startListener() {
-  // Ensure litePlay has initialized the audio_context
   if (!window.audio_context) {
     console.error("Start the litePlay engine first!");
     return;
   }
 
+  // GUARD: If it's already running, do nothing on subsequent clicks
+  if (hasListenerStarted) return;
+
+  // Start the listener
   const isNowListening = toggleListening(
     window.audio_context,
     handleNewMusicalEvent,
   );
+
+  // Lock the guard variable
+  if (isNowListening) {
+    hasListenerStarted = true;
+    console.log("Machine Listening successfully running in background.");
+  }
 }
