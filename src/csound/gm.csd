@@ -12,7 +12,7 @@ ichn = 1
 lp1: massign   ichn, 0
 loop_le   ichn, 1, 16, lp1
 pgmassign 0, 0
-gisf sfload "gm.sf2"
+gisf sfload "../../assets/audio/gm.sf2"
 sfpassign  0, gisf
 garev1 init 0
 garev2 init 0

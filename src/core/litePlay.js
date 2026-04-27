@@ -6,10 +6,10 @@ export let csound = null;
 // audio context
 export let audio_context = null;
 // source URL for assets
-const srcurl = "./litePlay.js/";
+const srcurl = "./";
 // CSD file name
-const csd = "../csound/litePlay.csd";
-const sfont = "../../assets/audio/gm.sf2";
+const csd = "src/csound/litePlay.csd";
+const sfont = "assets/audio/gm.sf2";
 
 // this is the JS function to start Csound
 export async function startEngine() {
@@ -26,7 +26,7 @@ export async function startEngine() {
     // set realtime MIDI input
     await csound.setOption("-M0");
     // copy the sfont file to the Csound local filesystem
-    await copyUrlToLocal(srcurl + sfont, sfont);
+    await copyUrlToLocal(srcurl + sfont, "gm.sf2");
     // copy the CSD file to the Csound local filesystem
     await copyUrlToLocal(srcurl + csd, csd);
     // compile csound code
