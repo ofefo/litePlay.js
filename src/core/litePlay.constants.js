@@ -1,5 +1,5 @@
 // litePlay URL
-const lp_URL = "https://vlazzarini.github.io/litePlay.js/litePlay.js";
+const lp_URL = "https://g-ubimus.github.io/litePlay.js/src/core/litePlay.js";
 
 // MIDI NOTE constants
 

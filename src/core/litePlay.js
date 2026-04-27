@@ -6,10 +6,10 @@ export let csound = null;
 // audio context
 export let audio_context = null;
 // source URL for assets
-const srcurl = "https://g-ubimus.github.io/litePlay.js/";
+const srcurl = "./litePlay.js/";
 // CSD file name
-const csd = "./litePlay.csd";
-const sfont = "./gm.sf2";
+const csd = "../csound/litePlay.csd";
+const sfont = "../../assets/audio/gm.sf2";
 
 // this is the JS function to start Csound
 export async function startEngine() {
