@@ -27,7 +27,8 @@ To use it in a web page, add this tag to the HTML page header:
 ```
 
 To play the default piano sound in litePlay, try: 
-```
+
+```JavaScript
 function f() {
 	lp.play(C4); 
 }

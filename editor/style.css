@@ -49,6 +49,19 @@ div.text{
 	overflow: auto; 
 }
 
+.listenc {
+	flex: 5;
+	height: 200px;
+	font-size: 18px; 
+	font-family: monospace;
+	background: #282c34;
+	color: #fff;
+	border: none;
+	resize: none;
+	margin: 0;         /* Ensures it touches the other console */ 
+	box-sizing: border-box; /* Prevents padding from breaking the layout */
+}
+
 .console {
 	flex: 5;
 	width: 100%;

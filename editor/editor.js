@@ -9,11 +9,18 @@ import {
 import { autocompletion } from "https://esm.sh/@codemirror/autocomplete";
 import { oneDark } from "https://esm.sh/@codemirror/theme-one-dark";
 // extendable media recorder
+<<<<<<< main
 import {
   MediaRecorder,
   register,
 } from "https://cdn.jsdelivr.net/npm/extendable-media-recorder/+esm";
 import { connect } from "https://cdn.jsdelivr.net/npm/extendable-media-recorder-wav-encoder/+esm";
+=======
+import { MediaRecorder, register } from "https://esm.sh/extendable-media-recorder";
+import { connect } from "https://esm.sh/extendable-media-recorder-wav-encoder";
+// add essentia
+import { toggleListening } from "../listener/listener.js";
+>>>>>>> main
 
 // override function to print output in console
 const consoleOutput = document.getElementById("console-output");
@@ -123,6 +130,7 @@ let editor = new EditorView({
 
 // start litePlay
 let liteplayEngine = null;
+<<<<<<< main
 
 document.addEventListener(
   "pointerdown",
@@ -150,6 +158,34 @@ document.addEventListener(
   { once: true },
 );
 
+=======
+   
+document.addEventListener('pointerdown', async () => {
+	if (!liteplayEngine) {
+		try {
+			console.log("Loading litePlay engine...");
+			liteplayEngine = await lpLoad(); 
+
+			// expose all of litePlay.js exports to the global window
+			Object.assign(window, liteplayEngine);
+			console.log("litePlay is ready!");
+
+			// change button colors when ready
+			const runBtn = document.getElementById('run-btn');
+			if (runBtn) runBtn.classList.add('ready-green');
+
+			const recBtn = document.getElementById('rec-btn');
+			if (recBtn) recBtn.classList.add('ready-red');
+
+			startListener();
+
+		} catch (error) {
+			console.error("Failed to auto-start litePlay:", error);
+		}
+	}
+}, {once: true});
+		
+>>>>>>> main
 // save button
 const saveCode = () => {
   const now = new Date();
@@ -264,5 +300,42 @@ saveButton.addEventListener("click", saveCode);
 const recButton = document.querySelector("#rec-btn");
 recButton.addEventListener("click", startRecording);
 
+<<<<<<< main
 const stopRecButton = document.querySelector("#stopRec-btn");
 stopRecButton.addEventListener("click", stopRecording);
+=======
+const stopRecButton = document.querySelector('#stopRec-btn');
+stopRecButton.addEventListener('click', stopRecording);
+
+// Get UI elements
+const mlConsole = document.getElementById('ml-console');
+
+// Create the callback function to handle incoming data
+function handleNewMusicalEvent(eventData) {
+    // Format the array as a string so it looks nice in the console
+    const textOutput = `Event: [${eventData[0]}, ${eventData[1]}, ${eventData[2]}, []]\n`;
+    
+    if (mlConsole) {
+        mlConsole.value += textOutput;
+        mlConsole.scrollTop = mlConsole.scrollHeight; // Auto-scroll to bottom
+    }
+}
+
+// Bind the button
+function startListener() {
+    	// Ensure litePlay has initialized the audio_context
+    	if (!window.audio_context) {
+    	    console.error("Start the litePlay engine first!");
+    	    return;
+    	}
+
+    	const isNowListening = toggleListening(window.audio_context, handleNewMusicalEvent);
+    
+//    if (isNowListening) {
+//	    listenBtn.style.color = "red";
+//    } else {
+//        listenBtn.innerHTML = "&#128066; <b>LISTEN</b>";
+//        listenBtn.style.color = ""; // reset to default
+//    }
+}
+>>>>>>> main
