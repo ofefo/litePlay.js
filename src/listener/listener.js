@@ -35,7 +35,7 @@ export async function toggleListening(audioCtx, onEventDetected) {
   if (!essentia) essentia = new Essentia(EssentiaWASM);
 
   try {
-    await audioCtx.audioWorklet.addModule("./src/listener/processor.js");
+    await audioCtx.audioWorklet.addModule("./listener/processor.js");
 
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: true,
