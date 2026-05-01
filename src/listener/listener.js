@@ -1,13 +1,13 @@
 import Essentia from "https://unpkg.com/essentia.js@0.1.3/dist/essentia.js-core.es.min.js";
 import { EssentiaWASM } from "https://unpkg.com/essentia.js@0.1.3/dist/essentia-wasm.es.js";
 
-// --- System Variables ---
+// System Variables
 let essentia = null;
 let isListening = false;
 let workletNode = null;
 let micSource = null;
 
-// --- Analysis State ---
+// Analysis State
 const onsetThreshold = 0.02;
 let isSounding = false;
 let eventStartTime = 0;
@@ -18,25 +18,23 @@ let lastNoteEndTime = 0;
 let recentPauses = [];
 let silenceThreshold = 0.5;
 
-// --- Global Exposes ---
+// Global Exposes
 window.allEvents = [];
-window.lastMelody = [];
 window.lastEvent = [];
+window.lastMelody = [];
+window.lastRhythm = [];
+window.lastAmps = [];
+window.lastPhrase = [];
 
-/**
- * Toggles the machine listening state.
- */
+// Toggles the machine listening state
 export async function toggleListening(audioCtx, onEventDetected) {
-  if (isListening) {
-    stopListening();
-    return false;
-  }
-
   if (!essentia) essentia = new Essentia(EssentiaWASM);
 
   try {
+    // Define worklet
     await audioCtx.audioWorklet.addModule("./src/listener/processor.js");
 
+    // Ask for audio input
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: true,
       video: false,
@@ -66,10 +64,7 @@ export async function toggleListening(audioCtx, onEventDetected) {
   }
 }
 
-// -----------------------------------------------------------------
-// Core Processing Modules
-// -----------------------------------------------------------------
-
+// is Sounding
 function handleSoundingFrame(vectorData, rms, currentTime) {
   if (!isSounding) {
     triggerNoteOn(currentTime);
@@ -77,6 +72,7 @@ function handleSoundingFrame(vectorData, rms, currentTime) {
   extractFeatures(vectorData, rms);
 }
 
+// is Silent
 function handleSilentFrame(currentTime, onEventDetected) {
   if (isSounding) {
     triggerNoteOff(currentTime, onEventDetected);
@@ -85,10 +81,7 @@ function handleSilentFrame(currentTime, onEventDetected) {
   }
 }
 
-// -----------------------------------------------------------------
 // Sub-Routines
-// -----------------------------------------------------------------
-
 function triggerNoteOn(currentTime) {
   isSounding = true;
   eventStartTime = currentTime;
@@ -105,7 +98,7 @@ function triggerNoteOff(currentTime, onEventDetected) {
   isSounding = false;
   const duration = currentTime - eventStartTime;
 
-  if (duration > 0.01) {
+  if (duration > 0.003) {
     const eventData = processEventData(framePitches, frameLoudness, duration);
     saveEventData(eventData);
 
@@ -146,13 +139,20 @@ function checkPhraseCompletion(currentTime) {
 }
 
 function finalizePhrase() {
-  window.lastMelody = [...currentPhrase];
+  window.lastMelody = currentPhrase.map((event) => event[0]);
+  window.lastAmps = currentPhrase.map((event) => event[1]);
+  window.lastRhythm = currentPhrase.map((event) => event[2]);
+  window.lastPhrase = [...currentPhrase];
+
   currentPhrase = [];
 
   const mlConsole = document.getElementById("ml-console");
   if (mlConsole) {
     const logText = `> Phrase grouped: ${window.lastMelody.length} events. (Threshold: ${silenceThreshold.toFixed(2)}s)\n`;
-    const arrayText = JSON.stringify(window.lastMelody) + "\n\n";
+    const arrayText =
+      `Melody: ${JSON.stringify(window.lastMelody)}\n` +
+      `Rhythm: ${JSON.stringify(window.lastRhythm)}\n` +
+      `Amps:   ${JSON.stringify(window.lastAmps)}\n\n`;
     mlConsole.value += logText + arrayText;
     mlConsole.scrollTop = mlConsole.scrollHeight;
   }
@@ -161,7 +161,7 @@ function finalizePhrase() {
 function saveEventData(eventData) {
   window.lastEvent = eventData;
   window.lastPitch = eventData[0];
-  window.lastAmp = eventData[1];
+  window.lastLoudness = eventData[1];
   window.lastDur = eventData[2];
 
   window.allEvents.push(eventData);
@@ -180,9 +180,8 @@ function processEventData(pitches, loudnesses, duration) {
 
   return [
     midiValue,
-    parseFloat(avgLoudness.toFixed(4)),
-    parseFloat(duration.toFixed(3)),
-    [],
+    parseFloat(avgLoudness.toFixed(2)),
+    parseFloat(duration.toFixed(2)),
   ];
 }
 
