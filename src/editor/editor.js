@@ -277,7 +277,7 @@ let hasListenerStarted = false;
 
 // Create the callback function to handle incoming data
 function handleNewMusicalEvent(eventData) {
-  const textOutput = `Event: [${eventData[0]}, ${eventData[1]}, ${eventData[2]}]\n`;
+  const textOutput = `Event: [${eventData[0]}, ${eventData[1]}, ${eventData[2]}, ${eventData[3]}]\n`;
 
   const mlConsole = document.getElementById("ml-console");
 

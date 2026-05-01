@@ -8,9 +8,10 @@ let workletNode = null;
 let micSource = null;
 
 // Analysis State
-const onsetThreshold = 0.02;
 let isSounding = false;
-let eventStartTime = 0;
+const onsetThreshold = 0.02;
+let eventOnset = 0;
+let phraseOnset = 0;
 let framePitches = [];
 let frameLoudness = [];
 let currentPhrase = [];
@@ -23,6 +24,7 @@ window.allEvents = [];
 window.lastEvent = [];
 window.lastMelody = [];
 window.lastRhythm = [];
+window.lastOnsetTimes = [];
 window.lastAmps = [];
 window.lastPhrase = [];
 
@@ -84,10 +86,13 @@ function handleSilentFrame(currentTime, onEventDetected) {
 // Sub-Routines
 function triggerNoteOn(currentTime) {
   isSounding = true;
-  eventStartTime = currentTime;
+  eventOnset = currentTime;
 
   if (lastNoteEndTime > 0) {
-    updateDynamicThreshold(currentTime);
+    updateSilenceThreshold(currentTime);
+  }
+  if (currentPhrase.length === 0) {
+    phraseOnset = eventOnset;
   }
 
   framePitches = [];
@@ -96,10 +101,17 @@ function triggerNoteOn(currentTime) {
 
 function triggerNoteOff(currentTime, onEventDetected) {
   isSounding = false;
-  const duration = currentTime - eventStartTime;
+  const duration = currentTime - eventOnset;
 
-  if (duration > 0.003) {
-    const eventData = processEventData(framePitches, frameLoudness, duration);
+  if (duration > 0.01) {
+    const relativeOnsetTime = eventOnset - phraseOnset;
+    const eventData = processEventData(
+      framePitches,
+      frameLoudness,
+      relativeOnsetTime,
+      duration,
+    );
+
     saveEventData(eventData);
 
     if (onEventDetected) onEventDetected(eventData);
@@ -118,7 +130,7 @@ function extractFeatures(vectorData, rms) {
   frameLoudness.push(rms);
 }
 
-function updateDynamicThreshold(currentTime) {
+function updateSilenceThreshold(currentTime) {
   const pauseDuration = currentTime - lastNoteEndTime;
   recentPauses.push(pauseDuration);
 
@@ -141,7 +153,8 @@ function checkPhraseCompletion(currentTime) {
 function finalizePhrase() {
   window.lastMelody = currentPhrase.map((event) => event[0]);
   window.lastAmps = currentPhrase.map((event) => event[1]);
-  window.lastRhythm = currentPhrase.map((event) => event[2]);
+  window.lastOnsetTimes = currentPhrase.map((event) => event[2]);
+  window.lastRhythm = currentPhrase.map((event) => event[3]);
   window.lastPhrase = [...currentPhrase];
 
   currentPhrase = [];
@@ -151,8 +164,8 @@ function finalizePhrase() {
     const logText = `> Phrase grouped: ${window.lastMelody.length} events. (Threshold: ${silenceThreshold.toFixed(2)}s)\n`;
     const arrayText =
       `Melody: ${JSON.stringify(window.lastMelody)}\n` +
-      `Rhythm: ${JSON.stringify(window.lastRhythm)}\n` +
-      `Amps:   ${JSON.stringify(window.lastAmps)}\n\n`;
+      `Amps:   ${JSON.stringify(window.lastAmps)}\n` +
+      `Rhythm: ${JSON.stringify(window.lastRhythm)}\n\n`;
     mlConsole.value += logText + arrayText;
     mlConsole.scrollTop = mlConsole.scrollHeight;
   }
@@ -162,14 +175,26 @@ function saveEventData(eventData) {
   window.lastEvent = eventData;
   window.lastPitch = eventData[0];
   window.lastLoudness = eventData[1];
-  window.lastDur = eventData[2];
+  window.lastOnsetTime = eventData[2];
+  window.lastDur = eventData[3];
 
   window.allEvents.push(eventData);
   currentPhrase.push(eventData);
 }
 
-function processEventData(pitches, loudnesses, duration) {
-  const avgLoudness = loudnesses.reduce((a, b) => a + b, 0) / loudnesses.length;
+const normAmp = (loudnesses) => {
+  if (!loudnesses || loudnesses.length === 0) return 0;
+  const peakRms = Math.max(...loudnesses);
+  if (peakRms <= 0) return 0;
+  const db = 20 * Math.log10(peakRms);
+  const minDb = -50; // Noise floor becomes 0.0
+  const maxDb = -10; // Maximum instrument volume becomes 1.0
+  const normalized = (db - minDb) / (maxDb - minDb);
+  return Math.max(0, Math.min(1, normalized));
+};
+
+function processEventData(pitches, loudnesses, onsetTime, duration) {
+  const avgLoudness = normAmp(loudnesses);
   let avgPitchHz = 0;
   let midiValue = 0;
 
@@ -181,7 +206,8 @@ function processEventData(pitches, loudnesses, duration) {
   return [
     midiValue,
     parseFloat(avgLoudness.toFixed(2)),
-    parseFloat(duration.toFixed(2)),
+    parseFloat(onsetTime.toFixed(3)),
+    parseFloat(duration.toFixed(3)),
   ];
 }
 
