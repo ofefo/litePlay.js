@@ -23,18 +23,19 @@ maxalloc 99, 1
 //reverb 
 garev1 init 0
 garev2 init 0
+
+//---------------------------------------------
 // this instrument parses MIDI input
 //   to trigger the GM soundfont synthesis
-//   instrument (instr 10
-//
+//   instrument (instr 10)
 instr 1
-idkit = 317 /* drum-kit preset was 317*/
-tableiw idkit, 9, 1
-irel = 0.5 /* release envelope */
-
-ipg = 1
-ivol = 2
-ipan = 3
+	idkit = 317 /* drum-kit preset was 317*/
+	tableiw idkit, 9, 1
+	irel = 0.5 /* release envelope */
+	
+	ipg = 1
+	ivol = 2
+	ipan = 3
 
 nxt:
   kst, kch, kd1, kd2 midiin
@@ -128,7 +129,6 @@ nxt:
     endif
      kgoto nxt
   endif
-
 endin
 
 /* topmost cf */
@@ -175,115 +175,113 @@ endin
 
 // sample playback
 instr 11
-irel table p7,26
-ifo table p6,10
-ifn table p6,9
-iamp table p5,5
-iln = ftlen(ifn)/(ftsr(ifn)*ftchnls(ifn))
-imicro = 2^(frac(p4)/12)
-ipitch = imicro*cpsmidinn(p4)/cpsmidinn(ifo)
-kstart table p6,11
-kend table p6,12
-kstart = kstart > 0 ? kstart : 0;
-klend = kend > 0 ? kend : iln;
-kfade table p6, 13
-kpitch table p7, 14
-kpan  table p7, 3
-kpan = (kpan - 64)/128
+	irel table p7,26
+	ifo table p6,10
+	ifn table p6,9
+	iamp table p5,5
+	iln = ftlen(ifn)/(ftsr(ifn)*ftchnls(ifn))
+	imicro = 2^(frac(p4)/12)
+	ipitch = imicro*cpsmidinn(p4)/cpsmidinn(ifo)
+	kstart table p6,11
+	kend table p6,12
+	kstart = kstart > 0 ? kstart : 0;
+	klend = kend > 0 ? kend : iln;
+	kfade table p6, 13
+	kpitch table p7, 14
+	kpan  table p7, 3
+	kpan = (kpan - 64)/128
+	
+	aenv linenr iamp,0,irel,0.01 
+	if ftchnls(ifn) == 1 then
+		a1 flooper2 iamp,ipitch*kpitch,kstart,klend,kfade,ifn
+		a1 = a1*aenv
+		a2 = a1*aenv
+		else 
+		a1,a2 flooper2 iamp,ipitch*kpitch,kstart,klend,kfade,ifn 
+		a1 = a1*aenv
+		a2 = a2*aenv
+	endif
 
-aenv linenr iamp,0,irel,0.01 
-if ftchnls(ifn) == 1 then
-a1 flooper2 iamp,ipitch*kpitch,kstart,klend,kfade,ifn
-a1 = a1*aenv
-a2 = a1*aenv
-else 
-a1,a2 flooper2 iamp,ipitch*kpitch,kstart,klend,kfade,ifn 
-a1 = a1*aenv
-a2 = a2*aenv
-endif
-
-a1 *= (0.5-kpan/2)
-a2 *= (0.5+kpan/2)
-krev table p7,8
-garev1 += a1*krev
-garev2 += a2*krev
-	//send to master
-	gaLeft = gaLeft + a1
-	gaRight = gaRight + a2
-if kend == 0 then
- kend = (iln - irel*2.1)/(ipitch*kpitch)  
- if timeinsts() >= kend then
-  turnoff 
- endif
-endif              
+	a1 *= (0.5-kpan/2)
+	a2 *= (0.5+kpan/2)
+	krev table p7,8
+	garev1 += a1*krev
+	garev2 += a2*krev
+		//send to master
+		gaLeft = gaLeft + a1
+		gaRight = gaRight + a2
+	if kend == 0 then
+		kend = (iln - irel*2.1)/(ipitch*kpitch)  
+	 	if timeinsts() >= kend then
+	  		turnoff 
+	 	endif
+	endif              
 endin
-
 
 // sample playback (spectral)
 // p6 is pgm -> sample num
 instr 12
+	iatt table p7,23
+	idec table p7,24
+	isus table p7,25
+	ire table p7,26
+	ifo table p6,10
+	ifn table p6,9
+	iamp table p5,5
+	iln = ftlen(ifn)/(ftsr(ifn)*ftchnls(ifn))
+	imicro = 2^(frac(p4)/12)
+	ipitch = imicro*cpsmidinn(p4)/cpsmidinn(ifo)
+	kstart table p6,11
+	kend table p6,12
+	kstart = kstart > 0 ? kstart : 0;
+	klend = kend > 0 ? kend : iln;
+	kpitch table p7, 14
+	kpan  table p7, 3
+	kpan = (kpan - 64)/128
+	ks0  table p6, 15  // sample speed ref per pgm
+	ksp  table p7, 16  // playback speed per chn
+	ksp *= ks0
+	aph phasor ksp/(klend - kstart)
+	atimpt = kstart + aph*(klend - kstart)
+	aenv madsr iatt+1/kr, idec, isus, ire
+	if ftchnls(ifn) == 1 then
+		a1 mincer atimpt,iamp,ipitch*kpitch,ifn,1
+		a1 = a1*aenv
+		a2 = a1*aenv
+	else 
+		a1,a2 mincer atimpt,iamp,ipitch*kpitch,ifn,1 
+		a1 = a1*aenv
+		a2 = a2*aenv
+	endif
 
-iatt table p7,23
-idec table p7,24
-isus table p7,25
-ire table p7,26
-ifo table p6,10
-ifn table p6,9
-iamp table p5,5
-iln = ftlen(ifn)/(ftsr(ifn)*ftchnls(ifn))
-imicro = 2^(frac(p4)/12)
-ipitch = imicro*cpsmidinn(p4)/cpsmidinn(ifo)
-kstart table p6,11
-kend table p6,12
-kstart = kstart > 0 ? kstart : 0;
-klend = kend > 0 ? kend : iln;
-kpitch table p7, 14
-kpan  table p7, 3
-kpan = (kpan - 64)/128
-ks0  table p6, 15  // sample speed ref per pgm
-ksp  table p7, 16  // playback speed per chn
-ksp *= ks0
-aph phasor ksp/(klend - kstart)
-atimpt = kstart + aph*(klend - kstart)
-aenv madsr iatt+1/kr, idec, isus, ire
-if ftchnls(ifn) == 1 then
-a1 mincer atimpt,iamp,ipitch*kpitch,ifn,1
-a1 = a1*aenv
-a2 = a1*aenv
-else 
-a1,a2 mincer atimpt,iamp,ipitch*kpitch,ifn,1 
-a1 = a1*aenv
-a2 = a2*aenv
-endif
+	iatt table p7,19
+	idec table p7,20
+	isus table p7,21
+	irel table p7,22
+	kcfi table p7,17
+	kres table p7,18
+	kcfi += madsr(iatt+1/kr,idec,isus,irel)*table(p7,27)
+	kcf = exp((kcfi < 1 ? kcfi : 1)*gicf)
+	a1f vclpf a1,kcf,kres
+	a2f vclpf a2,kcf,kres
+	a1 = a1f
+	a2 = a2f
 
-iatt table p7,19
-idec table p7,20
-isus table p7,21
-irel table p7,22
-kcfi table p7,17
-kres table p7,18
-kcfi += madsr(iatt+1/kr,idec,isus,irel)*table(p7,27)
-kcf = exp((kcfi < 1 ? kcfi : 1)*gicf)
-a1f vclpf a1,kcf,kres
-a2f vclpf a2,kcf,kres
-a1 = a1f
-a2 = a2f
-
-a1 *= (0.5-kpan/2)
-a2 *= (0.5+kpan/2)
-krev table p7,8
-garev1 += a1*krev
-garev2 += a2*krev
+	a1 *= (0.5-kpan/2)
+	a2 *= (0.5+kpan/2)
+	krev table p7,8
+	garev1 += a1*krev
+	garev2 += a2*krev
 	
 	//send to master
 	gaLeft = gaLeft + (a1*.2)
 	gaRight = gaRight + (a2*.2)
-if kend == 0 then
- kend = (iln - ire*2.1)/ksp;///(ipitch*ksp)  
- if timeinsts() >= kend then
-  turnoff 
- endif
-endif              
+	if kend == 0 then
+		kend = (iln - ire*2.1)/ksp;///(ipitch*ksp)  
+		if timeinsts() >= kend then
+			turnoff 
+		endif
+	endif              
 endin
 
 // loading tables
