@@ -273,6 +273,7 @@ function stopRecording() {
   }
 }
 
+//add sample
 document
   .getElementById("sample-btn")
   .addEventListener("change", async (event) => {

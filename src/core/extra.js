@@ -1,16 +1,45 @@
-export function transpose(melody, semitones) {
-  return melody.map((note) => note + semitones);
+export function midiToName(midiValue) {
+  if (midiValue < 0 || midiValue > 127)
+    return console.log("Pitch out of bounds (0-127).");
+  const pitchClasses = [
+    "C",
+    "Cs",
+    "D",
+    "Ds/Eb",
+    "E",
+    "F",
+    "Fs/Gb",
+    "G",
+    "Gs/Ab",
+    "A",
+    "As/Bb",
+    "B",
+  ];
+  let pitch = pitchClasses[midiValue % 12];
+  let octave = Math.floor(midiValue / 12) - 1;
+  let octaveName = octave === -1 ? "-1" : octave;
+  let name = pitch + octaveName;
+  return name;
 }
 
-export function randomChord(numNotes = 4) {
-  const minPitch = rndInt(24, 60);
-  const maxPitch = minPitch + 24;
+export function transpose(melody, semitones) {
+  return melody.map((note) => midiToName(note + semitones));
+}
 
+export function randomChord(numNotes = 4, pitchGenerator = midPitch) {
   let notes = new Set();
+  let maxAttempts;
+  if (pitchGenerator != midPitch) {
+    maxAttempts = 36;
+  } else {
+    maxAttempts = 24;
+  }
+  let attempts = 0;
 
-  while (notes.size < numNotes) {
-    let randomPitch = rndInt(minPitch, maxPitch);
-    notes.add(randomPitch);
+  while (notes.size < numNotes && attempts < maxAttempts) {
+    let getPitch = Math.round(pitchGenerator());
+    notes.add(getPitch);
+    attempts++;
   }
 
   return Array.from(notes).sort((a, b) => a - b);
@@ -78,29 +107,6 @@ export function intervalSequence(
 
 export function invert(melody, axis) {
   return melody.map((note) => axis + ((((axis - note) % 12) + 12) % 12));
-}
-
-export function midiToName(midiValue) {
-  if (midiValue < 0 || midiValue > 127)
-    return console.log("Pitch out of bounds (0-127).");
-  const pitchClasses = [
-    "C",
-    "Cs",
-    "D",
-    "Ds/Eb",
-    "E",
-    "F",
-    "Fs/Gb",
-    "G",
-    "Gs/Ab",
-    "A",
-    "As/Bb",
-    "B",
-  ];
-  let pitch = pitchClasses[midiValue % 12];
-  let octave = Math.floor(midiValue / 12) - 1;
-  let octaveName = octave === -1 ? "-1" : octave;
-  return console.log(pitch + octaveName);
 }
 
 export function tempoVariation(

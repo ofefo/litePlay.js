@@ -749,7 +749,7 @@ const lowpmax = 48.0;
 const midpmin = 48.0;
 const midpmax = 72.0;
 const hipmin = 72.0;
-const hipmax = 96.0;
+const hipmax = 108.0;
 
 export function lowPitch() {
   return rnd(lowpmin, lowpmax);
