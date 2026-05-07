@@ -255,6 +255,27 @@ function stopRecording() {
   }
 }
 
+document
+  .getElementById("sample-btn")
+  .addEventListener("change", async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (!csound) {
+      console.log("Start engine before uploading samples...");
+    }
+
+    const fileName = file.name;
+    const arrayBuffer = await file.arrayBuffer();
+    await csound.fs.writeFile(fileName, new Uint8Array(arrayBuffer));
+    const userSample = sample.create();
+    csound.inputMessage(`i2 0 0.1 "${fileName}" 60 ${userSample.number}`);
+    const varName = fileName.split(".")[0].replace(/[^a-zA-Z0-9]/g, "_");
+    window[varName] = userSample;
+    console.log(
+      `Successfully uploaded ${fileName}.\n Use '${varName}' to access it in your code.`,
+    );
+  });
+
 // buttons actions
 const runButton = document.querySelector("#run-btn");
 runButton.addEventListener("click", runLP);

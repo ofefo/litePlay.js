@@ -7,6 +7,7 @@
 	<title>litePlay</title>
 
 	<script src="./src/editor/litePlay.dev.js"></script>
+	<script src="./src/core/extra.js"></script>
 
 	<link rel="stylesheet" crossorigin href="./assets/css/style.css">
 </head>
@@ -29,6 +30,10 @@
 				<button class="button" id="save-btn">&#9660; <b>SAVE CODE</b></button>
 				<button class="button" id="rec-btn">&#9673; <b>REC</b></button>
 				<button class="button" id="stopRec-btn">&#9689; <b>STOP REC</b></button>
+				<input type="file" id="sample-btn" style="display:none" accept="audio/*">
+				<button class="button" onclick="document.getElementById('sample-btn').click()">
+				    &#8682; <b>ADD SAMPLE</b>
+				</button>
 			</div>
 		</div>
 		<div id="editor-container" class="cm-container"></div>
