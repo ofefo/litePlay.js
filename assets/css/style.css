@@ -13,7 +13,7 @@ div.text{
 }
  
 .button {
-	width: 5%;
+	width: 125px;
 	padding: .2%;
 	transition: filter .5s ease;
 	cursor: pointer;
