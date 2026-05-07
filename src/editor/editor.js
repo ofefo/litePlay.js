@@ -70,20 +70,31 @@ const stopLP = async (event) => {
 
 // import constants for autocompletion
 import * as litePlayLang from "../core/litePlay.js";
+import * as extra from "../core/extra.js";
+import * as listener from "../listener/listener.js";
 const lpKeys = Object.keys(litePlayLang);
+const extraKeys = Object.keys(extra);
+const listenerKeys = Object.keys(listener);
 
 function litePlayCompletions(context) {
   let word = context.matchBefore(/[a-zA-Z0-9_À-ÿ]+/);
   if (!word && !context.explicit) return null;
 
-  return {
-    from: word ? word.from : context.pos,
-    options: lpKeys.map((keyword) => {
-      // check the actual type of the exported item
-      const itemValue = litePlayLang[keyword];
+  // 1. Define the different sources of keywords
+  const sources = [
+    { keys: lpKeys, lib: litePlayLang, sourceName: "litePlay" },
+    { keys: extraKeys, lib: extra, sourceName: "extra" },
+    { keys: listenerKeys, lib: listener, sourceName: "listener" },
+  ];
+
+  // 2. Flatten all keys into a single array of options
+  const options = sources.flatMap((source) =>
+    source.keys.map((keyword) => {
+      // Look up the actual value in the corresponding library namespace
+      const itemValue = source.lib[keyword];
       const jsType = typeof itemValue;
 
-      // map JS types to CodeMirror autocomplete types
+      // Map JS types to CodeMirror autocomplete icons/types
       let cmType = "variable";
       if (jsType === "function") cmType = "function";
       else if (jsType === "number" || jsType === "string") cmType = "constant";
@@ -92,10 +103,15 @@ function litePlayCompletions(context) {
       return {
         label: keyword,
         type: cmType,
-        detail: jsType,
-        info: "litePlay",
+        detail: jsType, // Shows "function" or "object" next to the name
+        info: source.sourceName, // Tooltip showing which file it came from
       };
     }),
+  );
+
+  return {
+    from: word ? word.from : context.pos,
+    options: options,
   };
 }
 
@@ -136,6 +152,8 @@ document.addEventListener(
 
         // expose all of litePlay.js exports to the global window
         Object.assign(window, liteplayEngine);
+        Object.assign(window, extra);
+        Object.assign(window, listener);
         console.log("litePlay is ready!");
 
         // change button colors when ready
