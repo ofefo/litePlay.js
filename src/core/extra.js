@@ -139,7 +139,7 @@ export function tempoVariation(
   l = eventList.create(),
 ) {
   if (steps <= 0) {
-    l.play();
+    return l;
   } else {
     const currentEvent = [what, amp, when, duration, instrument];
     l.add(currentEvent);
@@ -147,7 +147,7 @@ export function tempoVariation(
     const nextDuration = duration * ratio;
     const nextWhen = when + duration;
 
-    tempoVariation(
+    return tempoVariation(
       [what, amp, nextWhen, nextDuration, instrument],
       steps - 1,
       ratio,
@@ -164,7 +164,7 @@ export function ampVariation(
 ) {
   let first = amp;
   if (!steps) {
-    l.play();
+    return l;
   } else {
     let ampStep = (last - first) / steps;
     let currentEvent = [what, first, when, duration, instrument];
@@ -176,9 +176,8 @@ export function ampVariation(
       duration,
       instrument,
     ];
-    ampVariation(nextEvent, last, steps - 1, l);
+    return ampVariation(nextEvent, last, steps - 1, l);
   }
-  return l;
 }
 
 export function retrograde(list) {
@@ -188,12 +187,29 @@ export function retrograde(list) {
   });
 }
 
-export function rotate(list, steps) {
+export function rotate(list, steps = 1) {
   return list.map((note, index, arr) => {
     let newIndex = (index + steps) % arr.length;
     if (newIndex < 0) newIndex += arr.length;
     return arr[newIndex];
   });
+}
+
+export function rotationSequence(
+  [what = 60, amp = 0.9, when = 0, duration = 1, instrument = piano] = [],
+  durationList,
+) {
+  const l = eventList.create();
+  let currentTime = when;
+  let currentPattern = [...durationList];
+  for (let i = 0; i < durationList.length; i++) {
+    for (let dur of currentPattern) {
+      l.add([what, amp, currentTime, dur, instrument]);
+      currentTime += dur;
+    }
+    currentPattern = rotate(currentPattern, 1);
+  }
+  return l;
 }
 
 export function tangle(listA, listB) {
@@ -204,4 +220,16 @@ export function tangle(listA, listB) {
     listC.push(listB[i % listB.length]);
   }
   return listC;
+}
+
+export function autoPan(instrument, hertz) {
+  if (instrument.panInterval) {
+    clearInterval(instrument.panInterval);
+  }
+
+  instrument.panInterval = setInterval(() => {
+    let timeInSeconds = Date.now() / 1000;
+    let panValue = Math.sin((timeInSeconds / hertz) * Math.PI * 2);
+    instrument.pan(panValue);
+  }, 30);
 }
