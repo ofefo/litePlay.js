@@ -55,7 +55,7 @@ export function randomChord(
 }
 
 export function arpeggio(
-  chord = randomChord(),
+  chord = randomChord(4, midPitch, true),
   repetitions = 1,
   speed = 0.25,
   direction = "upAndDown",
@@ -65,7 +65,7 @@ export function arpeggio(
   l = eventList.create(),
 ) {
   if (repetitions <= 0) {
-    l.play();
+    return l;
   } else {
     let pattern = [];
     if (direction === "down") {
@@ -83,7 +83,7 @@ export function arpeggio(
       l.add([pattern[i], amp, onset, speed, instrument]);
       onset += speed;
     }
-    arpeggio(
+    return arpeggio(
       chord,
       repetitions - 1,
       speed,
@@ -106,11 +106,11 @@ export function intervalSequence(
   ] = [],
   interval = rndInt(1, 11),
   repetitions = 5,
-  up = true,
+  up = choose(true, false),
   l = eventList.create(),
 ) {
   if (!repetitions) {
-    l.play();
+    return l;
   } else {
     const currentEvent = [note, amp, when, duration, instrument];
     l.add(currentEvent);
@@ -122,7 +122,7 @@ export function intervalSequence(
     }
     let nextWhen = when + duration;
     const nextEvent = [nextNote, amp, nextWhen, duration, instrument];
-    intervalSequence(nextEvent, interval, repetitions - 1, up, l);
+    return intervalSequence(nextEvent, interval, repetitions - 1, up, l);
   }
 }
 
@@ -154,4 +154,54 @@ export function tempoVariation(
       l,
     );
   }
+}
+
+export function ampVariation(
+  [what = 60, amp = 0.1, when = 0, duration = 1, instrument = piano] = [],
+  last = 1,
+  steps = 2,
+  l = eventList.create(),
+) {
+  let first = amp;
+  if (!steps) {
+    l.play();
+  } else {
+    let ampStep = (last - first) / steps;
+    let currentEvent = [what, first, when, duration, instrument];
+    l.add(currentEvent);
+    let nextEvent = [
+      what,
+      first + ampStep,
+      when + duration,
+      duration,
+      instrument,
+    ];
+    ampVariation(nextEvent, last, steps - 1, l);
+  }
+  return l;
+}
+
+export function retrograde(list) {
+  return list.map((item, index, arr) => {
+    let oppositeIndex = arr.length - 1 - index;
+    return arr[oppositeIndex];
+  });
+}
+
+export function rotate(list, steps) {
+  return list.map((note, index, arr) => {
+    let newIndex = (index + steps) % arr.length;
+    if (newIndex < 0) newIndex += arr.length;
+    return arr[newIndex];
+  });
+}
+
+export function tangle(listA, listB) {
+  let listC = [];
+  let size = Math.max(listA.length, listB.length);
+  for (let i = 0; i < size; i++) {
+    listC.push(listA[i % listA.length]);
+    listC.push(listB[i % listB.length]);
+  }
+  return listC;
 }
