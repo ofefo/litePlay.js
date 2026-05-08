@@ -22,11 +22,15 @@ export function midiToName(midiValue) {
   return name;
 }
 
-export function transpose(melody, semitones) {
+export function transpose(melody = [], semitones = 0) {
   return melody.map((note) => midiToName(note + semitones));
 }
 
-export function randomChord(numNotes = 4, pitchGenerator = midPitch) {
+export function randomChord(
+  size = 4,
+  pitchGenerator = midPitch,
+  microtonal = false,
+) {
   let notes = new Set();
   let maxAttempts;
   if (pitchGenerator != midPitch) {
@@ -35,9 +39,14 @@ export function randomChord(numNotes = 4, pitchGenerator = midPitch) {
     maxAttempts = 24;
   }
   let attempts = 0;
+  let getPitch;
 
-  while (notes.size < numNotes && attempts < maxAttempts) {
-    let getPitch = Math.round(pitchGenerator());
+  while (notes.size < size && attempts < maxAttempts) {
+    if (microtonal === false) {
+      getPitch = Math.round(pitchGenerator());
+    } else {
+      getPitch = pitchGenerator();
+    }
     notes.add(getPitch);
     attempts++;
   }
@@ -47,19 +56,18 @@ export function randomChord(numNotes = 4, pitchGenerator = midPitch) {
 
 export function arpeggio(
   chord = randomChord(),
-  repeats = 1,
-  speed = 0.15,
+  repetitions = 1,
+  speed = 0.25,
   direction = "upAndDown",
   amp = 1,
   instrument = piano,
   onset = 0,
   l = eventList.create(),
 ) {
-  if (repeats <= 0) {
+  if (repetitions <= 0) {
     l.play();
   } else {
     let pattern = [];
-
     if (direction === "down") {
       pattern = [...chord].reverse();
     } else if (direction === "upAndDown") {
@@ -71,24 +79,37 @@ export function arpeggio(
       // Default to "up"
       pattern = [...chord];
     }
-
     for (let i = 0; i < pattern.length; i++) {
       l.add([pattern[i], amp, onset, speed, instrument]);
       onset += speed;
     }
-
-    arpeggio(chord, repeats - 1, speed, direction, amp, instrument, onset, l);
+    arpeggio(
+      chord,
+      repetitions - 1,
+      speed,
+      direction,
+      amp,
+      instrument,
+      onset,
+      l,
+    );
   }
 }
 
 export function intervalSequence(
-  [note = 60, amp = 0.9, when = 0, duration = 0.25, instrument = piano] = [],
+  [
+    note = midPitch(),
+    amp = 0.9,
+    when = 0,
+    duration = 0.25,
+    instrument = piano,
+  ] = [],
   interval = rndInt(1, 11),
-  repeats = 5,
+  repetitions = 5,
   up = true,
   l = eventList.create(),
 ) {
-  if (!repeats) {
+  if (!repetitions) {
     l.play();
   } else {
     const currentEvent = [note, amp, when, duration, instrument];
@@ -101,12 +122,14 @@ export function intervalSequence(
     }
     let nextWhen = when + duration;
     const nextEvent = [nextNote, amp, nextWhen, duration, instrument];
-    intervalSequence(nextEvent, interval, repeats - 1, up, l);
+    intervalSequence(nextEvent, interval, repetitions - 1, up, l);
   }
 }
 
-export function invert(melody, axis) {
-  return melody.map((note) => axis + ((((axis - note) % 12) + 12) % 12));
+export function invert(melody = [], axis = C4) {
+  return melody.map((note) =>
+    midiToName(axis + ((((axis - note) % 12) + 12) % 12)),
+  );
 }
 
 export function tempoVariation(
