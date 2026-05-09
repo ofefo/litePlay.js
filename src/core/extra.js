@@ -226,3 +226,18 @@ export function autoPan(instrument, hertz) {
     instrument.pan(panValue);
   }, 30);
 }
+
+// portuguese aliases
+export const midiParaNome = midiToName;
+export const transpor = transpose;
+export const acordeAleatorio = randomChord;
+export const arpejo = arpeggio;
+export const sequenciaIntervalar = intervalSequence;
+export const inverter = invert;
+export const variarTempo = tempoVariation;
+export const variarAmplitude = ampVariation;
+export const retrogradar = retrograde;
+export const rotacionar = rotate;
+export const sequenciaRotacao = rotationSequence;
+export const misturar = tangle;
+export const panAutomatico = autoPan;
