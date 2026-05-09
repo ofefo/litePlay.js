@@ -55,53 +55,46 @@ export function randomChord(
 }
 
 export function arpeggio(
-  chord = randomChord(4, midPitch, true),
-  repetitions = 1,
-  speed = 0.25,
-  direction = "upAndDown",
-  amp = 1,
-  instrument = piano,
-  onset = 0,
+  [what = 60, howLoud = 0.9, when = 0, howLong = 0.25, instrument = piano] = [],
+  noteList = randomChord(),
+  repeats = 1,
+  direction = "upDown",
   l = eventList.create(),
 ) {
-  if (repetitions <= 0) {
-    return l;
+  let currentTime = when;
+  let notesToPlay = [];
+
+  if (direction === "up") {
+    notesToPlay = [...noteList];
+  } else if (direction === "down") {
+    notesToPlay = [...noteList].reverse();
+  } else if (
+    direction === "up and down" ||
+    direction === "upDown" ||
+    direction === "upAndDown" ||
+    direction === "updown"
+  ) {
+    const downNotes = [...noteList].reverse().slice(1, -1);
+    notesToPlay = [...noteList, ...downNotes];
   } else {
-    let pattern = [];
-    if (direction === "down") {
-      pattern = [...chord].reverse();
-    } else if (direction === "upAndDown") {
-      pattern = [...chord];
-      for (let i = chord.length - 2; i > 0; i--) {
-        pattern.push(chord[i]);
-      }
-    } else {
-      // Default to "up"
-      pattern = [...chord];
-    }
-    for (let i = 0; i < pattern.length; i++) {
-      l.add([pattern[i], amp, onset, speed, instrument]);
-      onset += speed;
-    }
-    return arpeggio(
-      chord,
-      repetitions - 1,
-      speed,
-      direction,
-      amp,
-      instrument,
-      onset,
-      l,
-    );
+    notesToPlay = [...noteList];
   }
+
+  for (let i = 0; i < repeats; i++) {
+    for (let note of notesToPlay) {
+      l.add([note, howLoud, currentTime, howLong, instrument]);
+      currentTime += howLong;
+    }
+  }
+  return l;
 }
 
 export function intervalSequence(
   [
     note = midPitch(),
-    amp = 0.9,
+    howLoud = 0.9,
     when = 0,
-    duration = 0.25,
+    howLong = 0.25,
     instrument = piano,
   ] = [],
   interval = rndInt(1, 11),
@@ -112,7 +105,7 @@ export function intervalSequence(
   if (!repetitions) {
     return l;
   } else {
-    const currentEvent = [note, amp, when, duration, instrument];
+    const currentEvent = [note, howLoud, when, howLong, instrument];
     l.add(currentEvent);
     let nextNote;
     if (up) {
@@ -120,8 +113,8 @@ export function intervalSequence(
     } else {
       nextNote = note - interval;
     }
-    let nextWhen = when + duration;
-    const nextEvent = [nextNote, amp, nextWhen, duration, instrument];
+    let nextWhen = when + howLong;
+    const nextEvent = [nextNote, howLoud, nextWhen, howLong, instrument];
     return intervalSequence(nextEvent, interval, repetitions - 1, up, l);
   }
 }
@@ -133,7 +126,7 @@ export function invert(melody = [], axis = C4) {
 }
 
 export function tempoVariation(
-  [what = 60, amp = 0.9, when = 0, duration = 1, instrument = piano] = [],
+  [what = 60, howLoud = 0.9, when = 0, howLong = 1, instrument = piano] = [],
   steps = 10,
   ratio = 0.9,
   l = eventList.create(),
@@ -141,14 +134,14 @@ export function tempoVariation(
   if (steps <= 0) {
     return l;
   } else {
-    const currentEvent = [what, amp, when, duration, instrument];
+    const currentEvent = [what, howLoud, when, howLong, instrument];
     l.add(currentEvent);
 
-    const nextDuration = duration * ratio;
-    const nextWhen = when + duration;
+    const nextDuration = howLong * ratio;
+    const nextWhen = when + howLong;
 
     return tempoVariation(
-      [what, amp, nextWhen, nextDuration, instrument],
+      [what, howLoud, nextWhen, nextDuration, instrument],
       steps - 1,
       ratio,
       l,
@@ -157,23 +150,23 @@ export function tempoVariation(
 }
 
 export function ampVariation(
-  [what = 60, amp = 0.1, when = 0, duration = 1, instrument = piano] = [],
+  [what = 60, howLoud = 0.1, when = 0, howLong = 1, instrument = piano] = [],
   last = 1,
   steps = 2,
   l = eventList.create(),
 ) {
-  let first = amp;
+  let first = howLoud;
   if (!steps) {
     return l;
   } else {
-    let ampStep = (last - first) / steps;
-    let currentEvent = [what, first, when, duration, instrument];
+    let howLoudStep = (last - first) / steps;
+    let currentEvent = [what, first, when, howLong, instrument];
     l.add(currentEvent);
     let nextEvent = [
       what,
-      first + ampStep,
-      when + duration,
-      duration,
+      first + howLoudStep,
+      when + howLong,
+      howLong,
       instrument,
     ];
     return ampVariation(nextEvent, last, steps - 1, l);
@@ -196,15 +189,15 @@ export function rotate(list, steps = 1) {
 }
 
 export function rotationSequence(
-  [what = 60, amp = 0.9, when = 0, duration = 1, instrument = piano] = [],
-  durationList,
+  [what = 60, howLoud = 0.9, when = 0, howLong = 1, instrument = piano] = [],
+  howLongList,
 ) {
   const l = eventList.create();
   let currentTime = when;
-  let currentPattern = [...durationList];
-  for (let i = 0; i < durationList.length; i++) {
+  let currentPattern = [...howLongList];
+  for (let i = 0; i < howLongList.length; i++) {
     for (let dur of currentPattern) {
-      l.add([what, amp, currentTime, dur, instrument]);
+      l.add([what, howLoud, currentTime, dur, instrument]);
       currentTime += dur;
     }
     currentPattern = rotate(currentPattern, 1);
