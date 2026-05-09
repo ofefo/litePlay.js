@@ -1017,6 +1017,15 @@ export const silently = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // funções
 Instrument.prototype.toque = Instrument.prototype.play;
+
+export const eventos = eventList;
+eventos.toque = eventList.play;
+eventos.criar = eventList.create;
+eventos.adicionar = eventList.add;
+eventos.remover = eventList.remove;
+eventos.inserir = eventList.insert;
+eventos.limpar = eventList.clear;
+
 export const toque = play;
 export const pare = stop;
 export const instrumento = instrument;
