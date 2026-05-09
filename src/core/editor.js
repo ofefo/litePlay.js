@@ -32,19 +32,6 @@ console.log = function (...args) {
   }
 };
 
-// override function to print errors in console
-const originalError = console.error;
-console.error = function (...args) {
-  originalError.apply(console, args);
-  const message = args
-    .map((arg) => (arg instanceof Error ? arg.message : String(arg)))
-    .join(" ");
-  if (consoleOutput) {
-    consoleOutput.value += "ERROR: " + message + "\n";
-    consoleOutput.scrollTop = consoleOutput.scrollHeight;
-  }
-};
-
 // run and stop litePlay (must be before startState)
 function runLP() {
   try {
@@ -69,8 +56,8 @@ const stopLP = async (event) => {
 };
 
 // import constants for autocompletion
-import * as litePlayLang from "../core/litePlay.js";
-import * as extra from "../core/extra.js";
+import * as litePlayLang from "./litePlay.js";
+import * as extra from "./extra.js";
 import * as listener from "../listener/listener.js";
 const lpKeys = Object.keys(litePlayLang);
 const extraKeys = Object.keys(extra);

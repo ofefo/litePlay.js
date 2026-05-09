@@ -1,5 +1,13 @@
-// litePlay URL
-const lp_URL = "https://g-ubimus.github.io/litePlay.js/src/core/litePlay.js";
+// Check if the environment is local/development
+const isLocalEnv =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1" ||
+  window.location.protocol === "file:";
+
+// Dynamically assign the core module URL
+const lp_URL = isLocalEnv
+  ? "./litePlay.js"
+  : "https://g-ubimus.github.io/litePlay.js/src/core/litePlay.js";
 
 // MIDI NOTE constants
 

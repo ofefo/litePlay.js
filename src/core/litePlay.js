@@ -8,7 +8,7 @@ export let audio_context = null;
 // source URL for assets
 const srcurl = "./";
 // CSD file name
-const csd = "src/csound/litePlay.csd";
+const csd = "src/core/litePlay.csd";
 const sfont = "assets/audio/gm.sf2";
 
 // this is the JS function to start Csound
