@@ -23,7 +23,7 @@ export function midiToName(midiValue) {
 }
 
 export function transpose(melody = [], semitones = 0) {
-  return melody.map((note) => midiToName(note + semitones));
+  return melody.map((note) => note + semitones);
 }
 
 export function randomChord(
