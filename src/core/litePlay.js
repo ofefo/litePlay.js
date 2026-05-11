@@ -676,6 +676,10 @@ export async function reset() {
 // sub() function to have subdivisions for the rhythms in the sequencer
 export const sub = (...notes) => ({ isSub: true, notes });
 
+// alias for undefined
+export const any = undefined;
+
+//Generators
 export const rnd = (min, max) => Math.random() * (max - min) + min;
 
 export const rndInt = (min, max) =>
