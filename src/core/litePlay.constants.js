@@ -304,3 +304,13 @@ async function leveToque(codigo = null) {
   lt = await lpLoad();
   if (typeof codigo === "function") codigo();
 }
+
+// load extra module
+(async () => {
+  try {
+    const extra = await import("./extra.js");
+    Object.assign(window, extra);
+  } catch (err) {
+    console.warn("litePlay: Could not auto-load extra.js", err);
+  }
+})();
