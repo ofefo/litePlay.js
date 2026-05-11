@@ -5,14 +5,14 @@ export function midiToName(midiValue) {
     "C",
     "Cs",
     "D",
-    "Ds/Eb",
+    "Eb",
     "E",
     "F",
-    "Fs/Gb",
+    "Fs",
     "G",
-    "Gs/Ab",
+    "Ab",
     "A",
-    "As/Bb",
+    "Bb",
     "B",
   ];
   let pitch = pitchClasses[midiValue % 12];
