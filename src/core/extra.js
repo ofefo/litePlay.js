@@ -120,9 +120,7 @@ export function intervalSequence(
 }
 
 export function invert(melody = [], axis = C4) {
-  return melody.map((note) =>
-    midiToName(axis + ((((axis - note) % 12) + 12) % 12)),
-  );
+  return melody.map((note) => axis + ((((axis - note) % 12) + 12) % 12));
 }
 
 export function tempoVariation(
