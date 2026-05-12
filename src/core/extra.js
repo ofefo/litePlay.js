@@ -253,5 +253,5 @@ export const variarAmplitude = ampVariation;
 export const retrogradar = retrograde;
 export const rotacionar = rotate;
 export const sequenciaRotacao = rotationSequence;
-export const misturar = tangle;
+export const misturar = blend;
 export const panAutomatico = autoPan;
