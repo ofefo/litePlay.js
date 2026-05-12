@@ -186,14 +186,27 @@ export function rotate(list, steps = 1) {
   });
 }
 
+export function ostinato(
+  [what = 60, howLoud = 0.9, when = 0, howLong = 1, instrument = piano] = [],
+  repetitions,
+) {
+  const l = eventList.create([what, howLoud, when, howLong, instrument]);
+  let initialTime = when;
+  for (let i = 0, len = repetitions; i < len; i++) {
+    initialTime += howLong;
+    l.add([what, howLoud, initialTime, howLong, instrument]);
+  }
+  return l;
+}
+
 export function rotationSequence(
   [what = 60, howLoud = 0.9, when = 0, howLong = 1, instrument = piano] = [],
-  howLongList,
+  rhythmList,
 ) {
   const l = eventList.create();
   let currentTime = when;
-  let currentPattern = [...howLongList];
-  for (let i = 0; i < howLongList.length; i++) {
+  let currentPattern = [...rhythmList];
+  for (let i = 0; i < rhythmList.length; i++) {
     for (let dur of currentPattern) {
       l.add([what, howLoud, currentTime, dur, instrument]);
       currentTime += dur;
