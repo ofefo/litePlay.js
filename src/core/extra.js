@@ -188,13 +188,16 @@ export function rotate(list, steps = 1) {
 
 export function ostinato(
   [what = 60, howLoud = 0.9, when = 0, howLong = 1, instrument = piano] = [],
-  repetitions,
+  repetitions = 1,
+  rhythmList = [howLong],
 ) {
   const l = eventList.create([what, howLoud, when, howLong, instrument]);
   let initialTime = when;
   for (let i = 0, len = repetitions; i < len; i++) {
-    initialTime += howLong;
-    l.add([what, howLoud, initialTime, howLong, instrument]);
+    for (let j of rhythmList) {
+      initialTime += j;
+      l.add([what, howLoud, initialTime, howLong, instrument]);
+    }
   }
   return l;
 }
