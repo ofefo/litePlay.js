@@ -219,7 +219,7 @@ export function rotationSequence(
   return l;
 }
 
-export function tangle(listA, listB) {
+export function blend(listA, listB) {
   let listC = [];
   let size = Math.max(listA.length, listB.length);
   for (let i = 0; i < size; i++) {
