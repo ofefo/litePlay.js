@@ -774,6 +774,13 @@ export function hiPitch() {
 }
 export const highPitch = hiPitch;
 
+export function monotone(initialTone) {
+  return choose(
+    initialTone,
+    choose(initialTone - 1, initialTone, initialTone + 1),
+  );
+}
+
 //percussion instruments by Hornbostel-Sachs classification
 export const membranophoneList = [
   35, 36, 40, 41, 43, 45, 47, 48, 50, 63, 64, 65, 66,
