@@ -1,4 +1,4 @@
-// csound.js is the Csound WASM module
+// ceound.js is the Csound WASM module
 const csoundjs =
   "https://cdn.jsdelivr.net/npm/@csound/browser@6.18.5/dist/csound.js";
 // csound is the Csound engine object (null as we start)
@@ -668,8 +668,16 @@ export function stop() {
 
 export async function reset() {
   if (csound) {
+    stop();
     sequencer.stop();
-    await csound.inputMessage("i 200 0 0.1");
+    try {
+      await csound.stop();
+      csound = null;
+    } catch {
+      console.error("Restart failed:", error);
+    } finally {
+      await startEngine();
+    }
   }
 }
 

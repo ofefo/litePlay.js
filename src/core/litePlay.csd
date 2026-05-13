@@ -318,8 +318,15 @@ endin
 instr 200
 	turnoff2 1, 0, 0
 	turnoff2 10, 0, 0
+	turnoff2 12, 0, 0
 	turnoff2 100, 0, 0
 	turnoff2 99, 0, 0
+	gaLeft= 0
+    	gaRight = 0
+	schedule(1, .1,-1)
+	schedule(10,.1,-1)
+	schedule(12, .1,-1)
+	schedule(100,.1,-1)
 	schedule(99, .1, -1) // restart master output after .1 seconds
 endin
 
