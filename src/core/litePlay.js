@@ -639,13 +639,39 @@ export const eventList = {
   },
 };
 
-// generic play
+export function dictionaryToArray(input) {
+  if (typeof input === "object" && input !== null && !Array.isArray(input)) {
+    return [
+      input.what ?? 60,
+      input.howLoud ?? 1,
+      input.when ?? 0,
+      input.howLong ?? 1,
+      input.instrument ?? (window.piano || 1),
+    ];
+  }
+  return input;
+}
+
 export function play(...theList) {
-  if (typeof theList[0] === "function") return play(theList[0]());
+  if (typeof theList[0] === "function") {
+    return play(theList[0]());
+  }
+
   if (isInstr(theList[0])) {
     theList[0].play();
     return theList[0];
   }
+
+  if (
+    typeof theList[0] === "object" &&
+    theList[0] !== null &&
+    !Array.isArray(theList[0])
+  ) {
+    const parsedEvent = dictionaryToArray(theList[0]);
+    eventList.create(parsedEvent).play();
+    return parsedEvent;
+  }
+
   if (theList.length > 0) {
     eventList.create().play(0, theList);
     return theList;
@@ -654,6 +680,21 @@ export function play(...theList) {
     return defInstr;
   }
 }
+
+//export function play(...theList) {
+//  if (typeof theList[0] === "function") return play(theList[0]());
+//  if (isInstr(theList[0])) {
+//    theList[0].play();
+//    return theList[0];
+//  }
+//  if (theList.length > 0) {
+//    eventList.create().play(0, theList);
+//    return theList;
+//  } else {
+//    defInstr.play();
+//    return defInstr;
+//  }
+//}
 
 // set default instrument
 export function instrument(instr) {
@@ -1040,6 +1081,7 @@ eventos.remover = eventList.remove;
 eventos.inserir = eventList.insert;
 eventos.limpar = eventList.clear;
 
+export const algum = any;
 export const toque = play;
 export const pare = stop;
 export const instrumento = instrument;
