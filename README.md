@@ -21,7 +21,7 @@ aims to cover the complete system.
 To use it in a web page, add this tag to the HTML page header:
 
 ```
-<script  src="https://g-ubimus.github.io/litePlay.js/litePlay.constants.js"></script>
+<script  src="https://g-ubimus.github.io/litePlay.js/src/core/litePlay.constants.js"></script>
 ```
 
 You can start by looking at the following example sketches in the P5.js editor:
