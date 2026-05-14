@@ -265,4 +265,4 @@ export const retrogradar = retrograde;
 export const rotacionar = rotate;
 export const sequenciaRotacao = rotationSequence;
 export const misturar = blend;
-export const panAutomatico = autoPan;
+export const espacializador = autoPan;
