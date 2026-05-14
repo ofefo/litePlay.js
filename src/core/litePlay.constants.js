@@ -1,12 +1,4 @@
-const currentScriptSrc = document.currentScript
-  ? document.currentScript.src
-  : window.location.href;
-
-const baseURL = currentScriptSrc.substring(
-  0,
-  currentScriptSrc.lastIndexOf("/") + 1,
-);
-
+const baseURL = "https://g-ubimus.github.io/litePlay.js/src/core/";
 const lp_URL = baseURL + "litePlay.js";
 const extra_URL = baseURL + "extra.js";
 
