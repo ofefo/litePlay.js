@@ -657,16 +657,16 @@ if (typeof eventList !== "undefined") {
     return function (...args) {
       const parsedArgs = args.map((arg) => {
         if (Array.isArray(arg)) {
+          if (typeof arg[0] === "number") {
+            return arg;
+          }
           return arg.map((item) => dictionaryToArray(item));
         }
-
         return dictionaryToArray(arg);
       });
-
       return originalMethod.apply(this, parsedArgs);
     };
   };
-
   if (eventList.create) eventList.create = wrapEventMethod(eventList.create);
   if (eventList.add) eventList.add = wrapEventMethod(eventList.add);
   if (eventList.insert) eventList.insert = wrapEventMethod(eventList.insert);
