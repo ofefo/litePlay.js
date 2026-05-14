@@ -54,26 +54,33 @@ export function randomChord(
   return Array.from(notes).sort((a, b) => a - b);
 }
 
+export function blockChord(
+  chord,
+  [what = 60, howLoud = 0.9, when = 0, howLong = 1, instrument = piano] = [],
+) {
+  let l = eventList.create();
+  for (let i of chord) {
+    console.log(i);
+    l.add([i, howLoud, when, howLong, instrument]);
+  }
+  return l;
+}
+
 export function arpeggio(
   [what = 60, howLoud = 0.9, when = 0, howLong = 0.25, instrument = piano] = [],
   noteList = randomChord(),
   repeats = 1,
-  direction = "upDown",
+  direction = "backAndForth",
   l = eventList.create(),
 ) {
   let currentTime = when;
   let notesToPlay = [];
 
-  if (direction === "up") {
+  if (direction === "forward") {
     notesToPlay = [...noteList];
-  } else if (direction === "down") {
+  } else if (direction === "backward") {
     notesToPlay = [...noteList].reverse();
-  } else if (
-    direction === "up and down" ||
-    direction === "upDown" ||
-    direction === "upAndDown" ||
-    direction === "updown"
-  ) {
+  } else if (direction === "backAndForth" || direction === "bidirectional") {
     const downNotes = [...noteList].reverse().slice(1, -1);
     notesToPlay = [...noteList, ...downNotes];
   } else {
