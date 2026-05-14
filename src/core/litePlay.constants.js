@@ -285,8 +285,8 @@ const oneCent = 0.01;
 
 const lpRun = (code = null) => {
   import(lp_URL).then((val) => {
-    lp = val;
-    lp.startEngine().then(() => {
+    window.lp = val;
+    window.lp.startEngine().then(() => {
       if (typeof code === "function") code();
       else console.log("litePlay.js: running\n");
     });
@@ -294,14 +294,14 @@ const lpRun = (code = null) => {
 };
 
 const lpLoad = async () => {
-  let lp = await import(lp_URL);
-  await lp.startEngine();
-  return lp;
+  let lpModule = await import(lp_URL);
+  await lpModule.startEngine();
+  return lpModule;
 };
 
 // interface em Portugues
 async function leveToque(codigo = null) {
-  lt = await lpLoad();
+  window.lt = await lpLoad();
   if (typeof codigo === "function") codigo();
 }
 

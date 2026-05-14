@@ -6,7 +6,7 @@ export let csound = null;
 // audio context
 export let audio_context = null;
 // source URL for assets
-const srcurl = "./";
+const srcurl = new URL("../../", import.meta.url).href;
 // CSD file name
 const csd = "src/core/litePlay.csd";
 const sfont = "assets/audio/gm.sf2";
