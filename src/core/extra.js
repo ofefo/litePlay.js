@@ -1,7 +1,7 @@
 function resolveEvent(input) {
   if (typeof input === "object" && input !== null && !Array.isArray(input)) {
     return [
-      input.what ?? input.oque ?? input.oQue 60,
+      input.what ?? input.oque ?? input.oQue ?? 60,
       input.howLoud ?? input.intensidade ?? 1,
       input.when ?? input.quando ?? 0,
       input.howLong ?? input.duração ?? 1,
