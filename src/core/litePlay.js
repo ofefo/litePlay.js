@@ -670,14 +670,9 @@ export async function reset() {
   if (csound) {
     stop();
     sequencer.stop();
-    try {
-      await csound.stop();
-      csound = null;
-    } catch {
-      console.error("Restart failed:", error);
-    } finally {
-      await startEngine();
-    }
+    await csound.inputMessage("i 200 0 0.1");
+  } else {
+    console.log("No Csound instance found!");
   }
 }
 
@@ -1079,6 +1074,7 @@ export const depois = later;
 export const grave = lowPitch;
 export const médio = midPitch;
 export const agudo = highPitch;
+export const monótono = monotone;
 
 // instrumentos
 class Instrumento extends Instrument {
