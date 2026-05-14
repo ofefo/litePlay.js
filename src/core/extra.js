@@ -76,11 +76,15 @@ export function arpeggio(
   let currentTime = when;
   let notesToPlay = [];
 
-  if (direction === "forward") {
+  if (direction === "forward" || direction === "normal") {
     notesToPlay = [...noteList];
-  } else if (direction === "backward") {
+  } else if (direction === "backward" || direction === "inversa") {
     notesToPlay = [...noteList].reverse();
-  } else if (direction === "backAndForth" || direction === "bidirectional") {
+  } else if (
+    direction === "backAndForth" ||
+    direction === "bidirectional" ||
+    direction === "vaiVolta"
+  ) {
     const downNotes = [...noteList].reverse().slice(1, -1);
     notesToPlay = [...noteList, ...downNotes];
   } else {
@@ -250,10 +254,10 @@ export function autoPan(instrument, hertz) {
 
 // portuguese aliases
 export const midiParaNome = midiToName;
-export const transpor = transpose;
-export const acordeAleatorio = randomChord;
+export const transpôr = transpose;
+export const acordeAleatório = randomChord;
 export const arpejo = arpeggio;
-export const sequenciaIntervalar = intervalSequence;
+export const sequênciaIntervalar = intervalSequence;
 export const inverter = invert;
 export const variarTempo = tempoVariation;
 export const variarAmplitude = ampVariation;
