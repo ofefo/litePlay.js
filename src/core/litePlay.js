@@ -640,6 +640,7 @@ export const eventList = {
 };
 
 export function dictionaryToArray(input) {
+  if (typeof isInstr === "function" && isInstr(input)) return input;
   if (typeof input === "object" && input !== null && !Array.isArray(input)) {
     return [
       input.what ?? 60,
@@ -657,16 +658,25 @@ if (typeof eventList !== "undefined") {
     return function (...args) {
       const parsedArgs = args.map((arg) => {
         if (Array.isArray(arg)) {
-          if (typeof arg[0] === "number") {
-            return arg;
+          const isListOfDicts =
+            arg.length > 0 &&
+            typeof arg[0] === "object" &&
+            arg[0] !== null &&
+            !Array.isArray(arg[0]) &&
+            !(typeof isInstr === "function" && isInstr(arg[0]));
+
+          if (isListOfDicts) {
+            return arg.map((item) => dictionaryToArray(item));
           }
-          return arg.map((item) => dictionaryToArray(item));
+          return arg;
         }
         return dictionaryToArray(arg);
       });
+
       return originalMethod.apply(this, parsedArgs);
     };
   };
+
   if (eventList.create) eventList.create = wrapEventMethod(eventList.create);
   if (eventList.add) eventList.add = wrapEventMethod(eventList.add);
   if (eventList.insert) eventList.insert = wrapEventMethod(eventList.insert);
@@ -704,21 +714,6 @@ export function play(...theList) {
     return defInstr;
   }
 }
-
-//export function play(...theList) {
-//  if (typeof theList[0] === "function") return play(theList[0]());
-//  if (isInstr(theList[0])) {
-//    theList[0].play();
-//    return theList[0];
-//  }
-//  if (theList.length > 0) {
-//    eventList.create().play(0, theList);
-//    return theList;
-//  } else {
-//    defInstr.play();
-//    return defInstr;
-//  }
-//}
 
 // set default instrument
 export function instrument(instr) {
