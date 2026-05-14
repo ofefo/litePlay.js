@@ -652,6 +652,30 @@ export function dictionaryToArray(input) {
   return input;
 }
 
+if (typeof eventList !== "undefined") {
+  const wrapEventMethod = (originalMethod) => {
+    return function (...args) {
+      const parsedArgs = args.map((arg) => {
+        if (Array.isArray(arg)) {
+          return arg.map((item) => dictionaryToArray(item));
+        }
+
+        return dictionaryToArray(arg);
+      });
+
+      return originalMethod.apply(this, parsedArgs);
+    };
+  };
+
+  if (eventList.create) eventList.create = wrapEventMethod(eventList.create);
+  if (eventList.add) eventList.add = wrapEventMethod(eventList.add);
+  if (eventList.insert) eventList.insert = wrapEventMethod(eventList.insert);
+
+  eventList.criar = eventList.create;
+  eventList.adicionar = eventList.add;
+  eventList.inserir = eventList.insert;
+}
+
 export function play(...theList) {
   if (typeof theList[0] === "function") {
     return play(theList[0]());
