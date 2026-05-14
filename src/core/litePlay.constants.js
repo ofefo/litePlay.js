@@ -1,16 +1,16 @@
-// Check if the environment is local/development
-const isLocalEnv =
-  window.location.hostname === "localhost" ||
-  window.location.hostname === "127.0.0.1" ||
-  window.location.protocol === "file:";
+const currentScriptSrc = document.currentScript
+  ? document.currentScript.src
+  : window.location.href;
 
-// Dynamically assign the core module URL
-const lp_URL = isLocalEnv
-  ? "./litePlay.js"
-  : "https://g-ubimus.github.io/litePlay.js/src/core/litePlay.js";
+const baseURL = currentScriptSrc.substring(
+  0,
+  currentScriptSrc.lastIndexOf("/") + 1,
+);
+
+const lp_URL = baseURL + "litePlay.js";
+const extra_URL = baseURL + "extra.js";
 
 // MIDI NOTE constants
-
 const djScratch = 29;
 const acousticBassDrum = 35;
 const kick = acousticBassDrum;
@@ -285,8 +285,8 @@ const oneCent = 0.01;
 
 const lpRun = (code = null) => {
   import(lp_URL).then((val) => {
-    window.lp = val;
-    window.lp.startEngine().then(() => {
+    lp = val;
+    lp.startEngine().then(() => {
       if (typeof code === "function") code();
       else console.log("litePlay.js: running\n");
     });
@@ -308,7 +308,7 @@ async function leveToque(codigo = null) {
 // load extra module
 (async () => {
   try {
-    const extra = await import("./extra.js");
+    const extra = await import(extra_URL);
     Object.assign(window, extra);
   } catch (err) {
     console.warn("litePlay: Could not auto-load extra.js", err);
