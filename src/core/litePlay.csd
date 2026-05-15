@@ -314,25 +314,31 @@ instr 100
 	garev2 = 0
 endin
 
-// turn sustained sounds of when reset() is called
+// turn everything off when reset() is called
 instr 200
 	turnoff2 1, 0, 0
 	turnoff2 10, 0, 0
 	turnoff2 12, 0, 0
-	turnoff2 100, 0, 0
 	turnoff2 99, 0, 0
+	turnoff2 100, 0, 0
 	turnoff3 1
 	turnoff3 10
 	turnoff3 12
-	turnoff3 100
 	turnoff3 99
-	gaLeft= 0
+	turnoff3 100
+	garev1 = 0
+	garev2 = 0
+	gaLeft = 0
     	gaRight = 0
-	schedule(1, .1,-1)
-	schedule(10,.1,-1)
-	schedule(12, .1,-1)
-	schedule(100,.1,-1)
-	schedule(99, .1, -1) // restart master output after .1 seconds
+	schedule(300, .1, 1)
+endin
+
+// turn everything back on
+instr 300
+	schedule(1, 0, -1)
+	schedule(10, 0, -1)
+	schedule(99, 0, -1)
+	schedule(100, 0, -1)
 endin
 
 
