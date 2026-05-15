@@ -316,6 +316,11 @@ endin
 
 // turn sustained sounds of when reset() is called
 instr 200
+	turnoff2 1, 0, 0
+	turnoff2 10, 0, 0
+	turnoff2 12, 0, 0
+	turnoff2 100, 0, 0
+	turnoff2 99, 0, 0
 	turnoff3 1
 	turnoff3 10
 	turnoff3 12
