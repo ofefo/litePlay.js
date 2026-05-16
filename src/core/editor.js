@@ -8,6 +8,8 @@ import {
 } from "https://esm.sh/@codemirror/lang-javascript";
 import { autocompletion } from "https://esm.sh/@codemirror/autocomplete";
 import { oneDark } from "https://esm.sh/@codemirror/theme-one-dark";
+import { StateField } from "https://esm.sh/@codemirror/state";
+import { showTooltip } from "https://esm.sh/@codemirror/view";
 // extendable media recorder
 import {
   MediaRecorder,
@@ -102,6 +104,59 @@ function litePlayCompletions(context) {
   };
 }
 
+// help system
+const functionSignatures = {
+  create: "create([what, howLoud, when, howLong, onSomething])",
+  remove: "remove(index)",
+  insert: "insert(position, [event])",
+  repeat: "repeat(times, when)",
+  midiToName: "midiToName(number)",
+  transpose: "transpose([melody], semitones)",
+  randomChord: "randomChord(size, range, microtonal = false)",
+  arpeggio: "arpeggio([event], [chord], repetitions, direction)",
+  intervalSequence: "intervalSequence([event], interval, repetitions, up?)",
+  invert: "invert([melody], axis)",
+  tempoVariation: "tempoVariation([event], steps, ratio)",
+  ostinato: "ostinato([event], repetitions, [rhythm])",
+  ampVariation: "ampVariation([event], lastAmp, steps)",
+  autoPan: "autoPan(instrument, hertz)",
+  retrograde: "retrograde([list])",
+  rotate: "rotate([list], steps)",
+  blend: "blend([listA], [listB])",
+};
+
+const signatureTooltipField = StateField.define({
+  create: getSignatureTooltip,
+
+  update(tooltip, tr) {
+    if (!tr.docChanged && !tr.selection) return tooltip;
+    return getSignatureTooltip(tr.state);
+  },
+  provide: (f) => showTooltip.from(f),
+});
+
+function getSignatureTooltip(state) {
+  const pos = state.selection.main.head;
+  const line = state.doc.lineAt(pos);
+  const textUpToCursor = line.text.slice(0, pos - line.from);
+  const match = textUpToCursor.match(/([a-zA-Z0-9_]+)\s*\([^)]*$/);
+  if (!match) return null;
+  const funcName = match[1];
+  const signature = functionSignatures[funcName];
+  if (!signature) return null;
+  return {
+    pos: pos,
+    above: false,
+    strictSide: false,
+    create(view) {
+      let dom = document.createElement("div");
+      dom.className = "cm-signature-tooltip";
+      dom.textContent = signature;
+      return { dom };
+    },
+  };
+}
+
 // CM startState
 const startState = EditorState.create({
   extensions: [
@@ -112,6 +167,7 @@ const startState = EditorState.create({
       autocomplete: litePlayCompletions,
     }),
     autocompletion(),
+    signatureTooltipField,
     Prec.highest(
       keymap.of([
         { key: "Mod-Enter", run: runLP },
