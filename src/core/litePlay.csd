@@ -19,7 +19,7 @@ sfpassign  0, gisf
 //master output
 gaLeft init 0
 gaRight init 0
-maxalloc 99, 1
+maxalloc 110, 1
 
 //reverb 
 garev1 init 0
@@ -294,15 +294,6 @@ tablew ign,p6,9
 tablew p5,p6,10
 endin
 
-// master output
-instr 99
-	a1 clip gaLeft, 0, .99
-	a2 clip gaRight, 0, .99
-	
-	outs a1, a2
-	clear gaLeft, gaRight
-endin
-
 // reverb
 instr 100
 	a1, a2 freeverb garev1, garev2, 0.7, 0.35
@@ -314,31 +305,42 @@ instr 100
 	garev2 = 0
 endin
 
+// master output
+instr 110
+	a1 clip gaLeft, 0, .99
+	a2 clip gaRight, 0, .99
+	
+	outs a1, a2
+	clear gaLeft, gaRight
+endin
+
 // turn everything off when reset() is called
 instr 200
-	turnoff2 1, 0, 0
-	turnoff2 10, 0, 0
-	turnoff2 12, 0, 0
-	turnoff2 99, 0, 0
-	turnoff2 100, 0, 0
-	turnoff3 1
-	turnoff3 10
-	turnoff3 12
-	turnoff3 99
-	turnoff3 100
 	garev1 = 0
 	garev2 = 0
 	gaLeft = 0
-    	gaRight = 0
+	gaRight = 0
+
+	turnoff2 10, 0, 0
+	turnoff2 12, 0, 0
+	turnoff2 1, 0, 0
+	turnoff2 100, 0, 0
+	turnoff2 110, 0, 0
+	
+	turnoff3 10
+	turnoff3 12
+	turnoff3 1
+	turnoff3 100
+	turnoff3 110
 	schedule(300, .1, 1)
+	turnoff
 endin
 
 // turn everything back on
 instr 300
 	schedule(1, 0, -1)
-	schedule(10, 0, -1)
-	schedule(99, 0, -1)
 	schedule(100, 0, -1)
+	schedule(110, 0, -1)
 endin
 
 
@@ -394,8 +396,8 @@ f27 0 1024 7 0 1024 0  /* fil env amount */
 
 
 i 1 0 z
-i 99 0 z
 i 100 0 z
+i 110 0 z
 e
 </CsScore>
 </CsoundSynthesizer> 
