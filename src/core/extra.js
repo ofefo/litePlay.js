@@ -80,10 +80,10 @@ export function randomChord(
 }
 
 export function blockChord(chord, eventInput) {
-  const [what, howLoud, when, howLong, instrument] = resolveEvent(eventInput);
+  const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
   let l = eventList.create();
   for (let i of chord) {
-    l.add([i, howLoud, when, howLong, instrument]);
+    l.add([i, howLoud, when, howLong, onSomething]);
   }
   return l;
 }
@@ -95,7 +95,7 @@ export function arpeggio(
   direction = "backAndForth",
   l = eventList.create(),
 ) {
-  const [what, howLoud, when, howLong, instrument] = resolveEvent(eventInput);
+  const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
   let currentTime = when;
   let notesToPlay = [];
 
@@ -116,7 +116,7 @@ export function arpeggio(
 
   for (let i = 0; i < repeats; i++) {
     for (let note of notesToPlay) {
-      l.add([note, howLoud, currentTime, howLong, instrument]);
+      l.add([note, howLoud, currentTime, howLong, onSomething]);
       currentTime += howLong;
     }
   }
@@ -130,17 +130,17 @@ export function intervalSequence(
   up = choose(true, false),
   l = eventList.create(),
 ) {
-  const [note, howLoud, when, howLong, instrument] = resolveEvent(eventInput);
+  const [note, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
 
   if (!repetitions) {
     return l;
   } else {
-    const currentEvent = [note, howLoud, when, howLong, instrument];
+    const currentEvent = [note, howLoud, when, howLong, onSomething];
     l.add(currentEvent);
 
     let nextNote = up ? note + interval : note - interval;
     let nextWhen = when + howLong;
-    const nextEvent = [nextNote, howLoud, nextWhen, howLong, instrument];
+    const nextEvent = [nextNote, howLoud, nextWhen, howLong, onSomething];
 
     return intervalSequence(nextEvent, interval, repetitions - 1, up, l);
   }
@@ -156,19 +156,19 @@ export function tempoVariation(
   ratio = 0.9,
   l = eventList.create(),
 ) {
-  const [what, howLoud, when, howLong, instrument] = resolveEvent(eventInput);
+  const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
 
   if (steps <= 0) {
     return l;
   } else {
-    const currentEvent = [what, howLoud, when, howLong, instrument];
+    const currentEvent = [what, howLoud, when, howLong, onSomething];
     l.add(currentEvent);
 
     const nextDuration = howLong * ratio;
     const nextWhen = when + howLong;
 
     return tempoVariation(
-      [what, howLoud, nextWhen, nextDuration, instrument],
+      [what, howLoud, nextWhen, nextDuration, onSomething],
       steps - 1,
       ratio,
       l,
@@ -182,14 +182,14 @@ export function ampVariation(
   steps = 2,
   l = eventList.create(),
 ) {
-  const [what, howLoud, when, howLong, instrument] = resolveEvent(eventInput);
+  const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
   let first = howLoud;
 
   if (!steps) {
     return l;
   } else {
     let howLoudStep = (last - first) / steps;
-    let currentEvent = [what, first, when, howLong, instrument];
+    let currentEvent = [what, first, when, howLong, onSomething];
     l.add(currentEvent);
 
     let nextEvent = [
@@ -197,7 +197,7 @@ export function ampVariation(
       first + howLoudStep,
       when + howLong,
       howLong,
-      instrument,
+      onSomething,
     ];
     return ampVariation(nextEvent, last, steps - 1, l);
   }
@@ -216,25 +216,25 @@ export function rotate(list, steps = 1) {
 }
 
 export function ostinato(eventInput, repetitions = 1, rhythmList) {
-  const [what, howLoud, when, howLong, instrument] = resolveEvent(eventInput);
+  const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
   const rhythms = rhythmList || [howLong];
   const resolvePitch = (val) => (typeof val === "function" ? val() : val);
   const firstPitch = resolvePitch(what);
-  const l = eventList.create([firstPitch, howLoud, when, howLong, instrument]);
+  const l = eventList.create([what, howLoud, when, howLong, onSomething]);
   let initialTime = when;
 
   for (let i = 0, len = repetitions; i < len; i++) {
     for (let j of rhythms) {
       initialTime += j;
       const currentPitch = resolvePitch(what);
-      l.add([currentPitch, howLoud, initialTime, howLong, instrument]);
+      l.add([currentPitch, howLoud, initialTime, howLong, onSomething]);
     }
   }
   return l;
 }
 
 export function rotationSequence(eventInput, rhythmList) {
-  const [what, howLoud, when, howLong, instrument] = resolveEvent(eventInput);
+  const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
 
   const l = eventList.create();
   let currentTime = when;
@@ -243,7 +243,7 @@ export function rotationSequence(eventInput, rhythmList) {
 
   for (let i = 0; i < rhythms.length; i++) {
     for (let dur of currentPattern) {
-      l.add([what, howLoud, currentTime, dur, instrument]);
+      l.add([what, howLoud, currentTime, dur, onSomething]);
       currentTime += dur;
     }
     currentPattern = rotate(currentPattern, 1);
@@ -261,15 +261,15 @@ export function blend(listA, listB) {
   return listC;
 }
 
-export function autoPan(instrument, hertz) {
-  if (instrument.panInterval) {
-    clearInterval(instrument.panInterval);
+export function autoPan(onSomething, hertz) {
+  if (onSomething.panInterval) {
+    clearInterval(onSomething.panInterval);
   }
 
-  instrument.panInterval = setInterval(() => {
+  onSomething.panInterval = setInterval(() => {
     let timeInSeconds = Date.now() / 1000;
     let panValue = Math.sin((timeInSeconds / hertz) * Math.PI * 2);
-    instrument.pan(panValue);
+    onSomething.pan(panValue);
   }, 30);
 }
 
