@@ -108,17 +108,22 @@ function litePlayCompletions(context) {
 const functionSignatures = {
   create: "create([what, howLoud, when, howLong, onSomething])",
   remove: "remove(index)",
-  insert: "insert(position, [event])",
+  insert: "insert(position, [what, howLoud, when, howLong, onSomething])",
   repeat: "repeat(times, when)",
   midiToName: "midiToName(number)",
   transpose: "transpose([melody], semitones)",
   randomChord: "randomChord(size, range, microtonal = false)",
-  arpeggio: "arpeggio([event], [chord], repetitions, direction)",
-  intervalSequence: "intervalSequence([event], interval, repetitions, up?)",
+  arpeggio:
+    "arpeggio([what, howLoud, when, howLong, onSomething], [chord], repetitions, direction)",
+  intervalSequence:
+    "intervalSequence([what, howLoud, when, howLong, onSomething], interval, repetitions, up?)",
   invert: "invert([melody], axis)",
-  tempoVariation: "tempoVariation([event], steps, ratio)",
-  ostinato: "ostinato([event], repetitions, [rhythm])",
-  ampVariation: "ampVariation([event], lastAmp, steps)",
+  tempoVariation:
+    "tempoVariation([what, howLoud, when, howLong, onSomething], steps, ratio)",
+  ostinato:
+    "ostinato([what, howLoud, when, howLong, onSomething], repetitions, [rhythm])",
+  ampVariation:
+    "ampVariation([what, howLoud, when, howLong, onSomething], lastAmp, steps)",
   autoPan: "autoPan(instrument, hertz)",
   retrograde: "retrograde([list])",
   rotate: "rotate([list], steps)",
