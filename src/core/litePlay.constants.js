@@ -27,6 +27,7 @@ const bassDrum = bassDrum1;
 const sideStick = 37;
 const acousticSnare = 38;
 const handClap = 39;
+const clap = handClap;
 const electricSnare = 40;
 const snare = electricSnare;
 const lowFloorTom = 41;
