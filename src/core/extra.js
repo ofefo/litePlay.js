@@ -233,6 +233,30 @@ export function ostinato(eventInput, repetitions = 1, rhythmList) {
   return l;
 }
 
+export function euclidean(
+  eventInput,
+  repetitions = 1,
+  steps = rnd(4, 12),
+  hits = steps - rnd(1, 3),
+  l = eventList.create(),
+) {
+  if (hits > steps) {
+    throw new Error("Number of hits cannot be greater than steps!");
+  }
+  const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
+  let currentTime = when;
+  for (let rep = 0; rep < repetitions; rep++) {
+    for (let i = 0; i < steps; i++) {
+      const isHit = (i * hits) % steps < hits;
+      if (isHit) {
+        l.add([what, howLoud, currentTime, howLong, onSomething]);
+      }
+      currentTime += howLong;
+    }
+  }
+  return l;
+}
+
 export function rotationSequence(eventInput, rhythmList) {
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
 
