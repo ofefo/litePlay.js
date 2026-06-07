@@ -239,6 +239,7 @@ export function euclidean(
   steps = rnd(4, 12),
   hits = steps - rnd(1, 3),
   rotation = 0,
+  a = [],
   l = eventList.create(),
 ) {
   if (hits > steps) {
@@ -252,11 +253,15 @@ export function euclidean(
       if (checkIndex < 0) checkIndex += steps;
       const isHit = (checkIndex * hits) % steps < hits;
       if (isHit) {
+        a.push(1);
         l.add([what, howLoud, currentTime, howLong, onSomething]);
+      } else {
+        a.push(0);
       }
       currentTime += howLong;
     }
   }
+  console.log(a);
   return l;
 }
 
