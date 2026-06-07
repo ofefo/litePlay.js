@@ -257,7 +257,6 @@ export function euclidean(
       currentTime += howLong;
     }
   }
-  console.log(a);
   return l;
 }
 
