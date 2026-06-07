@@ -122,6 +122,8 @@ const functionSignatures = {
     "tempoVariation([what, howLoud, when, howLong, onSomething], steps, ratio)",
   ostinato:
     "ostinato([what, howLoud, when, howLong, onSomething], repetitions, [rhythm])",
+  euclidean:
+    "euclidean([what, howLoud, when, howLong, onSomething], repetitions, pulses, hits, rotation)",
   ampVariation:
     "ampVariation([what, howLoud, when, howLong, onSomething], lastAmp, steps)",
   autoPan: "autoPan(instrument, hertz)",

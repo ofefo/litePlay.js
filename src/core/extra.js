@@ -238,22 +238,26 @@ export function euclidean(
   repetitions = 1,
   steps = rnd(4, 12),
   hits = steps - rnd(1, 3),
+  rotation = 0,
   l = eventList.create(),
 ) {
   if (hits > steps) {
-    throw new Error("Number of hits cannot be greater than steps!");
+    console.log("Number of hits cannot be greater than steps!");
   }
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
   let currentTime = when;
   for (let rep = 0; rep < repetitions; rep++) {
     for (let i = 0; i < steps; i++) {
-      const isHit = (i * hits) % steps < hits;
+      let checkIndex = (i - rotation) % steps;
+      if (checkIndex < 0) checkIndex += steps;
+      const isHit = (checkIndex * hits) % steps < hits;
       if (isHit) {
         l.add([what, howLoud, currentTime, howLong, onSomething]);
       }
       currentTime += howLong;
     }
   }
+  console.log(a);
   return l;
 }
 
