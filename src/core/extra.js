@@ -261,6 +261,7 @@ export function euclidean(
       currentTime += howLong;
     }
   }
+  a = a.slice(steps * -1);
   console.log(a);
   return l;
 }
