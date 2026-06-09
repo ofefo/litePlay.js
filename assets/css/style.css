@@ -95,6 +95,7 @@ div.text{
     	color: white;
     	font-weight: bold;
     	transition: background-color 1s ease;
+	transition: filter .5s ease;
 }
 
 .ready-red {
@@ -102,6 +103,7 @@ div.text{
     	color: white;
     	font-weight: bold;
     	transition: background-color 1s ease;
+	transition: filter .5s ease;
 }
 
 a:link {
