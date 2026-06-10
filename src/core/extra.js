@@ -51,6 +51,16 @@ export function transpose(melody = [], semitones = 0) {
   return melody.map((note) => note + semitones);
 }
 
+export function edo(divisions) {
+  let octave = 12;
+  let interval = 12 / divisions;
+  let tones = [0];
+  for (let i = 0, len = octave; i < len; i = i + interval) {
+    tones.push(i + interval);
+  }
+  return tones;
+}
+
 export function randomChord(
   size = 4,
   pitchGenerator = midPitch,
