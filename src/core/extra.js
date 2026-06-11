@@ -52,13 +52,33 @@ export function transpose(melody = [], semitones = 0) {
 }
 
 export function edo(divisions) {
-  let octave = 12;
-  let interval = 12 / divisions;
+  const octave = 12;
+  const interval = 12 / divisions;
   let tones = [0];
   for (let i = 0, len = octave; i < len; i = i + interval) {
     tones.push(i + interval);
   }
   return tones;
+}
+
+export function midiToFreq(midi) {
+  return 440 * Math.pow(2, (midi - 69) / 12);
+}
+
+export function freqToMidi(freq) {
+  return 69 + 12 * Math.log2(freq / 440);
+}
+
+export function justIntonation(baseNote = A4, size = 31) {
+  const baseFreq = midiToFreq(baseNote);
+  let tones = [];
+  for (let i = 1, len = size + 1; i < len; i++) {
+    let nextHarmonic = i * baseFreq;
+    tones.push(nextHarmonic);
+  }
+  let output = tones.map((i) => ((freqToMidi(i) - baseNote) % 12) + baseNote);
+  output.push(baseNote + 12);
+  return Array.from(new Set(output)).sort((a, b) => a - b);
 }
 
 export function randomChord(
