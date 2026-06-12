@@ -47,8 +47,8 @@ export function midiToName(midiValue) {
   return name;
 }
 
-export function transpose(melody = [], semitones = 0) {
-  return melody.map((note) => note + semitones);
+export function transpose(notes = [], interval = 0) {
+  return notes.map((i) => i + interval);
 }
 
 export function edo(divisions) {
@@ -69,7 +69,7 @@ export function freqToMidi(freq) {
   return 69 + 12 * Math.log2(freq / 440);
 }
 
-export function justIntonation(baseNote = A4, size = 31) {
+export function justIntonation(baseNote = C4, size = 14) {
   const baseFreq = midiToFreq(baseNote);
   let tones = [];
   for (let i = 1, len = size + 1; i < len; i++) {
@@ -78,7 +78,24 @@ export function justIntonation(baseNote = A4, size = 31) {
   }
   let output = tones.map((i) => ((freqToMidi(i) - baseNote) % 12) + baseNote);
   output.push(baseNote + 12);
+  output = output.map((i) => Number(i.toFixed(3)));
   return Array.from(new Set(output)).sort((a, b) => a - b);
+}
+
+export function monotone(initialTone = C4, interval = 1) {
+  if (interval === Math.trunc(interval)) {
+    return choose(
+      initialTone,
+      rndInt(initialTone - interval, initialTone + interval + 1),
+    );
+  } else {
+    let output = choose(
+      initialTone,
+      rnd(initialTone - interval, initialTone + interval + 1),
+    );
+    output = Number(output.toFixed(3));
+    return output;
+  }
 }
 
 export function randomChord(
@@ -157,22 +174,27 @@ export function intervalSequence(
   eventInput,
   interval = rndInt(1, 11),
   repetitions = 5,
-  up = choose(true, false),
+  direction = choose("up", "down"),
   l = eventList.create(),
 ) {
   const [note, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
+  l.add([note, howLoud, when, howLong, onSomething]);
+  let currentPitch = note;
+  let currentWhen = when;
 
   if (!repetitions) {
     return l;
   } else {
-    const currentEvent = [note, howLoud, when, howLong, onSomething];
-    l.add(currentEvent);
-
-    let nextNote = up ? note + interval : note - interval;
-    let nextWhen = when + howLong;
-    const nextEvent = [nextNote, howLoud, nextWhen, howLong, onSomething];
-
-    return intervalSequence(nextEvent, interval, repetitions - 1, up, l);
+    for (let i = 0; i < repetitions; i++) {
+      if (direction === "up") {
+        currentPitch += interval;
+      } else {
+        currentPitch -= interval;
+      }
+      currentWhen += howLong;
+      l.add([currentPitch, howLoud, currentWhen, howLong, onSomething]);
+    }
+    return l;
   }
 }
 

@@ -292,14 +292,18 @@ function isInstr(instr) {
 }
 
 // return seconds from beats
-export function secs(b) {
+function secs(b) {
   return (b * 60.0) / globalObj.BPM;
 }
 
+export const secondsToBeats = secs;
+
 // return beats from seconds
-export function beats(s) {
+function beats(s) {
   return (s * globalObj.BPM) / 60.0;
 }
+
+export const beatsToSeconds = beats;
 
 // set beats per minute
 export function setBpm(bpm) {
@@ -828,13 +832,6 @@ export function hiPitch() {
   return rnd(hipmin, hipmax);
 }
 export const highPitch = hiPitch;
-
-export function monotone(initialTone) {
-  return choose(
-    initialTone,
-    choose(initialTone - 1, initialTone, initialTone + 1),
-  );
-}
 
 //percussion instruments by Hornbostel-Sachs classification
 export const membranophoneList = [
