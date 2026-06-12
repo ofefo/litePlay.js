@@ -111,25 +111,57 @@ const functionSignatures = {
   insert: "insert(position, [what, howLoud, when, howLong, onSomething])",
   repeat: "repeat(times, when)",
   midiToName: "midiToName(number)",
-  transpose: "transpose([melody], semitones)",
+  midiToFrequency: "midiToFrequency(midi)",
+  frequencyToMidi: "frequencyToMidi(frequency)",
+  edo: "edo(number of divisions)",
+  justIntonation: "justIntonation(base pitch, number of harmonics)",
+  monotone: "monotone(initial tone, interval)",
+  transpose: "transpose([notes], interval)",
   randomChord: "randomChord(size, range, microtonal = false)",
   arpeggio:
     "arpeggio([what, howLoud, when, howLong, onSomething], [chord], repetitions, direction)",
   intervalSequence:
-    "intervalSequence([what, howLoud, when, howLong, onSomething], interval, repetitions, up?)",
+    "intervalSequence([what, howLoud, when, howLong, onSomething], interval, repetitions, direction)",
   invert: "invert([melody], axis)",
-  tempoVariation:
-    "tempoVariation([what, howLoud, when, howLong, onSomething], steps, ratio)",
+  faster: "faster([what, howLoud, when, howLong, onSomething], steps, ratio<1)",
+  slower: "slower([what, howLoud, when, howLong, onSomething], steps, ratio>1)",
   ostinato:
     "ostinato([what, howLoud, when, howLong, onSomething], repetitions, [rhythm])",
   euclidean:
     "euclidean([what, howLoud, when, howLong, onSomething], repetitions, pulses, hits, rotation)",
-  ampVariation:
-    "ampVariation([what, howLoud, when, howLong, onSomething], lastAmp, steps)",
+  louder: "louder([what, howLoud, when, howLong, onSomething], lastAmp, steps)",
+  softer: "softer([what, howLoud, when, howLong, onSomething], lastAmp, steps)",
   autoPan: "autoPan(instrument, hertz)",
   retrograde: "retrograde([list])",
+  suffle: "shuffle([list])",
   rotate: "rotate([list], steps)",
   blend: "blend([listA], [listB])",
+  midiParaNome: "midiParaNome(midi)",
+  transpôr: "tranpôr([notas], intervalo)",
+  afinaçãoJusta: "afinaçãoJusta(altura base, número de harmônicos)",
+  frequênciaParaMidi: "frequênciaParaMidi(frequência)",
+  monótono: "monótono(altura inicial, intervalo)",
+  acordeAleatório: "acordeAleatório(tamanho, registro, microtonal = false)",
+  arpejo:
+    "arpejo([oQuê, quãoForte, quando, quantoTempo, emAlgo], [acorde], repetições, direção)",
+  sequênciaIntervalar:
+    "sequênciaIntervalar([oQuê, quãoForte, quando, quantoTempo, emAlgo], intervalo, repetições, direção)",
+  inverter: "inverter([melodia], eixo)",
+  maisRápido:
+    "maisRápido([oQuê, quãoForte, quando, quantoTempo, emAlgo], passos, razão<1)",
+  maisLento:
+    "maisLento([oQuê, quãoForte, quando, quantoTempo, emAlgo], passos, razão>1)",
+  maisForte:
+    "maisForte([oQuê, quãoForte, quando, quantoTempo, emAlgo], última intensidade, passos)",
+  maisSuave:
+    "maisSuave([oQuê, quãoForte, quando, quantoTempo, emAlgo], última intensidade, passos)",
+  retrogradar: "retrogradar([lista])",
+  rotacionar: "rotacionar([lista])",
+  euclideano:
+    "euclideano([oQuê, quãoForte, quando, quantoTempo, emAlgo], repetições, pulsos, ataques, rotação)",
+  misturar: "misturar([listaA], [listaB])",
+  embaralhar: "embaralhar([lista])",
+  espacializador: "espacializador(instrumento, hertz)",
 };
 
 const signatureTooltipField = StateField.define({
@@ -146,7 +178,8 @@ function getSignatureTooltip(state) {
   const pos = state.selection.main.head;
   const line = state.doc.lineAt(pos);
   const textUpToCursor = line.text.slice(0, pos - line.from);
-  const match = textUpToCursor.match(/([a-zA-Z0-9_]+)\s*\([^)]*$/);
+  const match = textUpToCursor.match(/([\p{L}0-9_]+)\s*\([^)]*$/u);
+  //const match = textUpToCursor.match(/([a-zA-Z0-9_]+)\s*\([^)]*$/);
   if (!match) return null;
   const funcName = match[1];
   const signature = functionSignatures[funcName];
