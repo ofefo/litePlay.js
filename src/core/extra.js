@@ -2,7 +2,7 @@ function resolveEvent(input) {
   if (typeof input === "object" && input !== null && !Array.isArray(input)) {
     return [
       input.what ?? input.oque ?? input.oQue ?? 60,
-      input.howLoud ?? input.intensidade ?? 1,
+      input.howLoud ?? input.intensidade ?? 0.5,
       input.when ?? input.quando ?? 0,
       input.howLong ?? input.duração ?? 1,
       input.onSomething ?? input.noQue ?? (window.piano || 1),
@@ -61,22 +61,24 @@ export function edo(divisions) {
   return tones;
 }
 
-export function midiToFreq(midi) {
+export function midiToFrequency(midi) {
   return 440 * Math.pow(2, (midi - 69) / 12);
 }
 
-export function freqToMidi(freq) {
+export function frequencyToMidi(freq) {
   return 69 + 12 * Math.log2(freq / 440);
 }
 
 export function justIntonation(baseNote = C4, size = 14) {
-  const baseFreq = midiToFreq(baseNote);
+  const baseFreq = midiToFrequency(baseNote);
   let tones = [];
   for (let i = 1, len = size + 1; i < len; i++) {
     let nextHarmonic = i * baseFreq;
     tones.push(nextHarmonic);
   }
-  let output = tones.map((i) => ((freqToMidi(i) - baseNote) % 12) + baseNote);
+  let output = tones.map(
+    (i) => ((frequencyToMidi(i) - baseNote) % 12) + baseNote,
+  );
   output.push(baseNote + 12);
   output = output.map((i) => Number(i.toFixed(3)));
   return Array.from(new Set(output)).sort((a, b) => a - b);
@@ -202,56 +204,69 @@ export function invert(melody = [], axis = C4) {
   return melody.map((note) => axis + ((((axis - note) % 12) + 12) % 12));
 }
 
-export function tempoVariation(
+export function faster(eventInput, steps = 10, ratio = 0.9) {
+  return changeTempo(eventInput, steps, ratio);
+}
+
+export function slower(eventInput, steps = 10, ratio = 1.1) {
+  return changeTempo(eventInput, steps, ratio);
+}
+
+function changeTempo(
   eventInput,
   steps = 10,
   ratio = 0.9,
   l = eventList.create(),
 ) {
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
+  l.add([what, howLoud, when, howLong, onSomething]);
+  let nextDuration = howLong;
+  let nextWhen = when;
 
   if (steps <= 0) {
     return l;
   } else {
-    const currentEvent = [what, howLoud, when, howLong, onSomething];
-    l.add(currentEvent);
-
-    const nextDuration = howLong * ratio;
-    const nextWhen = when + howLong;
-
-    return tempoVariation(
-      [what, howLoud, nextWhen, nextDuration, onSomething],
-      steps - 1,
-      ratio,
-      l,
-    );
+    for (let i = 0; i < steps; i++) {
+      nextDuration *= ratio;
+      nextWhen += nextDuration;
+      let currentEvent = [what, howLoud, nextWhen, nextDuration, onSomething];
+      l.add(currentEvent);
+    }
+    return l;
   }
 }
 
-export function ampVariation(
+export function louder(eventInput, last = 1, steps = 10) {
+  return changeLoudness(eventInput, last, steps);
+}
+
+export function softer(eventInput, last = 0.01, steps = 10) {
+  return changeLoudness(eventInput, last, steps);
+}
+
+function changeLoudness(
   eventInput,
   last = 1,
-  steps = 2,
+  steps = 10,
   l = eventList.create(),
 ) {
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
-  let first = howLoud;
+  l.add([what, howLoud, when, howLong, onSomething]);
 
-  if (!steps) {
+  const ampStep = (last - howLoud) / steps;
+
+  let nextWhen = when;
+  let nextLoudness = howLoud;
+  if (steps <= 0) {
     return l;
   } else {
-    let howLoudStep = (last - first) / steps;
-    let currentEvent = [what, first, when, howLong, onSomething];
-    l.add(currentEvent);
-
-    let nextEvent = [
-      what,
-      first + howLoudStep,
-      when + howLong,
-      howLong,
-      onSomething,
-    ];
-    return ampVariation(nextEvent, last, steps - 1, l);
+    for (let i = 0; i < steps; i++) {
+      nextWhen += howLong;
+      nextLoudness += ampStep;
+      nextLoudness = Math.round(nextLoudness * 1000) / 1000;
+      l.add([what, nextLoudness, nextWhen, howLong, onSomething]);
+    }
+    return l;
   }
 }
 
@@ -370,14 +385,21 @@ export function autoPan(onSomething, hertz) {
 // portuguese aliases
 export const midiParaNome = midiToName;
 export const transpôr = transpose;
+export const afinaçãoJusta = justIntonation;
+export const frequênciaParaMidi = frequencyToMidi;
+export const monótono = monotone;
 export const acordeAleatório = randomChord;
 export const arpejo = arpeggio;
 export const sequênciaIntervalar = intervalSequence;
 export const inverter = invert;
-export const variarTempo = tempoVariation;
-export const variarAmplitude = ampVariation;
+export const maisRápido = faster;
+export const maisLento = slower;
+export const maisForte = louder;
+export const maisSuave = softer;
 export const retrogradar = retrograde;
 export const rotacionar = rotate;
 export const sequenciaRotacao = rotationSequence;
+export const euclideano = euclidean;
 export const misturar = blend;
+export const embaralhar = shuffle;
 export const espacializador = autoPan;

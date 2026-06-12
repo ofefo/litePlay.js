@@ -1132,7 +1132,6 @@ export const depois = later;
 export const grave = lowPitch;
 export const médio = midPitch;
 export const agudo = highPitch;
-export const monótono = monotone;
 
 // instrumentos
 class Instrumento extends Instrument {
