@@ -292,14 +292,14 @@ function isInstr(instr) {
 }
 
 // return seconds from beats
-function secs(b) {
+export function secs(b) {
   return (b * 60.0) / globalObj.BPM;
 }
 
 export const secondsToBeats = secs;
 
 // return beats from seconds
-function beats(s) {
+export function beats(s) {
   return (s * globalObj.BPM) / 60.0;
 }
 
