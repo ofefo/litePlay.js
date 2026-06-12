@@ -9,7 +9,8 @@ let micSource = null;
 
 // Analysis State
 let isSounding = false;
-const onsetThreshold = 0.02;
+const onsetThreshold = 0.05;
+const durationThreshold = 0.02;
 let eventOnset = 0;
 let phraseOnset = 0;
 let framePitches = [];
@@ -103,7 +104,7 @@ function triggerNoteOff(currentTime, onEventDetected) {
   isSounding = false;
   const duration = currentTime - eventOnset;
 
-  if (duration > 0.01) {
+  if (duration > durationThreshold) {
     const relativeOnsetTime = eventOnset - phraseOnset;
     const eventData = processEventData(
       framePitches,
