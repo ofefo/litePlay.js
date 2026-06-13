@@ -1,26 +1,37 @@
 function resolveEvent(input) {
+  const parseInstr = (inst) => {
+    let target = inst ?? (window.piano || 1);
+    if (target && target.instr) {
+      return target.instr;
+    }
+    return target;
+  };
+
   if (typeof input === "object" && input !== null && !Array.isArray(input)) {
     return [
       input.what ?? input.oque ?? input.oQue ?? 60,
       input.howLoud ?? input.intensidade ?? 0.5,
       input.when ?? input.quando ?? 0,
       input.howLong ?? input.duração ?? 1,
-      input.onSomething ?? input.noQue ?? (window.piano || 1),
+      parseInstr(input.onSomething ?? input.noQue),
     ];
   }
+
   if (typeof input === "number") {
-    return [input, 1, 0, 1, window.piano || 1];
+    return [input, 1, 0, 1, parseInstr(null)];
   }
+
   if (Array.isArray(input) && input.length > 0) {
     return [
       input[0] ?? 60,
       input[1] ?? 1,
       input[2] ?? 0,
       input[3] ?? 1,
-      input[4] ?? (window.piano || 1),
+      parseInstr(input[4]),
     ];
   }
-  return [60, 1, 0, 1, window.piano || 1];
+
+  return [60, 1, 0, 1, parseInstr(null)];
 }
 
 export function midiToName(midiValue) {
