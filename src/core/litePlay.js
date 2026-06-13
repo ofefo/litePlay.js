@@ -835,11 +835,11 @@ export const highPitch = hiPitch;
 
 //percussion instruments by Hornbostel-Sachs classification
 export const membranophoneList = [
-  35, 36, 40, 41, 43, 45, 47, 48, 50, 63, 64, 65, 66,
+  35, 36, 40, 41, 43, 45, 47, 48, 50, 63, 64, 65, 66, 86, 87,
 ];
 export const idiophoneList = [
   29, 34, 37, 39, 42, 44, 46, 49, 51, 52, 53, 54, 55, 57, 58, 59, 67, 68, 71,
-  72, 81,
+  72, 81, 83, 84,
 ];
 export function rndMembranophone() {
   return choose(membranophoneList);
