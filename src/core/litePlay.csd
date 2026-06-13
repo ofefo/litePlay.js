@@ -7,7 +7,7 @@ nchnls = 2
 nchnls_i = 1
 ksmps = 64
 0dbfs = 1
-sr = 41000
+sr = 44100
 
 ichn = 1
 lp1: massign   ichn, 0
