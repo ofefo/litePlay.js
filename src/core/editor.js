@@ -106,7 +106,7 @@ function litePlayCompletions(context) {
 
 // help system
 const functionSignatures = {
-  play: "[what, howLoud, when, howLong, onSomething])",
+  play: "play([what, howLoud, when, howLong, onSomething])",
   create: "create([what, howLoud, when, howLong, onSomething])",
   remove: "remove(index)",
   insert: "insert(position, [what, howLoud, when, howLong, onSomething])",
@@ -137,7 +137,7 @@ const functionSignatures = {
   suffle: "shuffle([list])",
   rotate: "rotate([list], steps)",
   blend: "blend([listA], [listB])",
-  toque: "[oQuê, quãoForte, quando, quantoTempo, emAlgo])",
+  toque: "toque([oQuê, quãoForte, quando, quantoTempo, emAlgo])",
   midiParaNome: "midiParaNome(midi)",
   transpôr: "tranpôr([notas], intervalo)",
   afinaçãoJusta: "afinaçãoJusta(altura base, número de harmônicos)",
