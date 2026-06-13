@@ -1,9 +1,15 @@
 function resolveEvent(input) {
   const parseInstr = (inst) => {
     let target = inst ?? (window.piano || 1);
-    if (target && target.instr) {
+    if (
+      target &&
+      typeof target === "object" &&
+      typeof target.instr === "object" &&
+      target.instr !== null
+    ) {
       return target.instr;
     }
+
     return target;
   };
 
@@ -24,14 +30,14 @@ function resolveEvent(input) {
   if (Array.isArray(input) && input.length > 0) {
     return [
       input[0] ?? 60,
-      input[1] ?? 1,
+      input[1] ?? 0.5,
       input[2] ?? 0,
       input[3] ?? 1,
       parseInstr(input[4]),
     ];
   }
 
-  return [60, 1, 0, 1, parseInstr(null)];
+  return [60, 0.5, 0, 1, parseInstr(null)];
 }
 
 export function midiToName(midiValue) {
