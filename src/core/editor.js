@@ -22,11 +22,35 @@ import { toggleListening } from "../listener/listener.js";
 // override function to print output in console
 const consoleOutput = document.getElementById("console-output");
 const originalLog = console.log;
+const originalError = console.error;
 
 console.log = function (...args) {
   originalLog.apply(console, args);
   const message = args
     .map((arg) => (typeof arg === "object" ? JSON.stringify(arg) : String(arg)))
+    .join(" ");
+  if (consoleOutput) {
+    consoleOutput.value += message + "\n";
+    consoleOutput.scrollTop = consoleOutput.scrollHeight;
+  }
+};
+
+console.error = function (...args) {
+  originalError.apply(console, args);
+  const message = args
+    .map((arg) => {
+      if (arg instanceof Error) {
+        return arg.toString();
+      }
+      if (typeof arg === "object" && arg !== null) {
+        try {
+          return JSON.stringify(arg, null, 2);
+        } catch (e) {
+          return "[Unstringifiable Object]";
+        }
+      }
+      return String(arg);
+    })
     .join(" ");
   if (consoleOutput) {
     consoleOutput.value += message + "\n";
