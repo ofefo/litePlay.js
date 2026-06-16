@@ -156,7 +156,7 @@ const functionSignatures = {
     "euclidean([what, howLoud, when, howLong, onSomething], repetitions, pulses, hits, rotation)",
   louder: "louder([what, howLoud, when, howLong, onSomething], lastAmp, steps)",
   softer: "softer([what, howLoud, when, howLong, onSomething], lastAmp, steps)",
-  autoPan: "autoPan(instrument, hertz)",
+  autoPan: "autoPan(instrument, seconds)",
   retrograde: "retrograde([list])",
   suffle: "shuffle([list])",
   rotate: "rotate([list], steps)",
@@ -187,7 +187,7 @@ const functionSignatures = {
     "euclideano([oQuê, quãoForte, quando, quantoTempo, emAlgo], repetições, pulsos, ataques, rotação)",
   misturar: "misturar([listaA], [listaB])",
   embaralhar: "embaralhar([lista])",
-  espacializador: "espacializador(instrumento, hertz)",
+  panAutomático: "panAutomático(instrumento, segundos)",
 };
 
 const signatureTooltipField = StateField.define({
