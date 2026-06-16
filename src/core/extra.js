@@ -327,7 +327,7 @@ export function euclidean(
   l = eventList.create(),
 ) {
   if (hits > steps) {
-    console.log("Number of hits cannot be greater than steps!");
+    console.error("Number of hits cannot be greater than steps!");
   }
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
   let currentTime = when;
@@ -391,12 +391,11 @@ export function autoPan(onSomething, hertz) {
   if (onSomething.panInterval) {
     clearInterval(onSomething.panInterval);
   }
-
   onSomething.panInterval = setInterval(() => {
     let timeInSeconds = Date.now() / 1000;
     let panValue = Math.sin((timeInSeconds / hertz) * Math.PI * 2);
     onSomething.pan(panValue);
-  }, 30);
+  }, 10);
 }
 
 // portuguese aliases
@@ -419,4 +418,4 @@ export const sequenciaRotacao = rotationSequence;
 export const euclideano = euclidean;
 export const misturar = blend;
 export const embaralhar = shuffle;
-export const espacializador = autoPan;
+export const panAutomático = autoPan;
