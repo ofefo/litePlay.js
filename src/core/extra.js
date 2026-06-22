@@ -203,13 +203,22 @@ export function arpeggio(eventInput, arg1, arg2, arg3) {
   return l;
 }
 
-export function intervalSequence(
-  eventInput,
-  interval = rndInt(1, 11),
-  repetitions = 5,
-  direction = choose("up", "down"),
-  l = eventList.create(),
-) {
+export function intervalSequence(eventInput, arg1, arg2, arg3) {
+  let interval = rndInt(1, 11);
+  let repetitions = 5;
+  let direction = choose("up", "down");
+  let l = eventList.create();
+
+  if (typeof arg1 === "object" && arg1 !== null && !Array.isArray(arg1)) {
+    interval = arg1.interval ?? interval;
+    repetitions = arg1.repetitions ?? repetitions;
+    direction = arg1.direction ?? direction;
+  } else {
+    if (arg1 !== undefined) interval = arg1;
+    if (arg2 !== undefined) repetitions = arg2;
+    if (arg3 !== undefined) direction = arg3;
+  }
+
   const [note, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
   l.add([note, howLoud, when, howLong, onSomething]);
   let currentPitch = note;
