@@ -150,7 +150,7 @@ export function randomChord(arg1, arg2, arg3) {
   return Array.from(notes).sort((a, b) => a - b);
 }
 
-export function blockChord(chord, eventInput) {
+export function blockChord(chord = randomChord(), eventInput) {
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
   let l = eventList.create();
   for (let i of chord) {
