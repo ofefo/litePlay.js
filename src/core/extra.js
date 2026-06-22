@@ -117,26 +117,31 @@ export function monotone(initialTone = C4, interval = 1) {
   }
 }
 
-export function randomChord(
-  size = 4,
-  pitchGenerator = midPitch,
-  microtonal = false,
-) {
-  let notes = new Set();
-  let maxAttempts;
-  if (pitchGenerator != midPitch) {
-    maxAttempts = 36;
+export function randomChord(arg1, arg2, arg3) {
+  let size = 4;
+  let range = midPitch;
+  let microtonal = false;
+
+  if (typeof arg1 === "object" && arg1 !== null && !Array.isArray(arg1)) {
+    size = arg1.size ?? size;
+    range = arg1.range ?? range;
+    microtonal = arg1.microtonal ?? microtonal;
   } else {
-    maxAttempts = 24;
+    if (arg1 !== undefined) size = arg1;
+    if (arg2 !== undefined) range = arg2;
+    if (arg3 !== undefined) microtonal = arg3;
   }
+  let notes = new Set();
+  let maxAttempts = range != midPitch ? 36 : 24;
+
   let attempts = 0;
   let getPitch;
 
   while (notes.size < size && attempts < maxAttempts) {
     if (microtonal === false) {
-      getPitch = Math.round(pitchGenerator());
+      getPitch = Math.round(range());
     } else {
-      getPitch = pitchGenerator();
+      getPitch = range();
     }
     notes.add(getPitch);
     attempts++;
