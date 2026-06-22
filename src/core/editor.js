@@ -269,8 +269,8 @@ document.addEventListener(
         const runBtn = document.getElementById("run-btn");
         if (runBtn) runBtn.classList.add("ready-green");
 
-        const recBtn = document.getElementById("rec-btn");
-        if (recBtn) recBtn.classList.add("ready-red");
+        //const recBtn = document.getElementById("rec-btn");
+        //if (recBtn) recBtn.classList.add("ready-red");
 
         startListener();
       } catch (error) {
@@ -319,6 +319,8 @@ async function startRecording() {
     if (!encoderRegistered) {
       await register(await connect());
       encoderRegistered = true;
+      const recBtn = document.getElementById("rec-btn");
+      if (recBtn) recBtn.classList.add("start-rec");
     }
 
     connectedCsoundNode = await window.csound.getNode();
@@ -345,6 +347,9 @@ async function startRecording() {
     };
 
     mediaRecorder.onstop = () => {
+      const recBtn = document.getElementById("rec-btn");
+      if (recBtn) recBtn.classList.remove("start-rec");
+
       const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
       const audioUrl = URL.createObjectURL(audioBlob);
 
