@@ -159,13 +159,22 @@ export function blockChord(chord = randomChord(), eventInput) {
   return l;
 }
 
-export function arpeggio(
-  eventInput,
-  noteList = randomChord(),
-  repeats = 1,
-  direction = "backAndForth",
-  l = eventList.create(),
-) {
+export function arpeggio(eventInput, arg1, arg2, arg3) {
+  let l = eventList.create();
+  let noteList = randomChord();
+  let repetitions = 1;
+  let direction = "backAndForth";
+
+  if (typeof arg1 === "object" && arg1 !== null && !Array.isArray(arg1)) {
+    noteList = arg1.noteList ?? noteList;
+    repetitions = arg1.repetitions ?? repetitions;
+    direction = arg1.direction ?? direction;
+  } else {
+    if (arg1 !== undefined) noteList = arg1;
+    if (arg2 !== undefined) repetitions = arg2;
+    if (arg3 !== undefined) direction = arg3;
+  }
+
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
   let currentTime = when;
   let notesToPlay = [];
@@ -185,7 +194,7 @@ export function arpeggio(
     notesToPlay = [...noteList];
   }
 
-  for (let i = 0; i < repeats; i++) {
+  for (let i = 0; i < repetitions; i++) {
     for (let note of notesToPlay) {
       l.add([note, howLoud, currentTime, howLong, onSomething]);
       currentTime += howLong;
