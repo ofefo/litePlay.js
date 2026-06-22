@@ -398,6 +398,27 @@ export function autoPan(onSomething, hertz) {
   }, 10);
 }
 
+export function glissando(eventInput, targetPitch) {
+  let [startPitch, howLoud, when, howLong, onSomething] =
+    resolveEvent(eventInput);
+  onSomething.play(eventInput);
+  const durationMs = howLong * 1000;
+  const startTime = performance.now();
+
+  function runGlissandoLoop() {
+    const elapsedTime = performance.now() - startTime;
+    let progress = elapsedTime / durationMs;
+    if (progress > 1) progress = 1;
+    const currentPitch = startPitch + (targetPitch - startPitch) * progress;
+    const bendOffset = currentPitch - startPitch;
+    onSomething.bend(bendOffset);
+    if (progress < 1) {
+      setTimeout(runGlissandoLoop, 10);
+    }
+  }
+  runGlissandoLoop();
+}
+
 // portuguese aliases
 export const midiParaNome = midiToName;
 export const transpôr = transpose;
