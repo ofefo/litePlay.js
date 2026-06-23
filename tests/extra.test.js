@@ -387,3 +387,149 @@ describe('Portuguese aliases', () => {
     expect(extra.embaralhar).toBe(extra.shuffle);
   });
 });
+
+// ─── Object / named-parameter input ───────────────────────────────────────────
+
+describe('Object event input (named parameters)', () => {
+  it('blockChord accepts { what, howLoud, when, howLong }', () => {
+    const result = extra.blockChord({ what: 60, howLoud: 0.8, when: 0, howLong: 1 });
+    expect(result).toBeDefined();
+    expect(typeof result.add).toBe('function');
+    // Every event in the list should share the same howLoud and howLong
+    for (const evt of result.events) {
+      expect(evt[1]).toBeCloseTo(0.8);
+      expect(evt[3]).toBeCloseTo(1);
+    }
+  });
+
+  it('blockChord accepts Portuguese property names { oque, intensidade, quando, duração }', () => {
+    const result = extra.blockChord({ oque: 64, intensidade: 0.5, quando: 0, duração: 2 });
+    expect(result).toBeDefined();
+    for (const evt of result.events) {
+      expect(evt[1]).toBeCloseTo(0.5);
+      expect(evt[3]).toBeCloseTo(2);
+    }
+  });
+
+  it('blockChord second arg as object { chord } overrides random chord', () => {
+    const chord = [60, 64, 67];
+    const result = extra.blockChord(null, { chord });
+    const pitches = result.events.map(e => e[0]);
+    expect(pitches).toEqual(chord);
+  });
+
+  it('arpeggio accepts { what, howLoud, howLong } as event input', () => {
+    const result = extra.arpeggio({ what: 60, howLoud: 0.7, howLong: 0.5 });
+    expect(result).toBeDefined();
+    expect(result.events.length).toBeGreaterThan(0);
+  });
+
+  it('arpeggio second arg as object { noteList, repetitions, direction }', () => {
+    const noteList = [60, 62, 64];
+    const result = extra.arpeggio(
+      { what: 60, howLoud: 1, when: 0, howLong: 0.25 },
+      { noteList, repetitions: 2, direction: 'forward' }
+    );
+    // forward * 2 repetitions = 6 events
+    expect(result.events.length).toBe(6);
+    expect(result.events[0][0]).toBe(60);
+    expect(result.events[1][0]).toBe(62);
+  });
+
+  it('arpeggio direction: backward reverses note order', () => {
+    const noteList = [60, 62, 64];
+    const result = extra.arpeggio(
+      { what: 60, howLoud: 1, when: 0, howLong: 0.25 },
+      { noteList, repetitions: 1, direction: 'backward' }
+    );
+    expect(result.events[0][0]).toBe(64);
+    expect(result.events[2][0]).toBe(60);
+  });
+
+  it('intervalSequence accepts { what, howLoud, when, howLong } and { interval, repetitions, direction }', () => {
+    const result = extra.intervalSequence(
+      { what: 60, howLoud: 0.8, when: 0, howLong: 0.5 },
+      { interval: 2, repetitions: 3, direction: 'up' }
+    );
+    // 1 root + 3 steps = 4 events
+    expect(result.events.length).toBe(4);
+    expect(result.events[0][0]).toBe(60);
+    expect(result.events[1][0]).toBe(62);
+    expect(result.events[2][0]).toBe(64);
+    expect(result.events[3][0]).toBe(66);
+  });
+
+  it('intervalSequence direction: down descends by interval', () => {
+    const result = extra.intervalSequence(
+      { what: 72, howLoud: 1, when: 0, howLong: 0.5 },
+      { interval: 3, repetitions: 2, direction: 'down' }
+    );
+    expect(result.events[1][0]).toBe(69);
+    expect(result.events[2][0]).toBe(66);
+  });
+
+  it('faster accepts object options { lastDuration, steps }', () => {
+    const result = extra.faster(
+      { what: 60, howLoud: 1, when: 0, howLong: 1 },
+      { lastDuration: 0.1, steps: 5 }
+    );
+    // 1 root + 5 steps = 6 events
+    expect(result.events.length).toBe(6);
+  });
+
+  it('slower accepts object options { lastDuration, steps }', () => {
+    const result = extra.slower(
+      { what: 60, howLoud: 1, when: 0, howLong: 0.2 },
+      { lastDuration: 2, steps: 4 }
+    );
+    expect(result.events.length).toBe(5);
+  });
+
+  it('louder accepts object options { lastAmp, steps }', () => {
+    const result = extra.louder(
+      { what: 60, howLoud: 0.1, when: 0, howLong: 0.5 },
+      { lastAmp: 1, steps: 4 }
+    );
+    // 1 root + 4 steps = 5 events; amplitude should increase
+    expect(result.events.length).toBe(5);
+    expect(result.events[result.events.length - 1][1]).toBeCloseTo(1, 2);
+  });
+
+  it('softer accepts object options { lastAmp, steps }', () => {
+    const result = extra.softer(
+      { what: 60, howLoud: 1, when: 0, howLong: 0.5 },
+      { lastAmp: 0.1, steps: 4 }
+    );
+    expect(result.events.length).toBe(5);
+    expect(result.events[result.events.length - 1][1]).toBeCloseTo(0.1, 2);
+  });
+
+  it('ostinato accepts object options { repetitions, rhythm }', () => {
+    const result = extra.ostinato(
+      { what: 60, howLoud: 0.8, when: 0, howLong: 0.5 },
+      { repetitions: 2, rhythm: [0.5, 0.25] }
+    );
+    // 1 root + 2 reps × 2 rhythm steps = 5 events
+    expect(result.events.length).toBe(5);
+  });
+
+  it('euclidean accepts object options { steps, hits, repetitions }', () => {
+    const result = extra.euclidean(
+      { what: 60, howLoud: 1, when: 0, howLong: 0.25 },
+      { steps: 8, hits: 4, repetitions: 1 }
+    );
+    // 4 hits out of 8 steps
+    expect(result.events.length).toBe(4);
+  });
+
+  it('rotationSequence accepts object options { rhythm }', () => {
+    const rhythm = [0.5, 0.25, 0.25];
+    const result = extra.rotationSequence(
+      { what: 60, howLoud: 1, when: 0, howLong: 0.5 },
+      { rhythm }
+    );
+    // 3 rotations × 3 durations = 9 events
+    expect(result.events.length).toBe(9);
+  });
+});
+
