@@ -256,7 +256,7 @@ export function faster(eventInput, arg2, arg3) {
     if (arg3 !== undefined) steps = arg3;
   }
 
-  return changeTempo(eventInput, steps, lastDuration);
+  return changeTempo(eventInput, lastDuration, steps);
 }
 
 export function slower(eventInput, arg2, arg3) {
@@ -271,10 +271,10 @@ export function slower(eventInput, arg2, arg3) {
     if (arg3 !== undefined) steps = arg3;
   }
 
-  return changeTempo(eventInput, steps, lastDuration);
+  return changeTempo(eventInput, lastDuration, steps);
 }
 
-function changeTempo(eventInput, steps = 10, lastDuration = 1) {
+function changeTempo(eventInput, lastDuration = 1, steps = 10) {
   let l = eventList.create();
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
   l.add([what, howLoud, when, howLong, onSomething]);
@@ -296,20 +296,34 @@ function changeTempo(eventInput, steps = 10, lastDuration = 1) {
   }
 }
 
-export function louder(eventInput, last = 1, steps = 10) {
-  return changeLoudness(eventInput, last, steps);
+export function louder(eventInput, arg2, arg3) {
+  let lastAmp = 1;
+  let steps = 10;
+  if (typeof arg2 === "object" && arg2 !== null && !Array.isArray(arg2)) {
+    lastAmp = arg2.lastAmp ?? lastAmp;
+    steps = arg2.steps ?? steps;
+  } else {
+    if (arg2 !== undefined) lastAmp = arg2;
+    if (arg3 !== undefined) steps = arg3;
+  }
+  return changeLoudness(eventInput, lastAmp, steps);
 }
 
-export function softer(eventInput, last = 0.01, steps = 10) {
-  return changeLoudness(eventInput, last, steps);
+export function softer(eventInput, arg2, arg3) {
+  let lastAmp = 0.1;
+  let steps = 10;
+  if (typeof arg2 === "object" && arg2 !== null && !Array.isArray(arg2)) {
+    lastAmp = arg2.lastAmp ?? lastAmp;
+    steps = arg2.steps ?? steps;
+  } else {
+    if (arg2 !== undefined) lastAmp = arg2;
+    if (arg3 !== undefined) steps = arg3;
+  }
+  return changeLoudness(eventInput, lastAmp, steps);
 }
 
-function changeLoudness(
-  eventInput,
-  last = 1,
-  steps = 10,
-  l = eventList.create(),
-) {
+function changeLoudness(eventInput, last = 1, steps = 10) {
+  let l = eventList.create();
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
   l.add([what, howLoud, when, howLong, onSomething]);
 

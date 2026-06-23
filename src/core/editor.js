@@ -148,8 +148,10 @@ const functionSignatures = {
   intervalSequence:
     "intervalSequence([what, howLoud, when, howLong, onSomething], interval, repetitions, direction)",
   invert: "invert([melody], axis)",
-  faster: "faster([what, howLoud, when, howLong, onSomething], steps, ratio<1)",
-  slower: "slower([what, howLoud, when, howLong, onSomething], steps, ratio>1)",
+  faster:
+    "faster([what, howLoud, when, howLong, onSomething], lastDuration, steps)",
+  slower:
+    "slower([what, howLoud, when, howLong, onSomething], lastDuration, steps)",
   ostinato:
     "ostinato([what, howLoud, when, howLong, onSomething], repetitions, [rhythm])",
   euclidean:
