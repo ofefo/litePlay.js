@@ -356,16 +356,26 @@ export function rotate(list, steps = 1) {
   });
 }
 
-export function ostinato(eventInput, repetitions = 1, rhythmList) {
+export function ostinato(eventInput, arg2, arg3) {
+  let repetitions = 1;
+  let rhythm;
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
-  const rhythms = rhythmList || [howLong];
+
+  if (typeof arg2 === "object" && arg2 !== null && !Array.isArray(arg2)) {
+    repetitions = arg2.repetitions ?? repetitions;
+    rhythm = arg2.rhythm ?? rhythm;
+  } else {
+    if (arg2 !== undefined) repetitions = arg2;
+    if (arg3 !== undefined) rhythm = arg3;
+  }
+  const durations = rhythm || [howLong];
   const resolvePitch = (val) => (typeof val === "function" ? val() : val);
   const firstPitch = resolvePitch(what);
-  const l = eventList.create([what, howLoud, when, howLong, onSomething]);
+  let l = eventList.create([what, howLoud, when, howLong, onSomething]);
   let initialTime = when;
 
   for (let i = 0, len = repetitions; i < len; i++) {
-    for (let j of rhythms) {
+    for (let j of durations) {
       initialTime += j;
       const currentPitch = resolvePitch(what);
       l.add([currentPitch, howLoud, initialTime, howLong, onSomething]);
