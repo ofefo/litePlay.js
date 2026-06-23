@@ -150,7 +150,7 @@ export function randomChord(arg1, arg2, arg3) {
   return Array.from(notes).sort((a, b) => a - b);
 }
 
-export function blockChord(chord = randomChord(), eventInput) {
+export function blockChord(eventInput, chord = randomChord()) {
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
   let l = eventList.create();
   for (let i of chord) {
@@ -159,20 +159,20 @@ export function blockChord(chord = randomChord(), eventInput) {
   return l;
 }
 
-export function arpeggio(eventInput, arg1, arg2, arg3) {
+export function arpeggio(eventInput, arg2, arg3, arg4) {
   let l = eventList.create();
   let noteList = randomChord();
   let repetitions = 1;
   let direction = "backAndForth";
 
-  if (typeof arg1 === "object" && arg1 !== null && !Array.isArray(arg1)) {
-    noteList = arg1.noteList ?? noteList;
-    repetitions = arg1.repetitions ?? repetitions;
-    direction = arg1.direction ?? direction;
+  if (typeof arg2 === "object" && arg2 !== null && !Array.isArray(arg2)) {
+    noteList = arg2.noteList ?? noteList;
+    repetitions = arg2.repetitions ?? repetitions;
+    direction = arg2.direction ?? direction;
   } else {
-    if (arg1 !== undefined) noteList = arg1;
-    if (arg2 !== undefined) repetitions = arg2;
-    if (arg3 !== undefined) direction = arg3;
+    if (arg2 !== undefined) noteList = arg2;
+    if (arg3 !== undefined) repetitions = arg3;
+    if (arg4 !== undefined) direction = arg4;
   }
 
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
@@ -203,20 +203,20 @@ export function arpeggio(eventInput, arg1, arg2, arg3) {
   return l;
 }
 
-export function intervalSequence(eventInput, arg1, arg2, arg3) {
+export function intervalSequence(eventInput, arg2, arg3, arg4) {
   let interval = rndInt(1, 11);
   let repetitions = 5;
   let direction = choose("up", "down");
   let l = eventList.create();
 
-  if (typeof arg1 === "object" && arg1 !== null && !Array.isArray(arg1)) {
-    interval = arg1.interval ?? interval;
-    repetitions = arg1.repetitions ?? repetitions;
-    direction = arg1.direction ?? direction;
+  if (typeof arg2 === "object" && arg2 !== null && !Array.isArray(arg2)) {
+    interval = arg2.interval ?? interval;
+    repetitions = arg2.repetitions ?? repetitions;
+    direction = arg2.direction ?? direction;
   } else {
-    if (arg1 !== undefined) interval = arg1;
-    if (arg2 !== undefined) repetitions = arg2;
-    if (arg3 !== undefined) direction = arg3;
+    if (arg2 !== undefined) interval = arg2;
+    if (arg3 !== undefined) repetitions = arg3;
+    if (arg4 !== undefined) direction = arg4;
   }
 
   const [note, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
@@ -244,30 +244,50 @@ export function invert(melody = [], axis = C4) {
   return melody.map((note) => axis + ((((axis - note) % 12) + 12) % 12));
 }
 
-export function faster(eventInput, steps = 10, ratio = 0.9) {
-  return changeTempo(eventInput, steps, ratio);
+export function faster(eventInput, arg2, arg3) {
+  let lastDuration = 0.1;
+  let steps = 10;
+
+  if (typeof arg2 === "object" && arg2 !== null && !Array.isArray(arg2)) {
+    lastDuration = arg2.lastDuration ?? lastDuration;
+    steps = arg2.steps ?? steps;
+  } else {
+    if (arg2 !== undefined) lastDuration = arg2;
+    if (arg3 !== undefined) steps = arg3;
+  }
+
+  return changeTempo(eventInput, steps, lastDuration);
 }
 
-export function slower(eventInput, steps = 10, ratio = 1.1) {
-  return changeTempo(eventInput, steps, ratio);
+export function slower(eventInput, arg2, arg3) {
+  let lastDuration = 2;
+  let steps = 10;
+
+  if (typeof arg2 === "object" && arg2 !== null && !Array.isArray(arg2)) {
+    lastDuration = arg2.lastDuration ?? lastDuration;
+    steps = arg2.steps ?? steps;
+  } else {
+    if (arg2 !== undefined) lastDuration = arg2;
+    if (arg3 !== undefined) steps = arg3;
+  }
+
+  return changeTempo(eventInput, steps, lastDuration);
 }
 
-function changeTempo(
-  eventInput,
-  steps = 10,
-  ratio = 0.9,
-  l = eventList.create(),
-) {
+function changeTempo(eventInput, steps = 10, lastDuration = 1) {
+  let l = eventList.create();
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
   l.add([what, howLoud, when, howLong, onSomething]);
   let nextDuration = howLong;
   let nextWhen = when;
+  let diff = howLong - lastDuration;
+  let stepSize = diff / steps;
 
   if (steps <= 0) {
     return l;
   } else {
     for (let i = 0; i < steps; i++) {
-      nextDuration *= ratio;
+      nextDuration -= stepSize;
       nextWhen += nextDuration;
       let currentEvent = [what, howLoud, nextWhen, nextDuration, onSomething];
       l.add(currentEvent);
