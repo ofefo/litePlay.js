@@ -602,7 +602,7 @@ export const eventList = {
         if (typeof amp_ === "function") amp = amp_();
         else amp = amp_;
       } else {
-        if (typeof evt === "function") what = evt_();
+        if (typeof evt === "function") what = evt();
         else what = evt;
         instr = defInstr;
         amp = instr.howLoud;
