@@ -4,24 +4,43 @@ import * as extra from '../src/core/extra.js';
 
 beforeAll(() => {
   globalThis.window = {};
-  globalThis.eventList = {
-    events: [],
-    create: (...evtLst) => {
-      let e = Object.create(globalThis.eventList);
-      e.events = evtLst;
-      return e;
-    },
-    add: (...evtLst) => {},
-    insert: (pos, ...evtLst) => {},
-    clear: () => {},
-    remove: (ndx = -1) => {},
-  };
+
+  // Math helpers used internally by extra.js functions
   globalThis.rnd = (min, max) => Math.random() * (max - min) + min;
   globalThis.rndInt = (min, max) =>
     Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min));
-  globalThis.choose = (...options) => options[0];
+  globalThis.choose = (...options) => {
+    if (options.length === 1 && Array.isArray(options[0])) options = options[0];
+    return options[Math.floor(Math.random() * options.length)];
+  };
+
+  // Pitch reference used by justIntonation, monotone, randomChord, invert defaults
   globalThis.C4 = 60;
-  globalThis.midPitch = () => 60;
+  globalThis.midPitch = () => globalThis.rndInt(48, 72);
+
+  // Minimal eventList mock used by blockChord, arpeggio, intervalSequence, etc.
+  const makeList = () => {
+    const l = {
+      events: [],
+      add(...evtLst) { for (const e of evtLst) this.events.push(e); return this; },
+      insert(pos, ...evtLst) { for (const e of evtLst) this.events.splice(pos, 0, e); return this; },
+      clear() { this.events = []; return this; },
+      remove(ndx = -1) { if (ndx < 0) this.events.pop(); else this.events.splice(ndx, 1); return this; },
+    };
+    return l;
+  };
+  globalThis.eventList = {
+    events: [],
+    create(...evtLst) {
+      const l = makeList();
+      l.events = [...evtLst];
+      return l;
+    },
+    add(...evtLst) { for (const e of evtLst) this.events.push(e); return this; },
+    insert(pos, ...evtLst) { for (const e of evtLst) this.events.splice(pos, 0, e); return this; },
+    clear() { this.events = []; return this; },
+    remove(ndx = -1) { if (ndx < 0) this.events.pop(); else this.events.splice(ndx, 1); return this; },
+  };
 });
 
 describe('midiToName', () => {
