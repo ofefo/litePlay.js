@@ -42,7 +42,7 @@ function resolveEvent(input) {
 
 export function midiToName(midiValue) {
   if (midiValue < 0 || midiValue > 127)
-    return console.log("Pitch out of bounds (0-127).");
+    throw new RangeError(`midiToName: value ${midiValue} is out of bounds (0-127).`);
   const pitchClasses = [
     "C",
     "Cs",
