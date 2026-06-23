@@ -429,15 +429,22 @@ export function euclidean(eventInput, arg2, arg3, arg4, arg5) {
   return l;
 }
 
-export function rotationSequence(eventInput, rhythmList) {
+export function rotationSequence(eventInput, arg2) {
+  let rhythm;
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
+
+  if (typeof arg2 === "object" && arg2 !== null && !Array.isArray(arg2)) {
+    rhythm = arg2.rhythm ?? rhythm;
+  } else {
+    if (arg2 !== undefined) rhythm = arg2;
+  }
 
   const l = eventList.create();
   let currentTime = when;
-  let rhythms = rhythmList || [howLong];
-  let currentPattern = [...rhythms];
+  let durations = rhythm || [howLong];
+  let currentPattern = [...durations];
 
-  for (let i = 0; i < rhythms.length; i++) {
+  for (let i = 0; i < durations.length; i++) {
     for (let dur of currentPattern) {
       l.add([what, howLoud, currentTime, dur, onSomething]);
       currentTime += dur;
@@ -466,7 +473,14 @@ export function shuffle(list) {
   return list;
 }
 
-export function autoPan(onSomething, hertz) {
+export function autoPan(onSomething, arg2) {
+  let hertz = 1;
+  if (typeof arg2 === "object" && arg2 !== null && !Array.isArray(arg2)) {
+    hertz = arg2.hertz ?? hertz;
+  } else {
+    if (arg2 !== undefined) hertz = arg2;
+  }
+
   if (onSomething.panInterval) {
     clearInterval(onSomething.panInterval);
   }
@@ -477,7 +491,14 @@ export function autoPan(onSomething, hertz) {
   }, 10);
 }
 
-export function glissando(eventInput, targetPitch) {
+export function glissando(eventInput) {
+  let targetPitch = 60;
+  if (typeof arg2 === "object" && arg2 !== null && !Array.isArray(arg2)) {
+    targetPitch = arg2.targetPitch ?? targetPitch;
+  } else {
+    if (arg2 !== undefined) targetPitch = arg2;
+  }
+
   let [startPitch, howLoud, when, howLong, onSomething] =
     resolveEvent(eventInput);
   onSomething.play(eventInput);
