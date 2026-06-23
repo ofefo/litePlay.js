@@ -155,7 +155,7 @@ const functionSignatures = {
   ostinato:
     "ostinato([what, howLoud, when, howLong, onSomething], repetitions, [rhythm])",
   euclidean:
-    "euclidean([what, howLoud, when, howLong, onSomething], repetitions, pulses, hits, rotation)",
+    "euclidean([what, howLoud, when, howLong, onSomething], repetitions, steps, hits, rotation)",
   louder: "louder([what, howLoud, when, howLong, onSomething], lastAmp, steps)",
   softer: "softer([what, howLoud, when, howLong, onSomething], lastAmp, steps)",
   autoPan: "autoPan(instrument, seconds)",
@@ -186,7 +186,7 @@ const functionSignatures = {
   retrogradar: "retrogradar([lista])",
   rotacionar: "rotacionar([lista])",
   euclideano:
-    "euclideano([oQuê, quãoForte, quando, quantoTempo, emAlgo], repetições, pulsos, ataques, rotação)",
+    "euclideano([oQuê, quãoForte, quando, quantoTempo, emAlgo], repetições, passos, ataques, rotação)",
   misturar: "misturar([listaA], [listaB])",
   embaralhar: "embaralhar([lista])",
   panAutomático: "panAutomático(instrumento, segundos)",

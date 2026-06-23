@@ -368,6 +368,7 @@ export function ostinato(eventInput, arg2, arg3) {
     if (arg2 !== undefined) repetitions = arg2;
     if (arg3 !== undefined) rhythm = arg3;
   }
+
   const durations = rhythm || [howLong];
   const resolvePitch = (val) => (typeof val === "function" ? val() : val);
   const firstPitch = resolvePitch(what);
@@ -384,15 +385,26 @@ export function ostinato(eventInput, arg2, arg3) {
   return l;
 }
 
-export function euclidean(
-  eventInput,
-  repetitions = 1,
-  steps = rnd(4, 12),
-  hits = steps - rnd(1, 3),
-  rotation = 0,
-  a = [],
-  l = eventList.create(),
-) {
+export function euclidean(eventInput, arg2, arg3, arg4, arg5) {
+  let repetitions = 1;
+  let steps = rnd(4, 12);
+  let hits = steps - rnd(1, 3);
+  let rotation = 0;
+  let a = [];
+  let l = eventList.create();
+
+  if (typeof arg2 === "object" && arg2 !== null && !Array.isArray(arg2)) {
+    repetitions = arg2.repetitions ?? repetitions;
+    steps = arg2.steps ?? steps;
+    hits = arg2.hits ?? hits;
+    rotation = arg2.rotation ?? rotation;
+  } else {
+    if (arg2 !== undefined) repetitions = arg2;
+    if (arg3 !== undefined) steps = arg3;
+    if (arg4 !== undefined) hits = arg4;
+    if (arg5 !== undefined) rotation = arg5;
+  }
+
   if (hits > steps) {
     console.error("Number of hits cannot be greater than steps!");
   }
