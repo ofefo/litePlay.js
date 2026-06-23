@@ -34,9 +34,9 @@ describe('midiToName', () => {
     expect(extra.midiToName(71)).toBe('B4');
   });
 
-  it('returns undefined for out-of-range values', () => {
-    expect(extra.midiToName(-1)).toBeUndefined();
-    expect(extra.midiToName(128)).toBeUndefined();
+  it('throws RangeError for out-of-range values', () => {
+    expect(() => extra.midiToName(-1)).toThrow(RangeError);
+    expect(() => extra.midiToName(128)).toThrow(RangeError);
   });
 });
 
