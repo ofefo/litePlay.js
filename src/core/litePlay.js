@@ -178,7 +178,7 @@ export class Instrument {
       for (const evt of evtLst) {
         let what,
           when = 0;
-        if (evt === "object") {
+        if (typeof evt === "object") {
           what = evt[0];
           when = evt.length > 2 ? evt[2] : 0;
         } else what = evt;
