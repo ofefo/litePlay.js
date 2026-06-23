@@ -246,7 +246,7 @@ describe('shuffle', () => {
 
 describe('resolveEvent (internal, tested via blockChord)', () => {
   it('is used internally by event-building functions', () => {
-    const result = extra.blockChord(60);
+    const result = extra.blockChord();
     expect(result).toBeDefined();
     expect(typeof result.add).toBe('function');
   });
@@ -254,7 +254,7 @@ describe('resolveEvent (internal, tested via blockChord)', () => {
 
 describe('faster', () => {
   it('returns an eventList-like result', () => {
-    const result = extra.faster(60);
+    const result = extra.faster();
     expect(result).toBeDefined();
     expect(typeof result.add).toBe('function');
   });
@@ -262,7 +262,7 @@ describe('faster', () => {
 
 describe('slower', () => {
   it('returns an eventList-like result', () => {
-    const result = extra.slower(60);
+    const result = extra.slower();
     expect(result).toBeDefined();
     expect(typeof result.add).toBe('function');
   });
@@ -270,7 +270,7 @@ describe('slower', () => {
 
 describe('louder', () => {
   it('returns an eventList-like result', () => {
-    const result = extra.louder(60);
+    const result = extra.louder();
     expect(result).toBeDefined();
     expect(typeof result.add).toBe('function');
   });
@@ -278,7 +278,7 @@ describe('louder', () => {
 
 describe('softer', () => {
   it('returns an eventList-like result', () => {
-    const result = extra.softer(60);
+    const result = extra.softer();
     expect(result).toBeDefined();
     expect(typeof result.add).toBe('function');
   });
@@ -286,7 +286,7 @@ describe('softer', () => {
 
 describe('blockChord', () => {
   it('returns an eventList-like result', () => {
-    const result = extra.blockChord(60);
+    const result = extra.blockChord();
     expect(result).toBeDefined();
     expect(typeof result.add).toBe('function');
   });
@@ -294,7 +294,7 @@ describe('blockChord', () => {
 
 describe('arpeggio', () => {
   it('returns an eventList-like result', () => {
-    const result = extra.arpeggio(60);
+    const result = extra.arpeggio();
     expect(result).toBeDefined();
     expect(typeof result.add).toBe('function');
   });
@@ -302,7 +302,7 @@ describe('arpeggio', () => {
 
 describe('intervalSequence', () => {
   it('returns an eventList-like result', () => {
-    const result = extra.intervalSequence(60);
+    const result = extra.intervalSequence();
     expect(result).toBeDefined();
     expect(typeof result.add).toBe('function');
   });
@@ -310,7 +310,7 @@ describe('intervalSequence', () => {
 
 describe('ostinato', () => {
   it('returns an eventList-like result', () => {
-    const result = extra.ostinato(60);
+    const result = extra.ostinato();
     expect(result).toBeDefined();
     expect(typeof result.add).toBe('function');
   });
@@ -318,7 +318,7 @@ describe('ostinato', () => {
 
 describe('euclidean', () => {
   it('returns an eventList-like result', () => {
-    const result = extra.euclidean(60);
+    const result = extra.euclidean();
     expect(result).toBeDefined();
     expect(typeof result.add).toBe('function');
   });
@@ -333,7 +333,7 @@ describe('euclidean', () => {
 
 describe('rotationSequence', () => {
   it('returns an eventList-like result', () => {
-    const result = extra.rotationSequence(60);
+    const result = extra.rotationSequence();
     expect(result).toBeDefined();
     expect(typeof result.add).toBe('function');
   });
