@@ -42,7 +42,9 @@ function resolveEvent(input) {
 
 export function midiToName(midiValue) {
   if (midiValue < 0 || midiValue > 127)
-    throw new RangeError(`midiToName: value ${midiValue} is out of bounds (0-127).`);
+    throw new RangeError(
+      `midiToName: value ${midiValue} is out of bounds (0-127).`,
+    );
   const pitchClasses = [
     "C",
     "Cs",
@@ -497,7 +499,7 @@ export function autoPan(onSomething, arg2) {
   }, 10);
 }
 
-export function glissando(eventInput) {
+export function glissando(eventInput, arg2) {
   let targetPitch = 60;
   if (typeof arg2 === "object" && arg2 !== null && !Array.isArray(arg2)) {
     targetPitch = arg2.targetPitch ?? targetPitch;
