@@ -143,6 +143,7 @@ const functionSignatures = {
   monotone: "monotone(initial tone, interval)",
   transpose: "transpose([notes], interval)",
   randomChord: "randomChord(size, range, microtonal = false)",
+  blockChord: "blockChord([what, howLoud, when, howLong, onSomething], [chord])",
   arpeggio:
     "arpeggio([what, howLoud, when, howLong, onSomething], [chord], repetitions, direction)",
   intervalSequence:
@@ -156,16 +157,25 @@ const functionSignatures = {
     "ostinato([what, howLoud, when, howLong, onSomething], repetitions, [rhythm])",
   euclidean:
     "euclidean([what, howLoud, when, howLong, onSomething], repetitions, steps, hits, rotation)",
+  rotationSequence: "rotationSequence([what, howLoud, when, howLong, onSomething], [rhythm])",
   louder: "louder([what, howLoud, when, howLong, onSomething], lastAmp, steps)",
   softer: "softer([what, howLoud, when, howLong, onSomething], lastAmp, steps)",
   autoPan: "autoPan(instrument, seconds)",
+  glissando: "glissando([what, howLoud, when, howLong, onSomething], targetPitch)",
   retrograde: "retrograde([list])",
-  suffle: "shuffle([list])",
+  shuffle: "shuffle([list])",
   rotate: "rotate([list], steps)",
   blend: "blend([listA], [listB])",
+  stop: "stop([what, when])",
+  instrument: "instrument(instrumentName)",
+  sub: "sub(note1, note2, ...)",
+  rnd: "rnd(min, max)",
+  rndInt: "rndInt(min, max)",
+  choose: "choose(option1, option2, ...)",
+  silently: "silently(ms)",
   toque: "toque([oQuê, quãoForte, quando, quantoTempo, emAlgo])",
   midiParaNome: "midiParaNome(midi)",
-  transpôr: "tranpôr([notas], intervalo)",
+  transpôr: "transpôr([notas], intervalo)",
   afinaçãoJusta: "afinaçãoJusta(altura base, número de harmônicos)",
   frequênciaParaMidi: "frequênciaParaMidi(frequência)",
   monótono: "monótono(altura inicial, intervalo)",
@@ -185,11 +195,16 @@ const functionSignatures = {
     "maisSuave([oQuê, quãoForte, quando, quantoTempo, emAlgo], última intensidade, passos)",
   retrogradar: "retrogradar([lista])",
   rotacionar: "rotacionar([lista])",
+  sequenciaRotacao: "sequenciaRotacao([oQuê, quãoForte, quando, quantoTempo, emAlgo], [ritmo])",
   euclideano:
     "euclideano([oQuê, quãoForte, quando, quantoTempo, emAlgo], repetições, passos, ataques, rotação)",
   misturar: "misturar([listaA], [listaB])",
   embaralhar: "embaralhar([lista])",
   panAutomático: "panAutomático(instrumento, segundos)",
+  pare: "pare()",
+  instrumento: "instrumento(nomeDoInstrumento)",
+  escolha: "escolha(opcao1, opcao2, ...)",
+  quieto: "quieto(ms)",
 };
 
 const signatureTooltipField = StateField.define({
