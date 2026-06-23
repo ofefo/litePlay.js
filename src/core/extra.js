@@ -166,10 +166,10 @@ export function blockChord(eventInput, arg2) {
 }
 
 export function arpeggio(eventInput, arg2, arg3, arg4) {
-  let l = eventList.create();
   let noteList = randomChord();
   let repetitions = 1;
   let direction = "backAndForth";
+  let l = eventList.create();
 
   if (typeof arg2 === "object" && arg2 !== null && !Array.isArray(arg2)) {
     noteList = arg2.noteList ?? noteList;
