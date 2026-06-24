@@ -238,7 +238,7 @@ export function arpeggio(eventInput, arg2, arg3, arg4) {
 
 export function intervalSequence(eventInput, arg2, arg3, arg4) {
   let interval = rndInt(1, 11);
-  let repetitions = 5;
+  let repetitions = 1;
   let direction = choose("up", "down");
   let l = eventList.create();
 
