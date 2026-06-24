@@ -342,11 +342,11 @@ describe('euclidean', () => {
     expect(typeof result.add).toBe('function');
   });
 
-  it('logs error when hits > steps', () => {
-    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    extra.euclidean(60, 1, 4, 6);
-    expect(spy).toHaveBeenCalled();
-    spy.mockRestore();
+  it('throws RangeError when hits > steps', () => {
+    expect(() => extra.euclidean(60, 1, 4, 6)).toThrow(RangeError);
+    expect(() => extra.euclidean(60, 1, 4, 6)).toThrow(
+      'hits (6) cannot be greater than steps (4)',
+    );
   });
 });
 

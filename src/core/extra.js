@@ -67,12 +67,19 @@ export function midiToName(midiValue) {
 }
 
 export function transpose(notes = [], interval = 0) {
+  if (!Array.isArray(notes)) {
+    throw new TypeError("transpose(): first argument must be an array.");
+  }
   return notes.map((i) => i + interval);
 }
 
 export function edo(divisions) {
+  if (divisions <= 0) {
+    throw new RangeError("edo(): divisions must be a positive number.");
+  }
   const octave = 12;
-  const interval = 12 / divisions;
+  let integer = Math.floor(divisions);
+  const interval = 12 / integer;
   let tones = [0];
   for (let i = 0, len = octave; i < len; i = i + interval) {
     tones.push(i + interval);
@@ -81,10 +88,18 @@ export function edo(divisions) {
 }
 
 export function midiToFrequency(midi) {
+  if (midi <= 0) {
+    throw new RangeError("midiToFrequency(): midi must be a positive number.");
+  }
   return 440 * Math.pow(2, (midi - 69) / 12);
 }
 
 export function frequencyToMidi(freq) {
+  if (freq <= 0) {
+    throw new RangeError(
+      "frequencyToMidi(): frequency must be a positive number.",
+    );
+  }
   return 69 + 12 * Math.log2(freq / 440);
 }
 
@@ -132,6 +147,9 @@ export function randomChord(arg1, arg2, arg3) {
     if (arg1 !== undefined) size = arg1;
     if (arg2 !== undefined) range = arg2;
     if (arg3 !== undefined) microtonal = arg3;
+  }
+  if (size < 1) {
+    throw new RangeError(`randomChord(): size (${size}) must be at least 1.`);
   }
   let notes = new Set();
   let maxAttempts = range != midPitch ? 36 : 24;
@@ -182,6 +200,11 @@ export function arpeggio(eventInput, arg2, arg3, arg4) {
     if (arg3 !== undefined) repetitions = arg3;
     if (arg4 !== undefined) direction = arg4;
   }
+  if (repetitions < 1) {
+    throw new RangeError(
+      `arpeggio(): repetitions (${repetitions}) must be at least 1.`,
+    );
+  }
 
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
   let currentTime = when;
@@ -199,7 +222,9 @@ export function arpeggio(eventInput, arg2, arg3, arg4) {
     const downNotes = [...noteList].reverse().slice(1, -1);
     notesToPlay = [...noteList, ...downNotes];
   } else {
-    notesToPlay = [...noteList];
+    throw new RangeError(
+      `arpeggio(): direction "${direction}" is not valid. Use "forward", "backward", or "backAndForth".`,
+    );
   }
 
   for (let i = 0; i < repetitions; i++) {
@@ -238,8 +263,12 @@ export function intervalSequence(eventInput, arg2, arg3, arg4) {
     for (let i = 0; i < repetitions; i++) {
       if (direction === "up") {
         currentPitch += interval;
-      } else {
+      } else if (direction === "down") {
         currentPitch -= interval;
+      } else {
+        throw new RangeError(
+          `intervalSequence(): direction "${direction}" is not valid. Use "up" or "down".`,
+        );
       }
       currentWhen += howLong;
       l.add([currentPitch, howLoud, currentWhen, howLong, onSomething]);
@@ -249,12 +278,15 @@ export function intervalSequence(eventInput, arg2, arg3, arg4) {
 }
 
 export function invert(melody = [], axis = C4) {
+  if (!Array.isArray(melody)) {
+    throw new TypeError("invert(): first argument must be an array.");
+  }
   return melody.map((note) => axis + ((((axis - note) % 12) + 12) % 12));
 }
 
 export function faster(eventInput, arg2, arg3) {
   let lastDuration = 0.1;
-  let steps = 10;
+  let steps = 1;
 
   if (typeof arg2 === "object" && arg2 !== null && !Array.isArray(arg2)) {
     lastDuration = arg2.lastDuration ?? lastDuration;
@@ -262,6 +294,19 @@ export function faster(eventInput, arg2, arg3) {
   } else {
     if (arg2 !== undefined) lastDuration = arg2;
     if (arg3 !== undefined) steps = arg3;
+  }
+
+  if (steps <= 0) {
+    throw new RangeError(
+      `faster(): steps (${steps}) must be a positive number.`,
+    );
+  }
+
+  const [, , , howLong] = resolveEvent(eventInput);
+  if (lastDuration >= howLong) {
+    throw new RangeError(
+      `faster(): lastDuration (${lastDuration}) must be less than the event duration (${howLong}) to make it faster.`,
+    );
   }
 
   return changeTempo(eventInput, lastDuration, steps);
@@ -269,7 +314,7 @@ export function faster(eventInput, arg2, arg3) {
 
 export function slower(eventInput, arg2, arg3) {
   let lastDuration = 2;
-  let steps = 10;
+  let steps = 1;
 
   if (typeof arg2 === "object" && arg2 !== null && !Array.isArray(arg2)) {
     lastDuration = arg2.lastDuration ?? lastDuration;
@@ -279,10 +324,28 @@ export function slower(eventInput, arg2, arg3) {
     if (arg3 !== undefined) steps = arg3;
   }
 
+  if (steps <= 0) {
+    throw new RangeError(
+      `slower(): steps (${steps}) must be a positive number.`,
+    );
+  }
+
+  const [, , , howLong] = resolveEvent(eventInput);
+  if (lastDuration <= howLong) {
+    throw new RangeError(
+      `slower(): lastDuration (${lastDuration}) must be greater than the event duration (${howLong}) to make it slower.`,
+    );
+  }
+
   return changeTempo(eventInput, lastDuration, steps);
 }
 
 function changeTempo(eventInput, lastDuration = 1, steps = 10) {
+  if (steps <= 0) {
+    throw new RangeError(
+      `changeTempo(): steps (${steps}) must be a positive number.`,
+    );
+  }
   let l = eventList.create();
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
   l.add([what, howLoud, when, howLong, onSomething]);
@@ -291,22 +354,18 @@ function changeTempo(eventInput, lastDuration = 1, steps = 10) {
   let diff = howLong - lastDuration;
   let stepSize = diff / steps;
 
-  if (steps <= 0) {
-    return l;
-  } else {
-    for (let i = 0; i < steps; i++) {
-      nextDuration -= stepSize;
-      nextWhen += nextDuration;
-      let currentEvent = [what, howLoud, nextWhen, nextDuration, onSomething];
-      l.add(currentEvent);
-    }
-    return l;
+  for (let i = 0; i < steps; i++) {
+    nextDuration -= stepSize;
+    nextWhen += nextDuration;
+    let currentEvent = [what, howLoud, nextWhen, nextDuration, onSomething];
+    l.add(currentEvent);
   }
+  return l;
 }
 
 export function louder(eventInput, arg2, arg3) {
   let lastAmp = 1;
-  let steps = 10;
+  let steps = 1;
   if (typeof arg2 === "object" && arg2 !== null && !Array.isArray(arg2)) {
     lastAmp = arg2.lastAmp ?? lastAmp;
     steps = arg2.steps ?? steps;
@@ -314,12 +373,32 @@ export function louder(eventInput, arg2, arg3) {
     if (arg2 !== undefined) lastAmp = arg2;
     if (arg3 !== undefined) steps = arg3;
   }
+
+  if (steps <= 0) {
+    throw new RangeError(
+      `louder(): steps (${steps}) must be a positive number.`,
+    );
+  }
+
+  if (lastAmp < 0 || lastAmp > 1) {
+    throw new RangeError(
+      `louder(): lastAmp (${lastAmp}) must be between 0 and 1.`,
+    );
+  }
+
+  const [, howLoud] = resolveEvent(eventInput);
+  if (lastAmp <= howLoud) {
+    throw new RangeError(
+      `louder(): lastAmp (${lastAmp}) must be greater than the event amplitude (${howLoud}) to make it louder.`,
+    );
+  }
+
   return changeLoudness(eventInput, lastAmp, steps);
 }
 
 export function softer(eventInput, arg2, arg3) {
   let lastAmp = 0.1;
-  let steps = 10;
+  let steps = 1;
   if (typeof arg2 === "object" && arg2 !== null && !Array.isArray(arg2)) {
     lastAmp = arg2.lastAmp ?? lastAmp;
     steps = arg2.steps ?? steps;
@@ -327,10 +406,35 @@ export function softer(eventInput, arg2, arg3) {
     if (arg2 !== undefined) lastAmp = arg2;
     if (arg3 !== undefined) steps = arg3;
   }
+
+  if (steps <= 0) {
+    throw new RangeError(
+      `softer(): steps (${steps}) must be a positive number.`,
+    );
+  }
+
+  if (lastAmp < 0 || lastAmp > 1) {
+    throw new RangeError(
+      `softer(): lastAmp (${lastAmp}) must be between 0 and 1.`,
+    );
+  }
+
+  const [, howLoud] = resolveEvent(eventInput);
+  if (lastAmp >= howLoud) {
+    throw new RangeError(
+      `softer(): lastAmp (${lastAmp}) must be less than the event amplitude (${howLoud}) to make it softer.`,
+    );
+  }
+
   return changeLoudness(eventInput, lastAmp, steps);
 }
 
 function changeLoudness(eventInput, last = 1, steps = 10) {
+  if (steps <= 0) {
+    throw new RangeError(
+      `changeLoudness(): steps (${steps}) must be a positive number.`,
+    );
+  }
   let l = eventList.create();
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
   l.add([what, howLoud, when, howLong, onSomething]);
@@ -339,24 +443,26 @@ function changeLoudness(eventInput, last = 1, steps = 10) {
 
   let nextWhen = when;
   let nextLoudness = howLoud;
-  if (steps <= 0) {
-    return l;
-  } else {
-    for (let i = 0; i < steps; i++) {
-      nextWhen += howLong;
-      nextLoudness += ampStep;
-      nextLoudness = Math.round(nextLoudness * 1000) / 1000;
-      l.add([what, nextLoudness, nextWhen, howLong, onSomething]);
-    }
-    return l;
+  for (let i = 0; i < steps; i++) {
+    nextWhen += howLong;
+    nextLoudness += ampStep;
+    nextLoudness = Math.round(nextLoudness * 1000) / 1000;
+    l.add([what, nextLoudness, nextWhen, howLong, onSomething]);
   }
+  return l;
 }
 
 export function retrograde(list) {
+  if (!Array.isArray(list)) {
+    throw new TypeError("retrograde(): argument must be an array.");
+  }
   return list.reverse();
 }
 
 export function rotate(list, steps = 1) {
+  if (!Array.isArray(list)) {
+    throw new TypeError("rotate(): first argument must be an array.");
+  }
   return list.map((note, index, arr) => {
     let newIndex = (index + steps) % arr.length;
     if (newIndex < 0) newIndex += arr.length;
@@ -413,8 +519,20 @@ export function euclidean(eventInput, arg2, arg3, arg4, arg5) {
     if (arg5 !== undefined) rotation = arg5;
   }
 
+  if (steps <= 0) {
+    throw new RangeError(
+      `euclidean(): steps (${steps}) must be a positive number.`,
+    );
+  }
+  if (hits < 0) {
+    throw new RangeError(
+      `euclidean(): hits (${hits}) must be a positive number.`,
+    );
+  }
   if (hits > steps) {
-    console.error("Number of hits cannot be greater than steps!");
+    throw new RangeError(
+      `euclidean(): hits (${hits}) cannot be greater than steps (${steps}).`,
+    );
   }
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
   let currentTime = when;
@@ -463,6 +581,9 @@ export function rotationSequence(eventInput, arg2) {
 }
 
 export function blend(listA, listB) {
+  if (!Array.isArray(listA) || !Array.isArray(listB)) {
+    throw new TypeError("blend(): both arguments must be arrays.");
+  }
   let listC = [];
   let size = Math.max(listA.length, listB.length);
   for (let i = 0; i < size; i++) {
@@ -473,6 +594,9 @@ export function blend(listA, listB) {
 }
 
 export function shuffle(list) {
+  if (!Array.isArray(list)) {
+    throw new TypeError("shuffle(): argument must be an array.");
+  }
   //Fisher–Yates shuffle
   for (let i = list.length - 1; i >= 1; i--) {
     const j = Math.floor(Math.random() * (i + 1));
