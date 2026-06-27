@@ -143,7 +143,8 @@ const functionSignatures = {
   monotone: "monotone(initial tone, interval)",
   transpose: "transpose([notes], interval)",
   randomChord: "randomChord(size, range, microtonal = false)",
-  blockChord: "blockChord([what, howLoud, when, howLong, onSomething], [chord])",
+  blockChord:
+    "blockChord([what, howLoud, when, howLong, onSomething], [chord])",
   arpeggio:
     "arpeggio([what, howLoud, when, howLong, onSomething], [chord], repetitions, direction)",
   intervalSequence:
@@ -157,11 +158,13 @@ const functionSignatures = {
     "ostinato([what, howLoud, when, howLong, onSomething], repetitions, [rhythm])",
   euclidean:
     "euclidean([what, howLoud, when, howLong, onSomething], repetitions, steps, hits, rotation)",
-  rotationSequence: "rotationSequence([what, howLoud, when, howLong, onSomething], [rhythm])",
+  rotationSequence:
+    "rotationSequence([what, howLoud, when, howLong, onSomething], [rhythm])",
   louder: "louder([what, howLoud, when, howLong, onSomething], lastAmp, steps)",
   softer: "softer([what, howLoud, when, howLong, onSomething], lastAmp, steps)",
   autoPan: "autoPan(instrument, seconds)",
-  glissando: "glissando([what, howLoud, when, howLong, onSomething], targetPitch)",
+  glissando:
+    "glissando([what, howLoud, when, howLong, onSomething], targetPitch)",
   retrograde: "retrograde([list])",
   shuffle: "shuffle([list])",
   rotate: "rotate([list], steps)",
@@ -195,7 +198,8 @@ const functionSignatures = {
     "maisSuave([oQuê, quãoForte, quando, quantoTempo, emAlgo], última intensidade, passos)",
   retrogradar: "retrogradar([lista])",
   rotacionar: "rotacionar([lista])",
-  sequenciaRotacao: "sequenciaRotacao([oQuê, quãoForte, quando, quantoTempo, emAlgo], [ritmo])",
+  sequenciaRotacao:
+    "sequenciaRotacao([oQuê, quãoForte, quando, quantoTempo, emAlgo], [ritmo])",
   euclideano:
     "euclideano([oQuê, quãoForte, quando, quantoTempo, emAlgo], repetições, passos, ataques, rotação)",
   misturar: "misturar([listaA], [listaB])",
@@ -255,6 +259,7 @@ const startState = EditorState.create({
       keymap.of([
         { key: "Mod-Enter", run: runLP },
         { key: "Mod-.", run: stopLP },
+        { key: "Mod-s", run: saveCode },
       ]),
     ),
   ],
@@ -299,7 +304,7 @@ document.addEventListener(
 );
 
 // save button
-const saveCode = () => {
+function saveCode() {
   const now = new Date();
   const datetime = `${now.getFullYear()}_${now.getMonth() + 1}_${now.getDate()}_${now.getHours()}-${now.getMinutes()}`;
 
@@ -313,7 +318,8 @@ const saveCode = () => {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-};
+  return true;
+}
 
 // recording feature (extendable mediaRecorder)
 let mediaRecorder = null;

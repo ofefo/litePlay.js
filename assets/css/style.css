@@ -60,7 +60,7 @@ h1 {
 
 div.text {
 	text-align: left;
-	font-size: 20px;
+	font-size: 18px;
 	margin: 0 0 1.5rem;
 	color: var(--muted);
 	line-height: 1.6;
@@ -75,14 +75,14 @@ div.text {
 
 .button {
 	flex: 1;
-	padding: 0.5rem 0.75rem;
+	padding: 0.2rem;
 	border: none;
 	border-radius: 0;
 	background: var(--btn-bg);
 	color: var(--btn-text);
 	cursor: pointer;
 	transition: background 0.2s ease;
-	font-size: 16px;
+	font-size: 12px;
 	font-weight: 600;
 }
 
@@ -104,7 +104,7 @@ div.text {
 
 #save-btn:hover,
 #load-sample-btn:hover {
-	background: #2a4a8b;
+	background: #668ade;
 }
 
 #theme-btn {
