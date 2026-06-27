@@ -3,6 +3,7 @@
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 	<meta name="Description" content="litePlay">
+	<meta name="theme-color" content="#2d2d2d">
 	<link rel="icon" type="image/x-icon" href="./assets/images/favicon.png">
 	<meta charset="utf-8"/>
 	<title>litePlay</title>
@@ -13,7 +14,7 @@
 	<link rel="stylesheet" crossorigin href="./assets/css/style.css">
 </head>
 <body>
-	<div style="display: block; text-align: center; width: 100%;">
+	<div class="page-wrap">
 		<h1>litePlay</h1>
 		<div class="text">
 			<p>
@@ -24,22 +25,20 @@
 			<br>New to litePlay? Read the <b><a href="https://g-ubimus.github.io/litePlay.docs/" target="_blank">docs</a></b>.</p>
 		</div>
 		
-		<div style="display: block; text-align: left; width: 100%;">
-			<div style="display: inline;">
-				<button class="button" id="run-btn">&#9654; <b>RUN</b></button>
-				<button class="button" id="stop-btn">&#9724; <b>STOP</b></button>
-				<button class="button" id="save-btn">&#9660; <b>SAVE CODE</b></button>
-				<button class="button" id="rec-btn">&#9673; <b>REC</b></button>
-				<button class="button" id="stopRec-btn">&#9689; <b>STOP REC</b></button>
-				<input type="file" id="sample-btn" style="display:none" accept="audio/*">
-				<button class="button" onclick="document.getElementById('sample-btn').click()">
-				    &#8682; <b>ADD SAMPLE</b>
-				</button>
-			</div>
+		<div class="btn-row">
+			<button class="button" id="run-btn">&#9654; <b>RUN</b></button>
+			<button class="button" id="stop-btn">&#9724; <b>STOP</b></button>
+			<button class="button" id="save-btn">&#9660; <b>SAVE CODE</b></button>
+			<button class="button" id="rec-btn">&#9673; <b>REC</b></button>
+			<button class="button" id="stopRec-btn">&#9689; <b>STOP REC</b></button>
+			<input type="file" id="sample-btn" style="display:none" accept="audio/*">
+			<button class="button" id="load-sample-btn" onclick="document.getElementById('sample-btn').click()">
+			    &#8682; <b>ADD SAMPLE</b>
+			</button>
+			<button class="button" id="theme-btn" onclick="var b=document.body;b.classList.toggle('light');var l=b.classList.contains('light');this.innerHTML=l?'&#9790;':'&#9788;';document.querySelector('meta[name=theme-color]').content=l?'#f5f5f5':'#2d2d2d'">&#9788;</button>
 		</div>
 		<div id="editor-container" class="cm-container"></div>
-		<div class="editor-row"> 
-		<br>
+		<div class="editor-row">
 		<textarea id="ml-console" autocomplete="off" readonly class="listenc" placeholder="Machine Listening ouput will appear here..."></textarea>
 		<textarea id="console-output" autocomplete="off" readonly class="console" placeholder="Click anywhere to start litePlay."></textarea>
 		</div>
