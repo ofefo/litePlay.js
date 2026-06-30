@@ -7,7 +7,11 @@ import {
   javascriptLanguage,
 } from "https://esm.sh/@codemirror/lang-javascript";
 import { autocompletion } from "https://esm.sh/@codemirror/autocomplete";
-import { oneDark } from "https://esm.sh/@codemirror/theme-one-dark";
+import {
+  syntaxHighlighting,
+  HighlightStyle,
+} from "https://esm.sh/@codemirror/language";
+import { tags } from "https://esm.sh/@lezer/highlight";
 import { StateField } from "https://esm.sh/@codemirror/state";
 import { showTooltip } from "https://esm.sh/@codemirror/view";
 // extendable media recorder
@@ -262,11 +266,82 @@ const saveCode = () => {
   return true;
 };
 
+const pastelTheme = EditorView.theme({
+  "&": {
+    backgroundColor: "var(--editor-bg)",
+    color: "var(--editor-text)",
+  },
+  ".cm-gutters": {
+    backgroundColor: "var(--gutter-bg) !important",
+    color: "var(--gutter-text) !important",
+    border: "none !important",
+  },
+  "&.cm-focused .cm-cursor": {
+    borderLeftColor: "var(--syntax-cursor)",
+  },
+  ".cm-selectionBackground": {
+    backgroundColor: "var(--syntax-selection) !important",
+  },
+  ".cm-activeLine": {
+    backgroundColor: "var(--syntax-active-line)",
+  },
+});
+
+// custom colors for colorblind
+const pastelHighlight = HighlightStyle.define([
+  { tag: tags.keyword, color: "var(--syntax-keyword)" },
+  { tag: tags.controlKeyword, color: "var(--syntax-keyword)" },
+  { tag: tags.definitionKeyword, color: "var(--syntax-keyword)" },
+  { tag: tags.moduleKeyword, color: "var(--syntax-keyword)" },
+  { tag: tags.operatorKeyword, color: "var(--syntax-keyword)" },
+  { tag: tags.modifier, color: "var(--syntax-keyword)" },
+  { tag: tags.string, color: "var(--syntax-string)" },
+  { tag: tags.special(tags.string), color: "var(--syntax-string)" },
+  { tag: tags.regexp, color: "var(--syntax-string)" },
+  { tag: tags.number, color: "var(--syntax-number)" },
+  { tag: tags.bool, color: "var(--syntax-bool)" },
+  { tag: tags.null, color: "var(--syntax-bool)" },
+  { tag: tags.comment, color: "var(--syntax-comment)" },
+  { tag: tags.typeName, color: "var(--syntax-type)" },
+  { tag: tags.definition(tags.typeName), color: "var(--syntax-type)" },
+  { tag: tags.operator, color: "var(--syntax-operator)" },
+  { tag: tags.derefOperator, color: "var(--syntax-operator)" },
+  { tag: tags.arithmeticOperator, color: "var(--syntax-operator)" },
+  { tag: tags.logicOperator, color: "var(--syntax-operator)" },
+  { tag: tags.bitwiseOperator, color: "var(--syntax-operator)" },
+  { tag: tags.compareOperator, color: "var(--syntax-operator)" },
+  { tag: tags.updateOperator, color: "var(--syntax-operator)" },
+  { tag: tags.definitionOperator, color: "var(--syntax-operator)" },
+  { tag: tags.typeOperator, color: "var(--syntax-operator)" },
+  { tag: tags.controlOperator, color: "var(--syntax-operator)" },
+  { tag: tags.punctuation, color: "var(--syntax-punctuation)" },
+  { tag: tags.separator, color: "var(--syntax-punctuation)" },
+  { tag: tags.bracket, color: "var(--syntax-punctuation)" },
+  { tag: tags.angleBracket, color: "var(--syntax-punctuation)" },
+  { tag: tags.squareBracket, color: "var(--syntax-punctuation)" },
+  { tag: tags.paren, color: "var(--syntax-punctuation)" },
+  { tag: tags.brace, color: "var(--syntax-punctuation)" },
+  { tag: tags.variableName, color: "var(--syntax-variable)" },
+  {
+    tag: tags.definition(tags.variableName),
+    color: "var(--syntax-definition)",
+  },
+  { tag: tags.special(tags.variableName), color: "var(--syntax-function)" },
+  { tag: tags.standard(tags.variableName), color: "var(--syntax-function)" },
+  { tag: tags.function(tags.variableName), color: "var(--syntax-function)" },
+  { tag: tags.self, color: "var(--syntax-keyword)" },
+  { tag: tags.tagName, color: "var(--syntax-tag)" },
+  { tag: tags.attributeName, color: "var(--syntax-attribute)" },
+  { tag: tags.propertyName, color: "var(--syntax-attribute)" },
+  { tag: tags.labelName, color: "var(--syntax-variable)" },
+]);
+
 // CM startState
 const startState = EditorState.create({
   extensions: [
     basicSetup,
-    oneDark,
+    pastelTheme,
+    syntaxHighlighting(pastelHighlight),
     javascript(),
     javascriptLanguage.data.of({
       autocomplete: litePlayCompletions,
