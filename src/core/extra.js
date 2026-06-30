@@ -178,9 +178,11 @@ export function blockChord(eventInput, arg2) {
     if (arg2 !== undefined) chord = arg2;
   }
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
+  const resolvedWhen = typeof when === "function" ? when() : when;
+  const resolvedHowLong = typeof howLong === "function" ? howLong() : howLong;
   let l = eventList.create();
   for (let i of chord) {
-    l.add([i, howLoud, when, howLong, onSomething]);
+    l.add([i, howLoud, resolvedWhen, resolvedHowLong, onSomething]);
   }
   return l;
 }
@@ -207,7 +209,9 @@ export function arpeggio(eventInput, arg2, arg3, arg4) {
   }
 
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
-  let currentTime = when;
+  const resolvedWhen = typeof when === "function" ? when() : when;
+  const resolvedHowLong = typeof howLong === "function" ? howLong() : howLong;
+  let currentTime = resolvedWhen;
   let notesToPlay = [];
 
   if (direction === "forward" || direction === "normal") {
@@ -229,8 +233,8 @@ export function arpeggio(eventInput, arg2, arg3, arg4) {
 
   for (let i = 0; i < repetitions; i++) {
     for (let note of notesToPlay) {
-      l.add([note, howLoud, currentTime, howLong, onSomething]);
-      currentTime += howLong;
+      l.add([note, howLoud, currentTime, resolvedHowLong, onSomething]);
+      currentTime += resolvedHowLong;
     }
   }
   return l;
@@ -253,9 +257,11 @@ export function intervalSequence(eventInput, arg2, arg3, arg4) {
   }
 
   const [note, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
-  l.add([note, howLoud, when, howLong, onSomething]);
+  const resolvedWhen = typeof when === "function" ? when() : when;
+  const resolvedHowLong = typeof howLong === "function" ? howLong() : howLong;
+  l.add([note, howLoud, resolvedWhen, resolvedHowLong, onSomething]);
   let currentPitch = note;
-  let currentWhen = when;
+  let currentWhen = resolvedWhen;
 
   if (!repetitions) {
     return l;
@@ -270,8 +276,8 @@ export function intervalSequence(eventInput, arg2, arg3, arg4) {
           `intervalSequence(): direction "${direction}" is not valid. Use "up" or "down".`,
         );
       }
-      currentWhen += howLong;
-      l.add([currentPitch, howLoud, currentWhen, howLong, onSomething]);
+      currentWhen += resolvedHowLong;
+      l.add([currentPitch, howLoud, currentWhen, resolvedHowLong, onSomething]);
     }
     return l;
   }
@@ -303,9 +309,10 @@ export function faster(eventInput, arg2, arg3) {
   }
 
   const [, , , howLong] = resolveEvent(eventInput);
-  if (lastDuration >= howLong) {
+  const resolvedHowLong = typeof howLong === "function" ? howLong() : howLong;
+  if (lastDuration >= resolvedHowLong) {
     throw new RangeError(
-      `faster(): lastDuration (${lastDuration}) must be less than the event duration (${howLong}) to make it faster.`,
+      `faster(): lastDuration (${lastDuration}) must be less than the event duration (${resolvedHowLong}) to make it faster.`,
     );
   }
 
@@ -331,9 +338,10 @@ export function slower(eventInput, arg2, arg3) {
   }
 
   const [, , , howLong] = resolveEvent(eventInput);
-  if (lastDuration <= howLong) {
+  const resolvedHowLong = typeof howLong === "function" ? howLong() : howLong;
+  if (lastDuration <= resolvedHowLong) {
     throw new RangeError(
-      `slower(): lastDuration (${lastDuration}) must be greater than the event duration (${howLong}) to make it slower.`,
+      `slower(): lastDuration (${lastDuration}) must be greater than the event duration (${resolvedHowLong}) to make it slower.`,
     );
   }
 
@@ -348,10 +356,12 @@ function changeTempo(eventInput, lastDuration = 1, steps = 10) {
   }
   let l = eventList.create();
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
-  l.add([what, howLoud, when, howLong, onSomething]);
-  let nextDuration = howLong;
-  let nextWhen = when;
-  let diff = howLong - lastDuration;
+  const resolvedWhen = typeof when === "function" ? when() : when;
+  const resolvedHowLong = typeof howLong === "function" ? howLong() : howLong;
+  l.add([what, howLoud, resolvedWhen, resolvedHowLong, onSomething]);
+  let nextDuration = resolvedHowLong;
+  let nextWhen = resolvedWhen;
+  let diff = resolvedHowLong - lastDuration;
   let stepSize = diff / steps;
 
   for (let i = 0; i < steps; i++) {
@@ -437,17 +447,19 @@ function changeLoudness(eventInput, last = 1, steps = 10) {
   }
   let l = eventList.create();
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
-  l.add([what, howLoud, when, howLong, onSomething]);
+  const resolvedWhen = typeof when === "function" ? when() : when;
+  const resolvedHowLong = typeof howLong === "function" ? howLong() : howLong;
+  l.add([what, howLoud, resolvedWhen, resolvedHowLong, onSomething]);
 
   const ampStep = (last - howLoud) / steps;
 
-  let nextWhen = when;
+  let nextWhen = resolvedWhen;
   let nextLoudness = howLoud;
   for (let i = 0; i < steps; i++) {
-    nextWhen += howLong;
+    nextWhen += resolvedHowLong;
     nextLoudness += ampStep;
     nextLoudness = Math.round(nextLoudness * 1000) / 1000;
-    l.add([what, nextLoudness, nextWhen, howLong, onSomething]);
+    l.add([what, nextLoudness, nextWhen, resolvedHowLong, onSomething]);
   }
   return l;
 }
@@ -474,6 +486,8 @@ export function ostinato(eventInput, arg2, arg3) {
   let repetitions = 1;
   let rhythm;
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
+  const resolvedWhen = typeof when === "function" ? when() : when;
+  const resolvedHowLong = typeof howLong === "function" ? howLong() : howLong;
 
   if (typeof arg2 === "object" && arg2 !== null && !Array.isArray(arg2)) {
     repetitions = arg2.repetitions ?? repetitions;
@@ -483,17 +497,23 @@ export function ostinato(eventInput, arg2, arg3) {
     if (arg3 !== undefined) rhythm = arg3;
   }
 
-  const durations = rhythm || [howLong];
+  const durations = rhythm || [resolvedHowLong];
   const resolvePitch = (val) => (typeof val === "function" ? val() : val);
   const firstPitch = resolvePitch(what);
-  let l = eventList.create([what, howLoud, when, howLong, onSomething]);
-  let initialTime = when;
+  let l = eventList.create([
+    what,
+    howLoud,
+    resolvedWhen,
+    resolvedHowLong,
+    onSomething,
+  ]);
+  let initialTime = resolvedWhen;
 
   for (let i = 0, len = repetitions; i < len; i++) {
     for (let j of durations) {
       initialTime += j;
       const currentPitch = resolvePitch(what);
-      l.add([currentPitch, howLoud, initialTime, howLong, onSomething]);
+      l.add([currentPitch, howLoud, initialTime, resolvedHowLong, onSomething]);
     }
   }
   return l;
@@ -535,7 +555,9 @@ export function euclidean(eventInput, arg2, arg3, arg4, arg5) {
     );
   }
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
-  let currentTime = when;
+  const resolvedWhen = typeof when === "function" ? when() : when;
+  const resolvedHowLong = typeof howLong === "function" ? howLong() : howLong;
+  let currentTime = resolvedWhen;
   for (let rep = 0; rep < repetitions; rep++) {
     for (let i = 0; i < steps; i++) {
       let checkIndex = (i - rotation) % steps;
@@ -543,11 +565,11 @@ export function euclidean(eventInput, arg2, arg3, arg4, arg5) {
       const isHit = (checkIndex * hits) % steps < hits;
       if (isHit) {
         a.push(1);
-        l.add([what, howLoud, currentTime, howLong, onSomething]);
+        l.add([what, howLoud, currentTime, resolvedHowLong, onSomething]);
       } else {
         a.push(0);
       }
-      currentTime += howLong;
+      currentTime += resolvedHowLong;
     }
   }
   a = a.slice(steps * -1);
@@ -558,6 +580,8 @@ export function euclidean(eventInput, arg2, arg3, arg4, arg5) {
 export function rotationSequence(eventInput, arg2) {
   let rhythm;
   const [what, howLoud, when, howLong, onSomething] = resolveEvent(eventInput);
+  const resolvedWhen = typeof when === "function" ? when() : when;
+  const resolvedHowLong = typeof howLong === "function" ? howLong() : howLong;
 
   if (typeof arg2 === "object" && arg2 !== null && !Array.isArray(arg2)) {
     rhythm = arg2.rhythm ?? rhythm;
@@ -566,8 +590,8 @@ export function rotationSequence(eventInput, arg2) {
   }
 
   const l = eventList.create();
-  let currentTime = when;
-  let durations = rhythm || [howLong];
+  let currentTime = resolvedWhen;
+  let durations = rhythm || [resolvedHowLong];
   let currentPattern = [...durations];
 
   for (let i = 0; i < durations.length; i++) {
@@ -636,9 +660,11 @@ export function glissando(eventInput, arg2) {
     play: function () {
       let [startPitch, howLoud, when, howLong, onSomething] =
         resolveEvent(eventInput);
+      const resolvedHowLong =
+        typeof howLong === "function" ? howLong() : howLong;
 
       onSomething.play(eventInput);
-      const durationMs = howLong * 1000;
+      const durationMs = resolvedHowLong * 1000;
       const startTime = performance.now();
 
       function runGlissandoLoop() {
