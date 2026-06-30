@@ -748,11 +748,13 @@ export const any = undefined;
 
 //Generators
 export const rnd = (min, max) => Math.random() * (max - min) + min;
+export const random = rnd;
 
 export const rndInt = (min, max) =>
   Math.floor(
     Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min),
   );
+export const randomInteger = rndInt;
 
 export const choose = (...options) => {
   if (options.length === 1 && Array.isArray(options[0])) options = options[0];
@@ -1115,6 +1117,8 @@ export const naPercussão = onPerc;
 export const naVoz = onVoice;
 export const quieto = silently;
 export const escolha = choose;
+export const númeroAleatório = rnd;
+export const inteiroAleatório = rndInt;
 
 // geradores
 export const fraco = softLevel;
