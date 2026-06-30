@@ -1,5 +1,5 @@
 // code mirror
-import { basicSetup } from "https://esm.sh/codemirror";
+import { basicSetup } from "https://esm.sh/codemirror@6.0.2";
 import { EditorView, keymap } from "https://esm.sh/@codemirror/view";
 import { EditorState, Prec } from "https://esm.sh/@codemirror/state";
 import {
@@ -14,8 +14,8 @@ import { showTooltip } from "https://esm.sh/@codemirror/view";
 import {
   MediaRecorder,
   register,
-} from "https://cdn.jsdelivr.net/npm/extendable-media-recorder/+esm";
-import { connect } from "https://cdn.jsdelivr.net/npm/extendable-media-recorder-wav-encoder/+esm";
+} from "https://esm.sh/extendable-media-recorder";
+import { connect } from "https://esm.sh/extendable-media-recorder-wav-encoder";
 // add essentia
 import { toggleListening } from "../listener/listener.js";
 
@@ -244,6 +244,24 @@ function getSignatureTooltip(state) {
   };
 }
 
+// save button
+const saveCode = () => {
+  const now = new Date();
+  const datetime = `${now.getFullYear()}_${now.getMonth() + 1}_${now.getDate()}_${now.getHours()}-${now.getMinutes()}`;
+
+  const text = editor.state.doc.toString();
+  const blob = new Blob([text], { type: "text/javascript" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "litePlay" + datetime + ".js";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  return true;
+};
+
 // CM startState
 const startState = EditorState.create({
   extensions: [
@@ -302,24 +320,6 @@ document.addEventListener(
   },
   { once: true },
 );
-
-// save button
-function saveCode() {
-  const now = new Date();
-  const datetime = `${now.getFullYear()}_${now.getMonth() + 1}_${now.getDate()}_${now.getHours()}-${now.getMinutes()}`;
-
-  const text = editor.state.doc.toString();
-  const blob = new Blob([text], { type: "text/javascript" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "litePlay" + datetime + ".js";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  return true;
-}
 
 // recording feature (extendable mediaRecorder)
 let mediaRecorder = null;
