@@ -1,3 +1,5 @@
+import { midPitch, choose, rnd, rndInt, eventList } from "./litePlay.js";
+
 function resolveEvent(input) {
   const parseInstr = (inst) => {
     let target = inst ?? (window.piano || 1);
