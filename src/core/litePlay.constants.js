@@ -1,22 +1,12 @@
-// Check if the environment is local/development
-const isLocalEnv =
-  window.location.hostname === "localhost" ||
-  window.location.hostname === "127.0.0.1" ||
-  window.location.protocol === "file:";
-
-let baseURL = null;
-let lp_URL = null;
-let extra_URL = null;
-
-if (isLocalEnv === true) {
-  baseURL = "./";
-  lp_URL = baseURL + "litePlay.js";
-  extra_URL = baseURL + "extra.js";
+let baseURL;
+const scriptEl = document.currentScript;
+if (scriptEl && scriptEl.src) {
+  baseURL = scriptEl.src.replace(/\/[^/]*$/, "/");
 } else {
   baseURL = "https://g-ubimus.github.io/litePlay.js/src/core/";
-  lp_URL = baseURL + "litePlay.js";
-  extra_URL = baseURL + "extra.js";
 }
+const lp_URL = baseURL + "litePlay.js";
+const extra_URL = baseURL + "extra.js";
 
 // MIDI NOTE constants
 const djScratch = 29;
