@@ -657,34 +657,32 @@ export function dictionaryToArray(input) {
   return input;
 }
 
-if (typeof eventList !== "undefined") {
-  const wrapEventMethod = (originalMethod) => {
-    return function (...args) {
-      const parsedArgs = args.map((arg) => {
-        if (Array.isArray(arg)) {
-          const isListOfDicts =
-            arg.length > 0 &&
-            typeof arg[0] === "object" &&
-            arg[0] !== null &&
-            !Array.isArray(arg[0]) &&
-            !(typeof isInstr === "function" && isInstr(arg[0]));
+const wrapEventMethod = (originalMethod) => {
+  return function (...args) {
+    const parsedArgs = args.map((arg) => {
+      if (Array.isArray(arg)) {
+        const isListOfDicts =
+          arg.length > 0 &&
+          typeof arg[0] === "object" &&
+          arg[0] !== null &&
+          !Array.isArray(arg[0]) &&
+          !(typeof isInstr === "function" && isInstr(arg[0]));
 
-          if (isListOfDicts) {
-            return arg.map((item) => dictionaryToArray(item));
-          }
-          return arg;
+        if (isListOfDicts) {
+          return arg.map((item) => dictionaryToArray(item));
         }
-        return dictionaryToArray(arg);
-      });
+        return arg;
+      }
+      return dictionaryToArray(arg);
+    });
 
-      return originalMethod.apply(this, parsedArgs);
-    };
+    return originalMethod.apply(this, parsedArgs);
   };
+};
 
-  if (eventList.create) eventList.create = wrapEventMethod(eventList.create);
-  if (eventList.add) eventList.add = wrapEventMethod(eventList.add);
-  if (eventList.insert) eventList.insert = wrapEventMethod(eventList.insert);
-}
+eventList.create = wrapEventMethod(eventList.create);
+eventList.add = wrapEventMethod(eventList.add);
+eventList.insert = wrapEventMethod(eventList.insert);
 
 export function play(...theList) {
   if (typeof theList[0] === "function") {
