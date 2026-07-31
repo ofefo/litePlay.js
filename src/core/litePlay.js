@@ -1094,6 +1094,16 @@ eventList.inserir = eventList.insert;
 eventList.adicionar = eventList.add;
 eventList.remover = eventList.remove;
 
+export const sequenciador = sequencer;
+sequenciador.adicionar = sequencer.add;
+sequenciador.toque = sequencer.play;
+sequenciador.pare = sequencer.stop;
+sequenciador.limpar = sequencer.clear;
+sequenciador.remover = sequencer.remove;
+sequenciador.ativarPausa = sequencer.togglePause;
+sequenciador.ativarMudo = sequencer.toggleMute;
+sequenciador.ativarSolo = sequencer.toggleSolo;
+
 export const algum = any;
 export const toque = play;
 export const pare = stop;
