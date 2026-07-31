@@ -1088,17 +1088,17 @@ export const silently = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // Interface simples em Português
 
-// funções
+// métodos para objetos
 Instrument.prototype.toque = Instrument.prototype.play;
 Instrument.prototype.pare = Instrument.prototype.stop;
 
-export const eventos = eventList;
-eventos.toque = eventList.play;
-eventos.criar = eventList.create;
-eventos.adicionar = eventList.add;
-eventos.remover = eventList.remove;
-eventos.inserir = eventList.insert;
-eventos.limpar = eventList.clear;
+export const listaEventos = eventList;
+eventList.toque = eventList.play;
+eventList.criar = eventList.create;
+eventList.limpar = eventList.clear;
+eventList.inserir = eventList.insert;
+eventList.adicionar = eventList.add;
+eventList.remover = eventList.remove;
 
 export const algum = any;
 export const toque = play;
