@@ -647,11 +647,11 @@ export function dictionaryToArray(input) {
   if (typeof isInstr === "function" && isInstr(input)) return input;
   if (typeof input === "object" && input !== null && !Array.isArray(input)) {
     return [
-      input.what ?? 60,
-      input.howLoud ?? 1,
-      input.when ?? 0,
-      input.howLong ?? 1,
-      input.onSomething ?? (window.piano || 1),
+      input.what ?? input.oque ?? input.oQue ?? 60,
+      input.howLoud ?? input.quãoForte ?? input.intensidade ?? 1,
+      input.when ?? input.quando ?? 0,
+      input.howLong ?? input.quãoLongo ?? input.duração ?? 1,
+      input.onSomething ?? input.noQue ?? (window.piano || 1),
     ];
   }
   return input;
@@ -684,10 +684,6 @@ if (typeof eventList !== "undefined") {
   if (eventList.create) eventList.create = wrapEventMethod(eventList.create);
   if (eventList.add) eventList.add = wrapEventMethod(eventList.add);
   if (eventList.insert) eventList.insert = wrapEventMethod(eventList.insert);
-
-  eventList.criar = eventList.create;
-  eventList.adicionar = eventList.add;
-  eventList.inserir = eventList.insert;
 }
 
 export function play(...theList) {
