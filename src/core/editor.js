@@ -20,8 +20,8 @@ import {
   register,
 } from "https://esm.sh/extendable-media-recorder";
 import { connect } from "https://esm.sh/extendable-media-recorder-wav-encoder";
-// add essentia
-import { toggleListening, stopListening } from "../listener/listener.js";
+// machine listening (csound listener instr 99)
+import { toggleListening, stopListening } from "../listener/litePlay.listener.js";
 
 // override function to print output in console
 const consoleOutput = document.getElementById("console-output");
@@ -91,7 +91,7 @@ const stopLP = async (event) => {
 import * as litePlayLang from "./litePlay.js";
 import { midiRecorder } from "./litePlay.js";
 import * as extra from "./extra.js";
-import * as listener from "../listener/listener.js";
+import * as listener from "../listener/litePlay.listener.js";
 const lpKeys = Object.keys(litePlayLang);
 const extraKeys = Object.keys(extra);
 const listenerKeys = Object.keys(listener);
