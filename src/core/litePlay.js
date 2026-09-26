@@ -1143,12 +1143,12 @@ export const choose = (...options) => {
   return options[index];
 };
 
-const lowmin = 0.01;
-const lowmax = 0.1;
-const midmin = 0.1;
-const midmax = 0.4;
-const himin = 0.4;
-const himax = 0.9;
+const lowmin = 0.1;
+const lowmax = 0.5;
+const midmin = 0.5;
+const midmax = 0.8;
+const himin = 0.8;
+const himax = 0.99;
 export const softLevel = () => {
   return rnd(lowmin, lowmax);
 };
