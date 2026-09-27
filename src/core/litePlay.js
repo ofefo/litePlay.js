@@ -1148,7 +1148,7 @@ const lowmax = 0.5;
 const midmin = 0.5;
 const midmax = 0.8;
 const himin = 0.8;
-const himax = 0.99;
+const himax = 0.9;
 export const softLevel = () => {
   return rnd(lowmin, lowmax);
 };
