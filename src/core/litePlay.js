@@ -429,16 +429,10 @@ export class Sampler extends Instrument {
   }
 }
 
-// A second, independently-addressable soundfont bank, loaded on demand at
-// runtime (see instr 3 in litePlay.csd) rather than bundled with litePlay -
-// point this at any .sf2 file you have the rights to use. Its presets land
-// at preset index 1000+, so they never collide with the built-in gm.sf2
-// bank; instrument(pgm) hands back a regular Instrument bound to that
-// offset, so everything else (play(), effects, the sequencer...) works
-// exactly like any other litePlay instrument. Percussion-kit mapping (the
-// "+317" used for gm.sf2's own drum kits) is specific to gm.sf2's internal
-// preset layout, so isDrums here is left to the caller to opt into
-// deliberately rather than assumed.
+// A second, independently-addressable soundfont bank. Its presets land at
+// preset index 1000+ Percussion-kit mapping (the "+317" used for gm.sf2's own
+// drum kits) is specific to gm.sf2's internal preset layout, so isDrums here
+// is left to the caller to opt into deliberately rather than assumed.
 export const soundfont = {
   offset: 1000,
   loaded: false,
@@ -491,13 +485,6 @@ export function setBpm(bpm) {
 // returns beats per minute
 export function getBpm() {
   return globalObj.BPM;
-}
-
-// Reverberation: global reverb tone shaping via freeverb's kRoomSize/kHFDamp,
-// shared by every instrument since reverb is a single mixed bus, not per-channel.
-export function reverbTone(size = 0.7, damping = 0.35) {
-  csound.tableSet(57, 0, size < 1 ? (size > 0 ? size : 0) : 1);
-  csound.tableSet(58, 0, damping < 1 ? (damping > 0 ? damping : 0) : 1);
 }
 
 // current audio clock time
@@ -925,7 +912,7 @@ export async function reset() {
   }
 }
 
-// MIDI Recorder ────────────────────────────────────────────────────────────
+// MIDI Recorder
 export const midiRecorder = {
   recording: false,
   _events: [],
@@ -1039,10 +1026,10 @@ export const midiRecorder = {
       ];
     }
 
-    // ── Preprocess events (match Note On / Note Off) ───────────────────────
+    // Preprocess events (match Note On / Note Off)
     // activeNotes stores a queue (array) per channel_pitch key so that the
     // same note can be triggered multiple times while already sounding.
-    // Each Note Off is matched to the earliest pending Note On (FIFO).
+    // Each Note Off is matched to the earliest pending Note On (FIFO)
     const processedNotes = [];
     const activeNotes = new Map(); // channel_pitch -> onEvent[]
     const stopTimeSec = this._stopClockRef - this._clockRef;
@@ -1094,7 +1081,7 @@ export const midiRecorder = {
       }
     }
 
-    // ── Tempo track (track 0) ──────────────────────────────────────────────
+    // Tempo track (track 0)
     const tempoTrackEvents = tempoMap.map((t) => {
       const us = Math.round(60_000_000 / t.bpm);
       return {
@@ -1111,7 +1098,7 @@ export const midiRecorder = {
     });
     const tempoTrack = buildTrack(tempoTrackEvents);
 
-    // ── Group events by channel ────────────────────────────────────────────
+    // Group events by channel
     const channelMap = new Map(); // channel → { program, isDrums, events[] }
     for (const evt of processedNotes) {
       if (!channelMap.has(evt.channel)) {
@@ -1124,7 +1111,7 @@ export const midiRecorder = {
       channelMap.get(evt.channel).events.push(evt);
     }
 
-    // ── Build one MIDI track per channel ──────────────────────────────────
+    // Build one MIDI track per channel
     // Standard MIDI channels are 0-15. Drums go on channel 9 (GM convention).
     // We'll remap litePlay channels (which start at 16) to 0-15 sequentially.
     const channelKeys = [...channelMap.keys()].sort((a, b) => a - b);
@@ -1174,7 +1161,7 @@ export const midiRecorder = {
       instrumentTracks.push(buildTrack(absEvts));
     }
 
-    // ── Assemble SMF header ────────────────────────────────────────────────
+    // Assemble SMF header
     const numTracks = 1 + instrumentTracks.length; // tempo + instrument tracks
     const header = [
       0x4d,
@@ -1204,7 +1191,6 @@ export const midiRecorder = {
     console.log(`MIDI file downloaded: ${a.download}`);
   },
 };
-// ─────────────────────────────────────────────────────────────────────────────
 
 // sub() function to have subdivisions for the rhythms in the sequencer
 export const sub = (...notes) => ({ isSub: true, notes });
