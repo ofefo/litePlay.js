@@ -243,7 +243,7 @@ const functionSignatures = {
   cutoff: "cutoff(amount)",
   resonance: "resonance(amount)",
   delay: "delay(time, feedback)",
-  shift: "shift(val)",
+  shift: "shift(frequency)",
   pan: "pan(amount)",
   volume: "volume(amount)",
 };
