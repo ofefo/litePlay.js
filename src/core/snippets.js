@@ -140,69 +140,14 @@ export const SNIPPET_CATEGORIES = [
         code: "piano.highpass(0.4);\npiano.play(C4);",
       },
       {
-        id: "moog-filter",
-        label: "Moog-style filter",
-        code: "synth.moogFilter(0.3, 0.85);\nsynth.play(C3);",
-      },
-      {
-        id: "comb-filter",
-        label: "Comb filter",
-        code: "marimba.combFilter(2, 0.015);\nmarimba.play(C4);",
-      },
-      {
-        id: "string-resonance",
-        label: "String resonance",
-        code: "harp.stringResonance(220, 0.93);\nharp.play(A3);",
-      },
-      {
-        id: "compressor",
-        label: "Compressor",
-        code: "drums.compressor(0.6, 0.25);\ndrums.play(kick);",
-      },
-      {
         id: "tremolo",
         label: "Tremolo",
         code: "organ.tremolo(6, 0.6);\norgan.play(G3);",
       },
       {
-        id: "limiter",
-        label: "Limiter",
-        code: "drums.limiter(0.3);\ndrums.play(kick);",
-      },
-      {
-        id: "ring-modulate",
-        label: "Ring modulation",
-        code: "tinkleBell.ringModulate(233, 0.8);\ntinkleBell.play(C5);",
-      },
-      {
-        id: "flanger",
-        label: "Flanger",
-        code: "guitar.flanger(0.3, 0.006, 0.7);\nguitar.play([E3, 1, 0, 4]);",
-      },
-      {
         id: "chorus",
         label: "Chorus",
         code: "strings.chorus(0.25, 0.02);\nstrings.play([C4, 1, 0, 4]);",
-      },
-      {
-        id: "phaser",
-        label: "Phaser",
-        code: "pad1.phaser(0.4, 6, 0.85);\npad1.play([C3, 1, 0, 6]);",
-      },
-      {
-        id: "sample-hold",
-        label: "Sample & hold",
-        code: "synth.sampleHold(9, 0.7);\nsynth.play(A3);",
-      },
-      {
-        id: "convolve",
-        label: "Convolution reverb",
-        code: "piano.convolve(0.6);\npiano.play(C4);",
-      },
-      {
-        id: "reverb-tone",
-        label: "Shape the reverb",
-        code: "piano.reverb(0.8);\nreverbTone(0.9, 0.1);\npiano.play(C4);",
       },
     ],
   },
