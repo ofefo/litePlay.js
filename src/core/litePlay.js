@@ -87,7 +87,7 @@ export class Instrument {
         : 16;
     this.isDrums = isDrums;
     this.what_ = what;
-    this.howLoud = 0.8;
+    this.howLoud = 1;
     this.howLong = 1;
     this.on = new Uint8Array(128);
     this.instr = instr;
