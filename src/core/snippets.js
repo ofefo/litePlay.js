@@ -2,10 +2,6 @@
 // editor. Kept separate from editor.js (which owns the DOM/CodeMirror
 // wiring) so the data and the text-insertion math can be unit tested
 // without a browser.
-
-// Every `code` block below is ready-to-run JavaScript for the litePlay web
-// editor. Each one was checked against the actual litePlay.js/extra.js
-// implementations, so clicking any card produces code that really runs.
 export const SNIPPET_CATEGORIES = [
   {
     id: "basics",
