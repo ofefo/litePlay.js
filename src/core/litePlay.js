@@ -1,4 +1,4 @@
-// ceound.js is the Csound WASM module
+// csound.js is the Csound WASM module
 const csoundjs =
   "https://cdn.jsdelivr.net/npm/@csound/browser@6.18.5/dist/csound.js";
 // csound is the Csound engine object (null as we start)
@@ -13,26 +13,37 @@ const sfont = "assets/audio/gm.sf2";
 
 // this is the JS function to start Csound
 export async function startEngine() {
-  // if the Csound object is not initialised
-  if (csound == null) {
-    // import the Csound method from csound.js
-    const { Csound } = await import(csoundjs);
-    // create a Csound engine object
-    csound = await Csound();
-    // get audio context
-    audio_context = await csound.getAudioContext();
-    // set realtime audio (dac) output
-    await csound.setOption("-odac");
-    // set realtime MIDI input
-    await csound.setOption("-M0");
-    // copy the sfont file to the Csound local filesystem
-    await copyUrlToLocal(srcurl + sfont, "gm.sf2");
-    // copy the CSD file to the Csound local filesystem
-    await copyUrlToLocal(srcurl + csd, csd);
-    // compile csound code
-    await csound.compileCsd(csd);
-    // start the engine
-    await csound.start();
+  // if the Csound object is already initialised
+  if (csound != null) {
+    return;
+  }
+
+  // import the Csound method from csound.js
+  const { Csound } = await import(csoundjs);
+  // create a Csound engine object
+  csound = await Csound();
+  // Prevent automatic getUserMedia prompt on start; audio input will be connected explicitly
+  csound.enableAudioInput = () => {};
+  // get audio context
+  audio_context = await csound.getAudioContext();
+  // set realtime audio (dac) output
+  await csound.setOption("-odac");
+  // set realtime MIDI input
+  await csound.setOption("-M0");
+  // set realtime audio input, so instr 99 can listen to a connected source
+  await csound.setOption("-iadc");
+  // copy the sfont file to the Csound local filesystem
+  await copyUrlToLocal(srcurl + sfont, "gm.sf2");
+  // copy the CSD file to the Csound local filesystem
+  await copyUrlToLocal(srcurl + csd, csd);
+  // compile csound code
+  await csound.compileCsd(csd);
+  // start the engine
+  await csound.start();
+
+  if (typeof window !== "undefined") {
+    window.csound = csound;
+    window.audio_context = audio_context;
   }
 }
 

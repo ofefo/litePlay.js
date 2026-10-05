@@ -345,16 +345,16 @@ const lpRun = async (code = null) => {
   }
 };
 
-const lpLoad = async () => {
+const lpLoad = async (options = {}) => {
   let lpModule = await import(lp_URL);
   let extraModule = await import(extra_URL);
-  await lpModule.startEngine();
+  await lpModule.startEngine(options);
   return { ...lpModule, ...extraModule };
 };
 
 // interface em Portugues
-async function leveToque(codigo = null) {
-  window.lt = await lpLoad();
+async function leveToque(codigo = null, options = {}) {
+  window.lt = await lpLoad(options);
   if (typeof codigo === "function") codigo();
 }
 

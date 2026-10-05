@@ -15,10 +15,23 @@ let recentPauses = [];
 let silenceThreshold = 1.5;
 let pollIntervalId = null;
 let phraseCheckIntervalId = null;
+let pollInFlight = false;
 
 // Csound channel tracking
 let lastOnsetTrig = 0;
 let lastOffsetTrig = 0;
+
+// instr 99 reports timeinsts(), which counts from the moment the analysis
+// instrument was started. This is the audio clock reading at that same
+// moment, so subtracting it maps engine time onto audio_context.currentTime.
+let timeOrigin = 0;
+
+// Onsets that arrived faster than the poll interval could resolve separately.
+export let collapsedOnsets = 0;
+
+export function resetCollapsedOnsets() {
+  collapsedOnsets = 0;
+}
 
 // Global exposes
 window.allEvents = [];
@@ -30,6 +43,9 @@ window.lastAmps = [];
 window.lastPhrase = [];
 
 let micStream = null;
+let inputSourceNode = null;
+let feedbackDelayNode = null;
+let feedbackGainNode = null;
 
 export async function toggleListening(audioCtx, arg2, arg3) {
   let onEventDetected = null;
@@ -71,26 +87,75 @@ export async function toggleListening(audioCtx, arg2, arg3) {
   if (isListening) return true;
 
   try {
+    const csoundNode = await csound.getNode();
+
+    if (inputSourceNode) {
+      try {
+        inputSourceNode.disconnect();
+      } catch (e) {}
+      inputSourceNode = null;
+    }
+    if (feedbackDelayNode) {
+      try {
+        feedbackDelayNode.disconnect();
+      } catch (e) {}
+      feedbackDelayNode = null;
+    }
+    if (feedbackGainNode) {
+      try {
+        feedbackGainNode.disconnect();
+      } catch (e) {}
+      feedbackGainNode = null;
+    }
+
+    if (options.node) {
+      // Feed a graph node straight into Csound's input. Web Audio only allows a
+      // cycle when it contains a DelayNode, so route it through a one render
+      // quantum delay. Going through the node avoids the same-context
+      // MediaStream round trip, which stalls the render callback in some browsers.
+      feedbackGainNode = audioCtx.createGain();
+      feedbackGainNode.gain.value = 1;
+      feedbackDelayNode = audioCtx.createDelay(1);
+      feedbackDelayNode.delayTime.value = 128 / audioCtx.sampleRate;
+      options.node.connect(feedbackGainNode);
+      feedbackGainNode.connect(feedbackDelayNode);
+      feedbackDelayNode.connect(csoundNode);
+    } else {
+      let stream = options.stream;
+      if (!stream) {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false,
+          },
+        });
+        micStream = stream;
+      }
+      inputSourceNode = audioCtx.createMediaStreamSource(stream);
+      inputSourceNode.connect(csoundNode);
+    }
+
     if (!analysisInstrStarted) {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          echoCancellation: false,
-          noiseSuppression: false,
-          autoGainControl: false,
-        },
-      });
-      await csound.enableAudioInput(stream);
-      micStream = stream;
+      timeOrigin = audioCtx.currentTime;
       csound.inputMessage("i 99 0 -1");
       analysisInstrStarted = true;
     }
 
-    isListening = true;
-    lastOnsetTrig = 0;
-    lastOffsetTrig = 0;
+isListening = true;
+  lastOnsetTrig = 0;
+  lastOffsetTrig = 0;
+  collapsedOnsets = 0;
+  pollInFlight = false;
 
     pollIntervalId = setInterval(() => {
-      pollListener(onEventDetected);
+      // getControlChannel round trips can outlast the interval. Without this
+      // guard, slow polls overlap and interleave their trigger-counter reads.
+      if (pollInFlight) return;
+      pollInFlight = true;
+      pollListener(onEventDetected).finally(() => {
+        pollInFlight = false;
+      });
     }, 10);
     phraseCheckIntervalId = setInterval(() => {
       if (!isSounding) checkPhraseCompletion(performance.now() / 1000);
@@ -103,23 +168,30 @@ export async function toggleListening(audioCtx, arg2, arg3) {
   }
 }
 
-let debugTick = 0;
-
 async function pollListener(onEventDetected) {
   const rms = await csound.getControlChannel("listenerRms");
 
+  // Engine time counts from the analysis instrument's start. Shift it onto the
+  // AudioContext clock so both listeners report a comparable time base.
+  const engineTime = await csound.getControlChannel("listenerOnsetTime");
   const onsetTrig = await csound.getControlChannel("listenerOnsetTrig");
   if (onsetTrig > lastOnsetTrig) {
+    // A jump of more than one means several onsets fell inside a single poll
+    // interval. Only the latest carries a usable timestamp, so the extras are
+    // counted rather than silently discarded: density losses must stay visible
+    // instead of looking like clean silence.
+    collapsedOnsets += onsetTrig - lastOnsetTrig - 1;
     lastOnsetTrig = onsetTrig;
-    const onsetTime = await csound.getControlChannel("listenerOnsetTime");
-    triggerNoteOn(onsetTime);
+    triggerNoteOn(engineTime - timeOrigin);
   }
 
+  const offsetEngineTime = await csound.getControlChannel(
+    "listenerOffsetTime",
+  );
   const offsetTrig = await csound.getControlChannel("listenerOffsetTrig");
   if (offsetTrig > lastOffsetTrig) {
     lastOffsetTrig = offsetTrig;
-    const offsetTime = await csound.getControlChannel("listenerOffsetTime");
-    triggerNoteOff(offsetTime, onEventDetected);
+    triggerNoteOff(offsetEngineTime - timeOrigin, onEventDetected);
   }
 
   if (isSounding) {
@@ -158,7 +230,19 @@ function triggerNoteOff(currentTime, onEventDetected) {
     );
 
     saveEventData(eventData);
-    if (onEventDetected) onEventDetected(eventData);
+    if (onEventDetected) {
+      // Second argument is additive: eventData keeps its phrase-relative shape
+      // for existing callers, while absolute timings let a benchmark align
+      // detections against ground truth.
+      onEventDetected(eventData, {
+        onsetTime: eventOnset,
+        endTime: currentTime,
+        duration,
+        peakRms: frameLoudness.length
+          ? Math.max(...frameLoudness)
+          : 0,
+      });
+    }
 
     // Log individual note to ML console immediately
     const mlConsole = document.getElementById("ml-console");
@@ -173,16 +257,9 @@ function triggerNoteOff(currentTime, onEventDetected) {
 
 function processEventData(pitches, loudnesses, onsetTime, duration) {
   const avgLoudness = normAmp(loudnesses);
-  let avgPitchHz = 0;
-  let midiValue = 0;
-
-  if (pitches.length > 0) {
-    avgPitchHz = pitches.reduce((a, b) => a + b, 0) / pitches.length;
-    midiValue = parseFloat((69 + 12 * Math.log2(avgPitchHz / 440)).toFixed(2));
-  }
 
   return [
-    midiValue,
+    robustPitchMidi(pitches),
     parseFloat(avgLoudness.toFixed(2)),
     parseFloat(onsetTime.toFixed(3)),
     parseFloat(duration.toFixed(3)),
@@ -199,6 +276,30 @@ const normAmp = (loudnesses) => {
   const normalized = (db - minDb) / (maxDb - minDb);
   return Math.max(0, Math.min(1, normalized));
 };
+
+// Pitch is logarithmic, so it must be averaged in cents (the geometric mean),
+// never in Hz. Averaging Hz first biases the result upward and drags it toward
+// outliers. Frames more than an octave away from the median are octave errors
+// from the detector and are discarded before averaging.
+const OCTAVE_CENTS = 1200;
+
+function robustPitchMidi(pitches) {
+  if (!pitches || pitches.length === 0) return 0;
+
+  const cents = pitches
+    .filter((hz) => hz > 0 && Number.isFinite(hz))
+    .map((hz) => 1200 * Math.log2(hz / 440) + 6900);
+
+  if (cents.length === 0) return 0;
+
+  const sorted = [...cents].sort((a, b) => a - b);
+  const median = sorted[Math.floor(sorted.length / 2)];
+  const kept = cents.filter((c) => Math.abs(c - median) <= OCTAVE_CENTS);
+
+  const avgCents = kept.reduce((a, b) => a + b, 0) / kept.length;
+
+  return parseFloat((avgCents / 100).toFixed(2));
+}
 
 function saveEventData(eventData) {
   window.lastEvent = eventData;
@@ -246,14 +347,32 @@ function finalizePhrase() {
     const arrayText =
       `lastMelody: ${JSON.stringify(window.lastMelody)}\n` +
       `lastAmps:   ${JSON.stringify(window.lastAmps)}\n` +
-      `lastWhen: ${JSON.stringify(window.lastOnsetTimes)}\n\n`;
-    `lastRhythm: ${JSON.stringify(window.lastRhythm)}\n\n`;
+      `lastWhen: ${JSON.stringify(window.lastOnsetTimes)}\n` +
+      `lastRhythm: ${JSON.stringify(window.lastRhythm)}\n\n`;
     mlConsole.value += logText + arrayText;
     mlConsole.scrollTop = mlConsole.scrollHeight;
   }
 }
 
 export function stopListening() {
+  if (inputSourceNode) {
+    try {
+      inputSourceNode.disconnect();
+    } catch (e) {}
+    inputSourceNode = null;
+  }
+  if (feedbackGainNode) {
+    try {
+      feedbackGainNode.disconnect();
+    } catch (e) {}
+    feedbackGainNode = null;
+  }
+  if (feedbackDelayNode) {
+    try {
+      feedbackDelayNode.disconnect();
+    } catch (e) {}
+    feedbackDelayNode = null;
+  }
   if (analysisInstrStarted) {
     csound.inputMessage("i -99 0 0.1");
     analysisInstrStarted = false;

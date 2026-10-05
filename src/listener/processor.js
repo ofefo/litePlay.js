@@ -21,7 +21,21 @@ class AudioCaptureProcessor extends AudioWorkletProcessor {
 
         // Once our buffer is full, ship it to the main thread and reset
         if (this.pointer >= this.bufferSize) {
-          this.port.postMessage(new Float32Array(this.buffer));
+          // `currentFrame` is a global in AudioWorkletGlobalScope counting
+          // frames since context creation. The first sample in this buffer is
+          // one full window behind it, so this is the true capture position.
+          // Without it the main thread can only timestamp on arrival, which
+          // charges the listener a full window of latency that belongs to this
+          // transport rather than to the detector.
+          //
+          // postMessage takes (message, transfer), so the frame index rides
+          // along as a field on the message object; only the typed array's
+          // buffer is transferred.
+          const samples = new Float32Array(this.buffer);
+          this.port.postMessage(
+            { samples, frame: currentFrame - this.bufferSize },
+            [samples.buffer],
+          );
           this.pointer = 0;
         }
       }

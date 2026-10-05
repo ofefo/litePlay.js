@@ -424,7 +424,7 @@ function changeTempo(eventInput, lastDuration = 1, steps = 10) {
   return l;
 }
 
-export function louder(eventInput, arg2, arg3) {
+export function louder(eventInput = [60, 0.5, 0, 1], arg2, arg3) {
   let lastAmp = 1;
   let steps = 1;
   if (typeof arg2 === "object" && arg2 !== null && !Array.isArray(arg2)) {

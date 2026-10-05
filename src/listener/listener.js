@@ -21,6 +21,8 @@ async function getEssentia() {
 let isListening = false;
 let workletNode = null;
 let micSource = null;
+let analysisSource = null;
+let keepAliveNode = null;
 
 // Analysis State
 let isSounding = false;
@@ -44,27 +46,66 @@ window.lastOnsetTimes = [];
 window.lastAmps = [];
 window.lastPhrase = [];
 
+let micStream = null;
+
 // Toggles the machine listening state
-export async function toggleListening(audioCtx, onEventDetected) {
+export async function toggleListening(audioCtx, arg2, arg3) {
+  let onEventDetected = null;
+  let options = {};
+
+  if (typeof arg2 === "object" && arg2 !== null && !Array.isArray(arg2)) {
+    options = arg2;
+    if (typeof arg3 === "function") onEventDetected = arg3;
+  } else {
+    if (typeof arg2 === "function") onEventDetected = arg2;
+    if (typeof arg3 === "object" && arg3 !== null && !Array.isArray(arg3))
+      options = arg3;
+  }
+
   await getEssentia();
 
   try {
     // Define worklet
     await audioCtx.audioWorklet.addModule("./src/listener/processor.js");
 
-    // Ask for audio input
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: true,
-      video: false,
-    });
-    micSource = audioCtx.createMediaStreamSource(stream);
+    if (options.node) {
+      // Analyse a graph node directly. Avoids the same-context MediaStream
+      // round trip, which stalls the render callback in some browsers.
+      analysisSource = options.node;
+    } else {
+      let stream = options.stream;
+      if (!stream) {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false,
+          },
+          video: false,
+        });
+        micStream = stream;
+      }
+      micSource = audioCtx.createMediaStreamSource(stream);
+      analysisSource = micSource;
+    }
+
     workletNode = new AudioWorkletNode(audioCtx, "audio-capture-processor");
 
     // Central audio processing hub
     workletNode.port.onmessage = (event) => {
-      const vectorData = essentia.arrayToVector(event.data);
+      // The worklet reports the frame position it captured. Timestamping on
+      // `audioCtx.currentTime` instead would charge the listener a full
+      // analysis window of latency that belongs to this transport rather than
+      // to the detector.
+      const { samples, frame } = event.data;
+      const captureSec =
+        typeof frame === "number"
+          ? frame / audioCtx.sampleRate
+          : audioCtx.currentTime;
+
+      const vectorData = essentia.arrayToVector(samples);
       const rms = essentia.RMS(vectorData).rms;
-      const currentTime = audioCtx.currentTime;
+      const currentTime = captureSec;
 
       if (rms > onsetThreshold) {
         handleSoundingFrame(vectorData, rms, currentTime);
@@ -73,7 +114,15 @@ export async function toggleListening(audioCtx, onEventDetected) {
       }
     };
 
-    micSource.connect(workletNode);
+    analysisSource.connect(workletNode);
+
+    // The processor writes nothing to its output, so a muted sink guarantees
+    // it stays pulled by the graph even when nothing else consumes it.
+    keepAliveNode = audioCtx.createGain();
+    keepAliveNode.gain.value = 0;
+    workletNode.connect(keepAliveNode);
+    keepAliveNode.connect(audioCtx.destination);
+
     isListening = true;
     return true;
   } catch (err) {
@@ -130,7 +179,19 @@ function triggerNoteOff(currentTime, onEventDetected) {
 
     saveEventData(eventData);
 
-    if (onEventDetected) onEventDetected(eventData);
+    if (onEventDetected) {
+      // Second argument is additive: eventData keeps its phrase-relative shape
+      // for existing callers, while absolute timings let a benchmark align
+      // detections against ground truth.
+      onEventDetected(eventData, {
+        onsetTime: eventOnset,
+        endTime: currentTime,
+        duration,
+        peakRms: frameLoudness.length
+          ? Math.max(...frameLoudness)
+          : 0,
+      });
+    }
   }
 
   lastNoteEndTime = currentTime;
@@ -209,18 +270,36 @@ const normAmp = (loudnesses) => {
   return Math.max(0, Math.min(1, normalized));
 };
 
+// Pitch is logarithmic, so it must be averaged in cents (the geometric mean),
+// never in Hz. Averaging Hz first biases the result upward and drags it toward
+// outliers. Frames more than an octave away from the median are octave errors
+// from the detector and are discarded before averaging.
+const OCTAVE_CENTS = 1200;
+
+function robustPitchMidi(pitches) {
+  if (!pitches || pitches.length === 0) return 0;
+
+  const cents = pitches
+    .filter((hz) => hz > 0 && Number.isFinite(hz))
+    .map((hz) => 1200 * Math.log2(hz / 440) + 6900);
+
+  if (cents.length === 0) return 0;
+
+  const sorted = [...cents].sort((a, b) => a - b);
+  const median = sorted[Math.floor(sorted.length / 2)];
+  const kept = cents.filter((c) => Math.abs(c - median) <= OCTAVE_CENTS);
+
+  const avgCents =
+    kept.reduce((a, b) => a + b, 0) / kept.length;
+
+  return parseFloat((avgCents / 100).toFixed(2));
+}
+
 function processEventData(pitches, loudnesses, onsetTime, duration) {
   const avgLoudness = normAmp(loudnesses);
-  let avgPitchHz = 0;
-  let midiValue = 0;
-
-  if (pitches.length > 0) {
-    avgPitchHz = pitches.reduce((a, b) => a + b, 0) / pitches.length;
-    midiValue = parseFloat((69 + 12 * Math.log2(avgPitchHz / 440)).toFixed(2));
-  }
 
   return [
-    midiValue,
+    robustPitchMidi(pitches),
     parseFloat(avgLoudness.toFixed(2)),
     parseFloat(onsetTime.toFixed(3)),
     parseFloat(duration.toFixed(3)),
@@ -228,13 +307,40 @@ function processEventData(pitches, loudnesses, onsetTime, duration) {
 }
 
 export function stopListening() {
-  if (workletNode && micSource) {
-    micSource.disconnect();
-    workletNode.disconnect();
-    workletNode = null;
+  if (micSource) {
+    try {
+      micSource.disconnect();
+    } catch (e) {}
     micSource = null;
   }
+  if (analysisSource) {
+    try {
+      if (workletNode) analysisSource.disconnect(workletNode);
+    } catch (e) {}
+    analysisSource = null;
+  }
+  if (workletNode) {
+    try {
+      workletNode.disconnect();
+    } catch (e) {}
+    workletNode = null;
+  }
+  if (keepAliveNode) {
+    try {
+      keepAliveNode.disconnect();
+    } catch (e) {}
+    keepAliveNode = null;
+  }
+  if (micStream) {
+    micStream.getTracks().forEach((t) => t.stop());
+    micStream = null;
+  }
   isListening = false;
+  isSounding = false;
   essentia = null;
   essentiaLoadPromise = null;
 }
+
+// Portuguese aliases
+export const ativarEscuta = toggleListening;
+export const pararEscuta = stopListening;

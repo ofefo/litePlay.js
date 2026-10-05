@@ -22,6 +22,7 @@ import {
 import { connect } from "https://esm.sh/extendable-media-recorder-wav-encoder";
 // machine listening (csound listener instr 99)
 import { toggleListening, stopListening } from "../listener/litePlay.listener.js";
+import { runBenchmark } from "../benchmark/listenerBenchmark.js";
 
 // override function to print output in console
 const consoleOutput = document.getElementById("console-output");
@@ -70,7 +71,11 @@ function runLP() {
     const currentCode = editor.state.doc.toString();
     if (currentCode.trim() === "") throw new Error("Empty! Write something!");
 
-    eval(currentCode);
+    if (/\bawait\b/.test(currentCode)) {
+      eval(`(async () => {\n${currentCode}\n})().catch(console.error)`);
+    } else {
+      eval(currentCode);
+    }
     return true;
   } catch (error) {
     console.error(error);
@@ -106,6 +111,7 @@ function litePlayCompletions(context) {
     { keys: lpKeys, lib: litePlayLang, sourceName: "litePlay" },
     { keys: extraKeys, lib: extra, sourceName: "extra" },
     { keys: listenerKeys, lib: listener, sourceName: "listener" },
+    { keys: ["runBenchmark"], lib: { runBenchmark }, sourceName: "benchmark" },
     { keys: lpConstKeys, lib: window.lpAutocomplete, sourceName: "constants" },
   ];
 
@@ -139,6 +145,7 @@ function litePlayCompletions(context) {
 
 // help system
 const functionSignatures = {
+  runBenchmark: "runBenchmark({ engines?: ['csound', 'essentia'], clapCount?: 15, clapIntervalMs?: 650, melodyNotes?: [...], melodyIntervalMs?: 850, exportMedia?: true })",
   play: "play([what, howLoud, when, howLong, onSomething])",
   create: "create([what, howLoud, when, howLong, onSomething])",
   remove: "remove(index)",
@@ -387,6 +394,7 @@ document.addEventListener(
         Object.assign(window, liteplayEngine);
         Object.assign(window, extra);
         Object.assign(window, listener);
+        window.runBenchmark = runBenchmark;
         console.log("litePlay is ready!");
 
         // change button colors when ready
