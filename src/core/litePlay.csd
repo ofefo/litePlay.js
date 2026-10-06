@@ -1,6 +1,6 @@
 <CsoundSynthesizer>
 <CsOptions>
--odac -d 
+-odac -iadc -d 
 </CsOptions>
 <CsInstruments>
 nchnls = 2
@@ -8,13 +8,9 @@ nchnls_i = 1
 ksmps = 64
 0dbfs = 1
 sr = 44100
-/* topmost cf: maps a normalised 0-1 cutoff onto Hz for the exponential
-filter-cutoff mappings below (vclpf-based lowpass, plus the new HighPass and
-MoogFilter Signal Modifiers). Must be defined here, before first use, since
-Csound's compiler resolves a global variable's rate/value in file order -
-referencing it from an opcode defined earlier in the file (even though the
-opcode itself is only CALLED later, at performance time) still fails to
-compile with "Variable 'gicf' used before defined". */
+
+// maps a normalised 0-1 cutoff onto Hz for the exponential filter-cutoff
+// mappings below (vclpf-based lowpass, plus the HighPass)
 gicf = log(sr/2)
 
 ichn = 1
@@ -405,6 +401,78 @@ S1 = p4
 ign ftgen 0,0,0,1,S1,0,0,0
 tablew ign,p6,9
 tablew p5,p6,10
+endin
+
+// listener
+instr 99
+	ain inch 1
+
+	kFastAtt    chnget "listenerFastAtt"    // Fast envelope attack (default 10ms)
+	kFastRel    chnget "listenerFastRel"    // Fast envelope release (default 50ms)
+	kSlowAtt    chnget "listenerSlowAtt"    // Slow envelope attack (default 100ms)
+	kSlowRel    chnget "listenerSlowRel"    // Slow envelope release (default 300ms)
+    	kThresh     chnget "listenerThresh"     // Energy surge threshold above background (default 0.005)
+    	kNoiseFloor chnget "listenerNoiseFloor" // Absolute silence floor (default 0.002)
+    	kHoldTime   chnget "listenerHoldTime"   // Debounce time to avoid false offsets (default 50ms)
+
+	if kFastAtt == 0 then
+        	kFastAtt    = 0.05
+        	kFastRel    = 0.15
+        	kSlowAtt    = 0.1
+        	kSlowRel    = 0.3
+        	kThresh     = 0.05
+        	kNoiseFloor = 0.02
+        	kHoldTime   = 0.05
+      	endif
+
+	krect rms ain
+
+	kfast init 0
+      	kslow init 0
+
+	kFastTime = (krect > kfast) ? kFastAtt : kFastRel
+	kfast portk krect, kFastTime
+	kSlowTime = (krect > kslow) ? kSlowAtt : kSlowRel
+	kslow portk krect, kSlowTime
+	//chnset kfast, "listenerRms" // Send live RMS to JS for UI volume metering
+
+	konset      init 0
+      	kbelow      init 0
+      	kOnsetTrig  init 0
+      	kOffTrig    init 0
+
+	//number of k-cycles needed to satisfy holdTime
+	khold_samps = int(kHoldTime * kr)
+	
+	//onset detection
+	if (kfast > kslow + kThresh) && (konset == 0) then
+        	kbelow     = 0
+        	konset     = 1
+        	kOnsetTrig = kOnsetTrig + 1
+        	chnset kOnsetTrig, "listenerOnsetTrig"
+        	chnset timeinsts(), "listenerOnsetTime"
+      	endif
+
+	//pitch tracking and offset detection
+	if (konset == 1) then
+        	//check if energy dropped below
+        	if (kfast < kslow + (kThresh / 2)) || (kfast < kNoiseFloor) then
+        	  kbelow = kbelow + 1
+        	  //declare note-off after staying below for khold_samps consecutive cycles
+        	  if (kbelow > khold_samps) then
+        	    konset   = 0
+        	    kOffTrig = kOffTrig + 1
+        	    chnset kOffTrig, "listenerOffsetTrig"
+        	    chnset timeinsts(), "listenerOffsetTime"
+        	  endif
+        	else
+        	  kbelow = 0
+        	endif
+
+        //track pitch while the note is active
+        kfreq, kamp ptrack ain, 512
+        chnset kfreq, "listenerPitch"
+      endif
 endin
 
 // reverb
