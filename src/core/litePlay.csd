@@ -424,7 +424,7 @@ instr 99
           kThresh     = 0.05
           kNoiseFloor = 0.02
           kHoldTime   = 0.05
-	  kSilenceThresh = 1.5
+	  kSilenceThresh = 1
       	endif
 
 	krect rms ain

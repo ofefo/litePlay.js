@@ -27,6 +27,8 @@ export async function startEngine() {
     await csound.setOption("-odac");
     // set realtime MIDI input
     await csound.setOption("-M0");
+    // set realtime audio (adc) input
+    await csound.setOption("-iadc");
     // copy the sfont file to the Csound local filesystem
     await copyUrlToLocal(srcurl + sfont, "gm.sf2");
     // copy the bundled impulse response used by convolve()

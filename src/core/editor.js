@@ -221,24 +221,8 @@ const functionSignatures = {
   quieto: "quieto(ms)",
   distortion: "distortion(amount)",
   highpass: "highpass(cutoff)",
-  moogFilter: "moogFilter(cutoff, resonance)",
-  combFilter: "combFilter(decay, delayTime)",
-  noCombFilter: "noCombFilter()",
-  stringResonance: "stringResonance(frequency, feedback, mix)",
-  compressor: "compressor(amount, threshold)",
   tremolo: "tremolo(rate, depth)",
-  limiter: "limiter(ceiling)",
-  ringModulate: "ringModulate(frequency, mix)",
-  flanger: "flanger(rate, depth, feedback)",
-  noFlanger: "noFlanger()",
   chorus: "chorus(rate, depth)",
-  noChorus: "noChorus()",
-  phaser: "phaser(rate, num stages, feedback)",
-  noPhaser: "noPhaser()",
-  sampleHold: "sampleHold(rate, mix)",
-  convolve: "convolve(amount)",
-  noConvolve: "noConvolve()",
-  reverbTone: "reverbTone(size, damping)",
   reverb: "reverb(amount)",
   cutoff: "cutoff(amount)",
   resonance: "resonance(amount)",
@@ -664,6 +648,86 @@ document
       `Successfully uploaded ${fileName}.\n Use '${varName}' to access it in your code.`,
     );
   });
+
+import * as listener from "../listener/litePlay.listener.js";
+Object.assign(window, listener);
+
+const listenBtn = document.getElementById("listen-toggle-btn");
+const listenerPanel = document.getElementById("listener-panel");
+const phraseList = document.getElementById("phrase-list");
+const liveLog = document.getElementById("listener-log");
+const volumeBar = document.getElementById("listener-meter-fill");
+
+if (listenBtn) {
+  listenBtn.addEventListener("click", async () => {
+    const started = await listener.toggleListening(
+      {}, // default options
+      handleNewNoteEvent, // onEvent
+      handlePhraseCompleted, // onPhrase
+      handleLiveMeter, // onMeter
+    );
+
+    listenBtn.classList.toggle("active", started);
+    listenBtn.innerHTML = started ? "⏹ <b>STOP LISTENING</b>" : "<b>LISTEN</b>";
+  });
+}
+
+function handleNewNoteEvent(event) {
+  if (liveLog) {
+    liveLog.value += `Note: [what: ${event[0]}, loud: ${event[1]}, when: ${event[2]}, dur: ${event[3]}]\n`;
+    liveLog.scrollTop = liveLog.scrollHeight;
+  }
+}
+
+function handlePhraseCompleted(phrase) {
+  if (!phraseList) return;
+
+  const phraseIndex = window.allPhrases.length;
+  const card = document.createElement("div");
+  card.className = "phrase-card";
+
+  const totalDuration = (
+    phrase[phrase.length - 1][2] + phrase[phrase.length - 1][3]
+  ).toFixed(1);
+  card.innerHTML = `
+        <div class="phrase-card-header">
+          <b>Phrase #${phraseIndex}</b> (${phrase.length} notes, ${totalDuration}s)
+        </div>
+        <div class="phrase-card-preview">
+          Pitches: [${phrase.map((e) => e[0]).join(", ")}]
+        </div>
+        <div class="phrase-card-actions">
+          <button class="phrase-play-btn" title="Preview phrase">▶ Play</button>
+          <button class="phrase-insert-btn" title="Insert into editor code">⎘ Insert</button>
+        </div>
+      `;
+
+  card.querySelector(".phrase-play-btn").addEventListener("click", () => {
+    if (window.play) {
+      window.play(phrase);
+    }
+  });
+
+  card.querySelector(".phrase-insert-btn").addEventListener("click", () => {
+    const codeToInsert = `// Captured Phrase #${phraseIndex}\nplay(${JSON.stringify(phrase)});\n`;
+    const doc = editor.state.doc.toString();
+    const cursorPos = editor.state.selection.main.head;
+
+    editor.dispatch({
+      changes: { from: cursorPos, insert: codeToInsert },
+    });
+    editor.focus();
+  });
+
+  phraseList.prepend(card);
+}
+
+function handleLiveMeter(rms) {
+  if (volumeBar) {
+    const percent = Math.min(100, Math.round(rms * 400)); // scale for visibility
+    volumeBar.style.width = `${percent}%`;
+  }
+}
 
 // buttons actions
 const runButton = document.querySelector("#run-btn");
