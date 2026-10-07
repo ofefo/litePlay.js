@@ -414,15 +414,17 @@ instr 99
     	kThresh     chnget "listenerThresh"     // Energy surge threshold above background (default 0.005)
     	kNoiseFloor chnget "listenerNoiseFloor" // Absolute silence floor (default 0.002)
     	kHoldTime   chnget "listenerHoldTime"   // Debounce time to avoid false offsets (default 50ms)
+	kSilenceThresh chnget "listenerSilenceThresh" // End-phrase threshold (default 1.5s)
 
 	if kFastAtt == 0 then
-        	kFastAtt    = 0.05
-        	kFastRel    = 0.15
-        	kSlowAtt    = 0.1
-        	kSlowRel    = 0.3
-        	kThresh     = 0.05
-        	kNoiseFloor = 0.02
-        	kHoldTime   = 0.05
+          kFastAtt    = 0.05
+          kFastRel    = 0.15
+          kSlowAtt    = 0.1
+          kSlowRel    = 0.3
+          kThresh     = 0.05
+          kNoiseFloor = 0.02
+          kHoldTime   = 0.05
+	  kSilenceThresh = 1.5
       	endif
 
 	krect rms ain
@@ -435,43 +437,96 @@ instr 99
 	kSlowTime = (krect > kslow) ? kSlowAtt : kSlowRel
 	kslow portk krect, kSlowTime
 	//chnset kfast, "listenerRms" // Send live RMS to JS for UI volume metering
+	konset         init 0
+        kbelow         init 0
+        khold_samps    = int(kHoldTime * kr)
 
-	konset      init 0
-      	kbelow      init 0
-      	kOnsetTrig  init 0
-      	kOffTrig    init 0
+        kOnsetTime     init 0
+        kOffsetTime    init 0
+        kLastNoteEnd   init 0
+        kPhraseStart   init 0
+        kPhraseActive  init 0
 
-	//number of k-cycles needed to satisfy holdTime
-	khold_samps = int(kHoldTime * kr)
+        kNoteEndTrig   init 0
+        kPhraseEndTrig init 0
+
+        kmidi_sum      init 0
+        kmidi_count    init 0
+        kpeak_rms      init 0
 	
-	//onset detection
+	//onset
 	if (kfast > kslow + kThresh) && (konset == 0) then
-        	kbelow     = 0
-        	konset     = 1
-        	kOnsetTrig = kOnsetTrig + 1
-        	chnset kOnsetTrig, "listenerOnsetTrig"
-        	chnset timeinsts(), "listenerOnsetTime"
+          kbelow     = 0
+          konset     = 1
+	  kOnsetTime = timeinsts()
+
+	  kmidi_sum   = 0
+	  kmidi_count = 0
+	  kpeak_rms   = krect
+	  
+          if (kPhraseActive == 0) then
+            kPhraseStart  = kOnsetTime
+            kPhraseActive = 1
+          endif
       	endif
 
-	//pitch tracking and offset detection
+	//offset
 	if (konset == 1) then
-        	//check if energy dropped below
-        	if (kfast < kslow + (kThresh / 2)) || (kfast < kNoiseFloor) then
-        	  kbelow = kbelow + 1
-        	  //declare note-off after staying below for khold_samps consecutive cycles
-        	  if (kbelow > khold_samps) then
-        	    konset   = 0
-        	    kOffTrig = kOffTrig + 1
-        	    chnset kOffTrig, "listenerOffsetTrig"
-        	    chnset timeinsts(), "listenerOffsetTime"
-        	  endif
-        	else
-        	  kbelow = 0
-        	endif
+          if (krect > kpeak_rms) then
+            kpeak_rms = krect
+          endif
 
-        //track pitch while the note is active
-        kfreq, kamp ptrack ain, 512
-        chnset kfreq, "listenerPitch"
+          kfreq, kamp ptrack ain, 512
+
+          if (kfreq > 0) then
+            kmidi = ftom(kfreq)
+            kmidi_sum = kmidi_sum + kmidi
+            kmidi_count = kmidi_count + 1
+          endif
+
+	if (kfast < kslow + (kThresh / 2)) || (kfast < kNoiseFloor) then
+          kbelow = kbelow + 1
+
+          if (kbelow > khold_samps) then
+            konset       = 0
+            kOffsetTime  = timeinsts()
+            kLastNoteEnd = kOffsetTime
+
+            khowlong = kOffsetTime - kOnsetTime
+
+            kwhen = kOnsetTime - kPhraseStart
+
+            if (kmidi_count > 0) then
+              kwhat = kmidi_sum / kmidi_count
+            else
+              kwhat = 128
+            endif
+
+            kpeak_safe = (kpeak_rms > 0.00001) ? kpeak_rms : 0.00001
+            kdb = dbfsamp(kpeak_safe) ; 0 dBFS = 1.0
+            khowloud = (kdb - (-50)) / ((-10) - (-50))
+            khowloud = (khowloud < 0) ? 0 : ((khowloud > 1) ? 1 : khowloud)
+
+            chnset kwhat,    "listenerWhat"
+            chnset khowloud, "listenerHowLoud"
+            chnset kwhen,    "listenerWhen"
+            chnset khowlong, "listenerHowLong"
+
+            kNoteEndTrig = kNoteEndTrig + 1
+            chnset kNoteEndTrig, "listenerNoteEndTrig"
+          endif
+        else
+          kbelow = 0
+        endif
+      endif
+
+      if (konset == 0) && (kPhraseActive == 1) then
+        kSilence = timeinsts() - kLastNoteEnd
+        if (kSilence >= kSilenceThresh) then
+          kPhraseActive  = 0
+          kPhraseEndTrig = kPhraseEndTrig + 1
+          chnset kPhraseEndTrig, "listenerPhraseEndTrig"
+        endif
       endif
 endin
 
