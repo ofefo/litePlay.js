@@ -502,9 +502,9 @@ instr 99
               kwhat = 128
             endif
 
-            kpeak_safe = (kpeak_rms > 0.00001) ? kpeak_rms : 0.00001
-            kdb = dbfsamp(kpeak_safe) ; 0 dBFS = 1.0
-            khowloud = (kdb - (-50)) / ((-10) - (-50))
+            kpeak_safe = (kpeak_rms > 0.001) ? kpeak_rms : 0.001 //40dB
+            kdb = dbfsamp(kpeak_safe)
+            khowloud = (kdb - (-40)) / ((0) - (-40))
             khowloud = (khowloud < 0) ? 0 : ((khowloud > 1) ? 1 : khowloud)
 
             chnset kwhat,    "listenerWhat"
