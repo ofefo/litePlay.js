@@ -1,13 +1,14 @@
-/*This script reads microphone input information gathered by Csound*/
+/* This script reads microphone input information gathered by instrument 99 in
+ * litePlay.csd*/
 import { csound, audio_context } from "../core/litePlay.js";
 
 // Global exposes for the editor
 window.allPhrases = [];
 window.lastPhrase = [];
-window.lastMelody = [];
-window.lastRhythm = [];
+window.lastWhat = [];
+window.lastHowLoud = [];
 window.lastWhen = [];
-window.lastAmps = [];
+window.lastHowLong = [];
 window.lastEvent = [];
 
 // System state
@@ -28,45 +29,36 @@ let currentPhrase = [];
 // Event callbacks for UI
 let onEventCallback = null;
 let onPhraseCallback = null;
-let onMeterCallback = null;
 
 /**
  * Start or stop listening to the microphone.
  * @param {Object} options Configuration parameters
  * @param {Function} onEvent Called each time a single note completes
  * @param {Function} onPhrase Called when a phrase completes after silence
- * @param {Function} onMeter Called continuously with live RMS volume (0..1)
  */
-export async function toggleListening(
+export async function startListening(
   options = {},
   onEvent = null,
   onPhrase = null,
-  onMeter = null,
 ) {
-  if (isListening) {
-    stopListening();
-    return false;
-  }
-
   if (!csound) {
-    console.error("Csound engine is not ready yet.");
+    console.error("Csound is not running yet.");
     return false;
   }
 
   // Store callbacks
   onEventCallback = onEvent;
   onPhraseCallback = onPhrase;
-  onMeterCallback = onMeter;
 
   const {
     fastAtt = 0.05,
     fastRel = 0.15,
     slowAtt = 0.1,
     slowRel = 0.3,
-    thresh = 0.005,
-    noiseFloor = 0.002,
+    thresh = 0.05,
+    noiseFloor = 0.02,
     holdTime = 0.05,
-    silenceThresh = 1.5,
+    silenceThresh = 1,
   } = options;
 
   await csound.setControlChannel("listenerFastAtt", fastAtt);
@@ -128,18 +120,11 @@ export async function toggleListening(
 async function pollListener() {
   if (!isListening) return;
 
-  // Live volume meter for the UI
-  //const rms = await csound.getControlChannel("listenerRms");
-  //if (onMeterCallback) {
-  //  onMeterCallback(rms);
-  //}
-
   // Check if Csound finished a note
   const noteEndTrig = await csound.getControlChannel("listenerNoteEndTrig");
   if (noteEndTrig > lastNoteEndTrig) {
     lastNoteEndTrig = noteEndTrig;
 
-    // Read the 4 event values computed by Csound
     const what = await csound.getControlChannel("listenerWhat");
     const howLoud = await csound.getControlChannel("listenerHowLoud");
     const when = await csound.getControlChannel("listenerWhen");
@@ -167,10 +152,10 @@ async function pollListener() {
 
     if (currentPhrase.length > 0) {
       window.lastPhrase = [...currentPhrase];
-      window.lastMelody = currentPhrase.map((e) => e[0]);
-      window.lastAmps = currentPhrase.map((e) => e[1]);
+      window.lastWhat = currentPhrase.map((e) => e[0]);
+      window.lastHowLoud = currentPhrase.map((e) => e[1]);
       window.lastWhen = currentPhrase.map((e) => e[2]);
-      window.lastRhythm = currentPhrase.map((e) => e[3]);
+      window.lastHowLong = currentPhrase.map((e) => e[3]);
       window.allPhrases.push([...currentPhrase]);
 
       if (onPhraseCallback) {
@@ -207,11 +192,8 @@ export function stopListening() {
   }
 
   isListening = false;
-  if (onMeterCallback) onMeterCallback(0);
-  console.log("Machine listening stopped.");
 }
 
 // Portuguese aliases
-export const escutar = toggleListening;
-export const ativarEscuta = toggleListening;
+export const ativarEscuta = startListening;
 export const pararEscuta = stopListening;

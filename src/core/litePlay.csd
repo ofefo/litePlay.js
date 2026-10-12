@@ -502,8 +502,8 @@ instr 99
               kwhat = 128
             endif
 
-            kpeak_safe = (kpeak_rms > 0.001) ? kpeak_rms : 0.001 //40dB
-            kdb = dbfsamp(kpeak_safe)
+            kpeak_min = (kpeak_rms > 0.001) ? kpeak_rms : 0.001 //40dB
+            kdb = dbfsamp(kpeak_min)
             khowloud = (kdb - (-40)) / ((0) - (-40))
             khowloud = (khowloud < 0) ? 0 : ((khowloud > 1) ? 1 : khowloud)
 
