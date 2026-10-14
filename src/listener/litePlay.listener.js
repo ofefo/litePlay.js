@@ -157,6 +157,7 @@ async function pollListener() {
       window.lastWhen = currentPhrase.map((e) => e[2]);
       window.lastHowLong = currentPhrase.map((e) => e[3]);
       window.allPhrases.push([...currentPhrase]);
+      console.log(lastPhrase);
 
       if (onPhraseCallback) {
         onPhraseCallback(window.lastPhrase);
