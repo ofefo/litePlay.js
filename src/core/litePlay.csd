@@ -638,7 +638,7 @@ f1 0 16 -2 0 0 0 0 0 0 0 0 226 0 0 0 0 0 0 0
 /* velocity (memory) table */ 
 f2 0 1024 -7 127 1024 127
 /* pan (memory) table */
-f3 0 1024 -7 64 1024 127
+f3 0 1024 -7 64 1024 64 
 f5 0 128 5 0.1 128 1   /* velocity mapping: less nuanced */
 f6 0 128 5 0.01 128 1 /* velocity mapping: more nuanced */
 f7 0 128 7 0 128 0  /* note on table */
