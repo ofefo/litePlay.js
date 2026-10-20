@@ -1,6 +1,9 @@
-/* This script reads microphone input information gathered by instrument 99 in
- * litePlay.csd*/
+/* This script reads input information gathered by instrument 99 in
+ * litePlay.csd from the microphone or a provided Web Audio node. */
 import { csound, audio_context } from "../core/litePlay.js";
+
+// Same mute/rest sentinel as O in litePlay.constants.js
+const REST = -999;
 
 // Global exposes for the editor
 window.allPhrases = [];
@@ -16,6 +19,9 @@ let isListening = false;
 let analysisInstrStarted = false;
 let micStream = null;
 let inputSourceNode = null;
+let feedbackSourceNode = null;
+let feedbackGainNode = null;
+let feedbackDelayNode = null;
 let pollIntervalId = null;
 let pollInFlight = false;
 
@@ -31,7 +37,7 @@ let onEventCallback = null;
 let onPhraseCallback = null;
 
 /**
- * Start or stop listening to the microphone.
+ * Start listening to the microphone or a provided Web Audio node.
  * @param {Object} options Configuration parameters
  * @param {Function} onEvent Called each time a single note completes
  * @param {Function} onPhrase Called when a phrase completes after silence
@@ -46,6 +52,8 @@ export async function startListening(
     return false;
   }
 
+  if (isListening) return true;
+
   // Store callbacks
   onEventCallback = onEvent;
   onPhraseCallback = onPhrase;
@@ -59,6 +67,7 @@ export async function startListening(
     noiseFloor = 0.02,
     holdTime = 0.05,
     silenceThresh = 1,
+    node = null,
   } = options;
 
   await csound.setControlChannel("listenerFastAtt", fastAtt);
@@ -71,24 +80,38 @@ export async function startListening(
   await csound.setControlChannel("listenerSilenceThresh", silenceThresh);
 
   try {
-    // Get microphone
-    micStream = await navigator.mediaDevices.getUserMedia({
-      audio: {
-        echoCancellation: false,
-        noiseSuppression: false,
-        autoGainControl: false,
-      },
-    });
-
-    // Route mic audio into Csound's Web Audio node
     const audioCtx = audio_context || (await csound.getAudioContext());
     const csoundNode = await csound.getNode();
 
-    inputSourceNode = audioCtx.createMediaStreamSource(micStream);
-    inputSourceNode.connect(csoundNode);
+    if (node) {
+      disconnectLoopback();
+      feedbackSourceNode = node;
+      feedbackGainNode = audioCtx.createGain();
+      feedbackGainNode.gain.value = 1;
+      feedbackDelayNode = audioCtx.createDelay(1);
+      feedbackDelayNode.delayTime.value = 128 / audioCtx.sampleRate;
+      feedbackSourceNode.connect(feedbackGainNode);
+      feedbackGainNode.connect(feedbackDelayNode);
+      feedbackDelayNode.connect(csoundNode);
+    } else {
+      // Get microphone
+      micStream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: false,
+          noiseSuppression: false,
+          autoGainControl: false,
+        },
+      });
+
+      // Route mic audio into Csound's Web Audio node
+      inputSourceNode = audioCtx.createMediaStreamSource(micStream);
+      inputSourceNode.connect(csoundNode);
+    }
 
     // Start Csound analysis instrument (instr 99)
     if (!analysisInstrStarted) {
+      await csound.setControlChannel("listenerNoteEndTrig", 0);
+      await csound.setControlChannel("listenerPhraseEndTrig", 0);
       await csound.inputMessage("i 99 0 -1");
       analysisInstrStarted = true;
     }
@@ -125,7 +148,8 @@ async function pollListener() {
   if (noteEndTrig > lastNoteEndTrig) {
     lastNoteEndTrig = noteEndTrig;
 
-    const what = await csound.getControlChannel("listenerWhat");
+    const rawWhat = await csound.getControlChannel("listenerWhat");
+    const what = rawWhat >= 128 ? REST : rawWhat;
     const howLoud = await csound.getControlChannel("listenerHowLoud");
     const when = await csound.getControlChannel("listenerWhen");
     const howLong = await csound.getControlChannel("listenerHowLong");
@@ -169,7 +193,34 @@ async function pollListener() {
   }
 }
 
+function disconnectLoopback() {
+  if (feedbackSourceNode) {
+    if (feedbackGainNode) {
+      try {
+        feedbackSourceNode.disconnect(feedbackGainNode);
+      } catch (e) {}
+    }
+    feedbackSourceNode = null;
+  }
+
+  if (feedbackGainNode) {
+    try {
+      feedbackGainNode.disconnect();
+    } catch (e) {}
+    feedbackGainNode = null;
+  }
+
+  if (feedbackDelayNode) {
+    try {
+      feedbackDelayNode.disconnect();
+    } catch (e) {}
+    feedbackDelayNode = null;
+  }
+}
+
 export function stopListening() {
+  const wasListening = isListening;
+
   if (pollIntervalId) {
     clearInterval(pollIntervalId);
     pollIntervalId = null;
@@ -187,14 +238,32 @@ export function stopListening() {
     inputSourceNode = null;
   }
 
+  disconnectLoopback();
+
   if (micStream) {
     micStream.getTracks().forEach((track) => track.stop());
     micStream = null;
   }
 
   isListening = false;
+
+  if (wasListening) console.log("Machine listening stopped.");
+}
+
+export async function toggleListening(
+  options = {},
+  onEvent = null,
+  onPhrase = null,
+) {
+  if (isListening) {
+    stopListening();
+    return false;
+  }
+
+  return startListening(options, onEvent, onPhrase);
 }
 
 // Portuguese aliases
 export const ativarEscuta = startListening;
 export const pararEscuta = stopListening;
+export const alternarEscuta = toggleListening;

@@ -91,9 +91,13 @@ const stopLP = async (event) => {
 import * as litePlayLang from "./litePlay.js";
 import { midiRecorder } from "./litePlay.js";
 import * as extra from "./extra.js";
+import * as benchmark from "../benchmark/simple.js";
 const lpKeys = Object.keys(litePlayLang);
 const extraKeys = Object.keys(extra);
 const lpConstKeys = Object.keys(window.lpAutocomplete);
+const benchmarkKeys = Object.keys(benchmark);
+
+Object.assign(window, benchmark);
 
 function litePlayCompletions(context) {
   let word = context.matchBefore(/[a-zA-Z0-9_À-ÿ]+/);
@@ -104,6 +108,7 @@ function litePlayCompletions(context) {
     { keys: lpKeys, lib: litePlayLang, sourceName: "litePlay" },
     { keys: extraKeys, lib: extra, sourceName: "extra" },
     { keys: lpConstKeys, lib: window.lpAutocomplete, sourceName: "constants" },
+    { keys: benchmarkKeys, lib: benchmark, sourceName: "benchmark" },
   ];
 
   // 2. Flatten all keys into a single array of options
@@ -230,6 +235,10 @@ const functionSignatures = {
   shift: "shift(frequency)",
   pan: "pan(amount)",
   volume: "volume(amount)",
+  runSimpleBenchmark:
+    "runSimpleBenchmark({ count = 100, spacing = 0.5, noteDur = 0.25 })",
+  executarBenchmarkSimples:
+    "executarBenchmarkSimples({ count = 100, spacing = 0.5, noteDur = 0.25 })",
 };
 
 const signatureTooltipField = StateField.define({
@@ -660,21 +669,28 @@ const volumeBar = document.getElementById("listener-meter-fill");
 
 if (listenBtn) {
   listenBtn.addEventListener("click", async () => {
-    const started = await listener.toggleListening(
-      {}, // default options
-      handleNewNoteEvent, // onEvent
-      handlePhraseCompleted, // onPhrase
-      handleLiveMeter, // onMeter
-    );
+    listenBtn.disabled = true;
+    try {
+      const started = await listener.toggleListening(
+        {}, // default options
+        handleNewNoteEvent, // onEvent
+        handlePhraseCompleted, // onPhrase
+      );
 
-    listenBtn.classList.toggle("active", started);
-    listenBtn.innerHTML = started ? "⏹ <b>STOP LISTENING</b>" : "<b>LISTEN</b>";
+      listenBtn.classList.toggle("active", started);
+      listenBtn.innerHTML = started
+        ? "⏹ <b>STOP LISTENING</b>"
+        : "𓂈 <b>LISTEN</b>";
+    } finally {
+      listenBtn.disabled = false;
+    }
   });
 }
 
 function handleNewNoteEvent(event) {
   if (liveLog) {
-    liveLog.value += `Note: [what: ${event[0]}, loud: ${event[1]}, when: ${event[2]}, dur: ${event[3]}]\n`;
+    const what = event[0] < 0 ? "O" : event[0];
+    liveLog.value += `Note: [what: ${what}, loud: ${event[1]}, when: ${event[2]}, dur: ${event[3]}]\n`;
     liveLog.scrollTop = liveLog.scrollHeight;
   }
 }
@@ -694,7 +710,7 @@ function handlePhraseCompleted(phrase) {
           <b>Phrase #${phraseIndex}</b> (${phrase.length} notes, ${totalDuration}s)
         </div>
         <div class="phrase-card-preview">
-          Pitches: [${phrase.map((e) => e[0]).join(", ")}]
+          Pitches: [${phrase.map((e) => (e[0] < 0 ? "O" : e[0])).join(", ")}]
         </div>
         <div class="phrase-card-actions">
           <button class="phrase-play-btn" title="Preview phrase">▶ Play</button>
