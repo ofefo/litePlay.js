@@ -59,13 +59,13 @@ export async function startListening(
   onPhraseCallback = onPhrase;
 
   const {
-    fastAtt = 0.05,
-    fastRel = 0.15,
-    slowAtt = 0.1,
-    slowRel = 0.3,
-    thresh = 0.05,
-    noiseFloor = 0.02,
-    holdTime = 0.05,
+    fastAtt = 0.005,
+    fastRel = 0.02,
+    slowAtt = 0.02,
+    slowRel = 0.08,
+    thresh = 0.02,
+    noiseFloor = 0.005,
+    holdTime = 0.02,
     silenceThresh = 1,
     node = null,
   } = options;
