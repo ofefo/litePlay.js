@@ -69,14 +69,9 @@ const globalObj = {
   BPM: 60.0,
   sampnum: 0,
 };
-// hold delay lines
+// hold delay and chorus lines
 const delayLines = new Set();
-// hold per-channel Signal Modifier bus effects (flanger/chorus/phaser/comb)
-const flangerLines = new Set();
 const chorusLines = new Set();
-const phaserLines = new Set();
-const combLines = new Set();
-const convolveLines = new Set();
 
 // Csound instrument class
 export class Instrument {
@@ -879,11 +874,7 @@ export async function reset() {
     sequencer.stop();
     await csound.inputMessage("i 200 0 0.1");
     delayLines.clear();
-    flangerLines.clear();
     chorusLines.clear();
-    phaserLines.clear();
-    combLines.clear();
-    convolveLines.clear();
   } else {
     console.log("No Csound instance found!");
   }
