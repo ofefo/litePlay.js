@@ -338,8 +338,8 @@ export class Instrument {
   }
 
   tremolo(rate, depth) {
-    csound.tableSet(40, this.chn, rate < 10 ? rate : 0);
-    csound.tableSet(41, this.chn, depth < 1 ? (depth > 0 ? depth : 0) : 1);
+    csound.tableSet(36, this.chn, rate < 10 ? rate : 0);
+    csound.tableSet(37, this.chn, depth < 1 ? (depth > 0 ? depth : 0) : 1);
   }
 
   chorus(rate, depth) {
@@ -352,8 +352,8 @@ export class Instrument {
       }
       return;
     }
-    csound.tableSet(49, this.chn, r > 0 ? r : 0.25);
-    csound.tableSet(50, this.chn, Math.min(Math.max(d, 0), 0.025));
+    csound.tableSet(38, this.chn, r > 0 ? r : 0.25);
+    csound.tableSet(39, this.chn, Math.min(Math.max(d, 0), 0.025));
     csound.tableSet(60, this.chn, 1);
     if (!chorusLines.has(this.chn)) {
       chorusLines.add(this.chn);
