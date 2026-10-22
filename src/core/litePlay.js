@@ -1,6 +1,6 @@
-// csound.js is the Csound WASM module (Csound 7.0.0, latest beta)
+// csound.js is the Csound WASM module (Csound 7.0.0 stable)
 const csoundjs =
-  "https://cdn.jsdelivr.net/npm/@csound/browser@7.0.0-beta41/dist/csound.js";
+  "https://cdn.jsdelivr.net/npm/@csound/browser@7.0.0/dist/csound.js";
 // csound is the Csound engine object (null as we start)
 export let csound = null;
 // audio context
