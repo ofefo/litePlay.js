@@ -381,7 +381,7 @@ instr 12
 		gachorus[p7] = gachorus[p7] + a1
 		gachorus[p7] = gachorus[p7] + a2
 	endif
-	kcbon table p7, 62
+	kcbon table p7, 9 
 	//send to reverb
 	krev table p7,8
 	garev1 += a1*krev
