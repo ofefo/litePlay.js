@@ -1556,8 +1556,8 @@ sequenciador.remover = sequencer.remove;
 sequenciador.ativarPausa = sequencer.togglePause;
 sequenciador.ativarMudo = sequencer.toggleMute;
 sequenciador.ativarSolo = sequencer.toggleSolo;
-sequenciador.chamarNovamente = sequencer.addCallback;
-sequenciador.limparChamadas = sequencer.clearCallbacks;
+sequenciador.adicionarChamado = sequencer.addCallback;
+sequenciador.limparChamados = sequencer.clearCallbacks;
 
 export const amostra = sample;
 export const amostrador = Sampler;
