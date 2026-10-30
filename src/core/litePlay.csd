@@ -15,7 +15,7 @@ gicf = log(sr/2)
 
 ichn = 1
 lp1: massign   ichn, 0
-loop_le   ichn, 1, 16, lp1
+loople ichn, 1, 16, lp1
 pgmassign 0, 0
 gisf sfload "gm.sf2"
 sfpassign  0, gisf
@@ -86,7 +86,7 @@ endop
 //   instrument (instr 10)
 instr 1
 	idkit = 317 /* drum-kit preset was 317*/
-	tableiw idkit, 9, 1
+	tablew idkit, 9, 1
 	irel = 0.5 /* release envelope */
 	
 	ipg = 1
@@ -377,7 +377,7 @@ instr 12
 		gachorus[p7] = gachorus[p7] + a1
 		gachorus[p7] = gachorus[p7] + a2
 	endif
-	kcbon table p7, 62
+	kcbon table p7, 9 
 	//send to reverb
 	krev table p7,8
 	garev1 += a1*krev
@@ -623,7 +623,7 @@ instr 110
 	a1 clip gaLeft, 0, .99
 	a2 clip gaRight, 0, .99
 	
-	outs a1, a2
+	out a1, a2
 	clear gaLeft, gaRight
 endin
 
