@@ -405,177 +405,180 @@ endin
 
 // listener
 instr 99
-	ain inch 1
+    ain inch 1
 
-	kFastAtt    chnget "listenerFastAtt"    // Fast envelope attack (default 5ms)
-	kFastRel    chnget "listenerFastRel"    // Fast envelope release (default 20ms)
-	kSlowAtt    chnget "listenerSlowAtt"    // Slow envelope attack (default 20ms)
-	kSlowRel    chnget "listenerSlowRel"    // Slow envelope release (default 80ms)
-	kThresh     chnget "listenerThresh"     // Energy surge threshold above background (default 0.02)
-	kNoiseFloor chnget "listenerNoiseFloor" // Absolute silence floor (default 0.005)
-	kHoldTime   chnget "listenerHoldTime"   // Debounce time to avoid false offsets (default 20ms)
-	kSilenceThresh chnget "listenerSilenceThresh" // End-phrase threshold (default 1s)
+    kFastAtt    chnget "listenerFastAtt"    // Fast envelope attack (default 5ms)
+    kFastRel    chnget "listenerFastRel"    // Fast envelope release (default 20ms)
+    kSlowAtt    chnget "listenerSlowAtt"    // Slow envelope attack (default 20ms)
+    kSlowRel    chnget "listenerSlowRel"    // Slow envelope release (default 80ms)
+    kThresh     chnget "listenerThresh"     // Energy surge threshold above background (default 0.02)
+    kNoiseFloor chnget "listenerNoiseFloor" // Absolute silence floor (default 0.005)
+    kHoldTime   chnget "listenerHoldTime"   // Debounce time to avoid false offsets (default 20ms)
+    kSilenceThresh chnget "listenerSilenceThresh" // End-phrase threshold (default 1s)
 
-	if kFastAtt == 0 then
-          kFastAtt    = 0.005
-          kFastRel    = 0.02
-          kSlowAtt    = 0.02
-          kSlowRel    = 0.08
-          kThresh     = 0.02
-          kNoiseFloor = 0.005
-          kHoldTime   = 0.02
-	  kSilenceThresh = 1
-      	endif
+    if kFastAtt == 0 then
+        kFastAtt    = 0.005
+        kFastRel    = 0.015
+        kSlowAtt    = 0.02
+        kSlowRel    = 0.06
+        kThresh     = 0.02
+        kNoiseFloor = 0.005
+        kHoldTime   = 0.01
+        kSilenceThresh = 1
+    endif
 
-	// Slow release and drop ratio used only by the note-end detector.
-	kHoldRel  = 0.30
-	kOffRatio = 0.5
+    // Slow release and drop ratio for the note-end detector
+    kHoldRel  = 0.3
+    kOffRatio = 0.5
 
-	krect rms ain
+    krms rms ain, 100
 
-	kfast init 0
-      	kslow init 0
-	khold init 0
-	kprev_fast init 0
+    kfast init 0
+    kslow init 0
+    khold init 0
+    kprev_fast init 0
 
-	kFastTime = (krect > kfast) ? kFastAtt : kFastRel
-	kfast portk krect, kFastTime
-	kSlowTime = (krect > kslow) ? kSlowAtt : kSlowRel
-	kslow portk krect, kSlowTime
-	kHoldEnvTime = (krect > khold) ? kSlowAtt : kHoldRel
-	khold portk krect, kHoldEnvTime
-	//chnset kfast, "listenerRms" // Send live RMS to JS for UI volume metering
-	konset         init 0
-        kbelow         init 0
-        khold_samps    = int(kHoldTime * kr)
+    kFastTime = (krms > kfast) ? kFastAtt : kFastRel
+    kfast portk krms , kFastTime
+    kSlowTime = (krms > kslow) ? kSlowAtt : kSlowRel
+    kslow portk krms , kSlowTime
+    kHoldEnvTime = (krms > khold) ? kSlowAtt : kHoldRel
+    khold portk krms , kHoldEnvTime
 
-        kOnsetTime     init 0
-        kOffsetTime    init 0
-        kLastNoteEnd   init 0
-        kPhraseStart   init 0
-        kPhraseActive  init 0
+    konset         init 0
+    kbelow         init 0
+    khold_samps    = int(kHoldTime * kr)
 
-        kNoteEndTrig   init 0
-        kPhraseEndTrig init 0
+    kOnsetTime     init 0
+    kOffsetTime    init 0
+    kLastNoteEnd   init 0
+    kPhraseStart   init 0
+    kPhraseActive  init 0
 
-        kmidi_sum      init 0
-        kmidi_count    init 0
-        kpeak_rms      init 0
-        kpeak_db_lo    init -90
-        kpeak_db_hi    init -90
-        kused_low      init 0
-        kfreeze        init 0
+    kNoteEndTrig   init 0
+    kPhraseEndTrig init 0
 
-        kfreq_lo, kamp_lo ptrack ain, 2048
-        kfreq_hi, kamp_hi ptrack ain, 512
-	
-	//onset
-	if (kfast > kslow + kThresh) && (kfast > kprev_fast) && (konset == 0) then
-          kbelow     = 0
-          konset     = 1
-	  kOnsetTime = timeinsts()
+    kmidi_sum      init 0
+    kmidi_count    init 0
+    kpeak_rms      init 0
+    kpeak_db_lo    init -90
+    kpeak_db_hi    init -90
+    kused_low      init 0
+    kfreeze        init 0
 
-	  kmidi_sum   = 0
-	  kmidi_count = 0
-	  kpeak_rms   = krect
-	  kpeak_db_lo = -90
-	  kpeak_db_hi = -90
-	  kused_low   = 0
-	  kfreeze     = 0
-	  khold       = kfast
-	  
-          if (kPhraseActive == 0) then
+    // dual pitch tracking with different window sizes
+    kfreq_lo, kamp_lo ptrack ain, 2048
+    kfreq_hi, kamp_hi ptrack ain, 512
+
+    // onset
+    if (kfast > kslow + kThresh) && (kfast > kprev_fast) && (konset == 0) then
+        konset     = 1
+        kOnsetTime = timeinsts()
+        kpeak_rms   = krms
+
+	//Reset values
+        kbelow     = 0
+        kmidi_sum   = 0
+        kmidi_count = 0
+        kpeak_db_lo = -90
+        kpeak_db_hi = -90
+        kused_low   = 0
+        kfreeze     = 0
+        khold       = kfast
+        
+        if (kPhraseActive == 0) then
             kPhraseStart  = kOnsetTime
             kPhraseActive = 1
-          endif
-      	endif
+        endif
+    endif
 
-	kprev_fast = kfast
+    kprev_fast = kfast
 
-	//offset
-	if (konset == 1) then
-          if (krect > kpeak_rms) then
-            kpeak_rms = krect
-          endif
+    // offset
+    if (konset == 1) then
+        if (krms > kpeak_rms) then
+            kpeak_rms = krms
+        endif
 
-          kpeak_db_lo = (kamp_lo > kpeak_db_lo) ? kamp_lo : kpeak_db_lo
-          kpeak_db_hi = (kamp_hi > kpeak_db_hi) ? kamp_hi : kpeak_db_hi
-          kage = timeinsts() - kOnsetTime
-          // Prefer the low tracker once its 4096-sample window is valid;
-          // the high tracker covers notes shorter than that window.
-          klo_valid = 0
-          if (kage >= (2 * 2048 / sr)) && (kfreq_lo >= 30) && (kfreq_lo <= 3500) && (kamp_lo > -70) && (kamp_lo > kpeak_db_lo - 15) then
+        kpeak_db_lo = (kamp_lo > kpeak_db_lo) ? kamp_lo : kpeak_db_lo
+        kpeak_db_hi = (kamp_hi > kpeak_db_hi) ? kamp_hi : kpeak_db_hi
+        kage = timeinsts() - kOnsetTime
+        
+        // low tracker if 2048 window is valid
+        // high tracker else
+        klo_valid = 0
+        if (kage >= (2 * 2048 / sr)) && (kfreq_lo >= 30) && (kfreq_lo <= 3500) && (kamp_lo > -70) && (kamp_lo > kpeak_db_lo - 15) then
             klo_valid = 1
-          endif
-          khi_valid = 0
-          if (kage >= (2 * 512 / sr)) && (kfreq_hi >= 250) && (kfreq_hi <= 3500) && (kamp_hi > -70) && (kamp_hi > kpeak_db_hi - 15) then
+        endif
+        khi_valid = 0
+        if (kage >= (2 * 512 / sr)) && (kfreq_hi >= 250) && (kfreq_hi <= 3500) && (kamp_hi > -70) && (kamp_hi > kpeak_db_hi - 15) then
             khi_valid = 1
-          endif
-          kfreq_used = 0
-          if (klo_valid == 1) && (kfreeze == 0) then
+        endif
+
+        kfreq_used = 0
+        if (klo_valid == 1) && (kfreeze == 0) then
             if (kused_low == 0) then
-              kmidi_sum = 0
-              kmidi_count = 0
-              kused_low = 1
+                kmidi_sum = 0
+                kmidi_count = 0
+                kused_low = 1
             endif
             kfreq_used = kfreq_lo
-          elseif (khi_valid == 1) && (kused_low == 0) then
+        elseif (khi_valid == 1) && (kused_low == 0) then
             kfreq_used = kfreq_hi
-          endif
-          if (kfreeze == 0) && (kfreq_used > 0) then
+        endif
+
+        if (kfreeze == 0) && (kfreq_used > 0) then
             kmidi = ftom(kfreq_used)
             kmidi_sum = kmidi_sum + kmidi
             kmidi_count = kmidi_count + 1
-          endif
-
-	// A gap drops kfast below the slow hold envelope; a natural decay does not.
-	if (kfast < khold * kOffRatio) || (kfast < kNoiseFloor) then
-          if (kbelow == 0) then
-            kfreeze = 1
-          endif
-          kbelow = kbelow + 1
-
-          if (kbelow > khold_samps) then
-            konset       = 0
-            kOffsetTime  = timeinsts()
-            kLastNoteEnd = kOffsetTime
-
-            khowlong = kOffsetTime - kOnsetTime
-
-            kwhen = kOnsetTime - kPhraseStart
-
-            if (kmidi_count > 0) then
-              kwhat = kmidi_sum / kmidi_count
-            else
-              kwhat = 128
-            endif
-
-            kpeak_min = (kpeak_rms > 0.001) ? kpeak_rms : 0.001 //40dB
-            kdb = dbfsamp(kpeak_min)
-            khowloud = (kdb - (-40)) / ((0) - (-40))
-            khowloud = (khowloud < 0) ? 0 : ((khowloud > 1) ? 1 : khowloud)
-
-            chnset kwhat,    "listenerWhat"
-            chnset khowloud, "listenerHowLoud"
-            chnset kwhen,    "listenerWhen"
-            chnset khowlong, "listenerHowLong"
-
-            kNoteEndTrig = kNoteEndTrig + 1
-            chnset kNoteEndTrig, "listenerNoteEndTrig"
-          endif
-        else
-          kbelow = 0
         endif
-      endif
 
-      if (konset == 0) && (kPhraseActive == 1) then
+        if (kfast < khold * kOffRatio) || (kfast < kNoiseFloor) then
+            if (kbelow == 0) then
+                kfreeze = 1
+            endif
+            kbelow = kbelow + 1
+
+            if (kbelow > khold_samps) then
+                konset       = 0
+                kOffsetTime  = timeinsts()
+                kLastNoteEnd = kOffsetTime
+
+                khowlong = kOffsetTime - kOnsetTime
+                kwhen = kOnsetTime - kPhraseStart
+
+                if (kmidi_count > 0) then
+                    kwhat = kmidi_sum / kmidi_count
+                else
+                    kwhat = 128
+                endif
+
+                kpeak_min = (kpeak_rms > 0.001) ? kpeak_rms : 0.001 //40dB
+                kdb = dbfsamp(kpeak_min)
+                khowloud = (kdb - (-40)) / ((0) - (-40))
+                khowloud = (khowloud < 0) ? 0 : ((khowloud > 1) ? 1 : khowloud)
+
+                chnset kwhat,    "listenerWhat"
+                chnset khowloud, "listenerHowLoud"
+                chnset kwhen,    "listenerWhen"
+                chnset khowlong, "listenerHowLong"
+
+                kNoteEndTrig = kNoteEndTrig + 1
+                chnset kNoteEndTrig, "listenerNoteEndTrig"
+            endif
+        else
+            kbelow = 0
+        endif
+    endif
+
+    if (konset == 0) && (kPhraseActive == 1) then
         kSilence = timeinsts() - kLastNoteEnd
         if (kSilence >= kSilenceThresh) then
-          kPhraseActive  = 0
-          kPhraseEndTrig = kPhraseEndTrig + 1
-          chnset kPhraseEndTrig, "listenerPhraseEndTrig"
+            kPhraseActive  = 0
+            kPhraseEndTrig = kPhraseEndTrig + 1
+            chnset kPhraseEndTrig, "listenerPhraseEndTrig"
         endif
-      endif
+    endif
 endin
 
 // reverb

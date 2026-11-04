@@ -60,12 +60,12 @@ export async function startListening(
 
   const {
     fastAtt = 0.005,
-    fastRel = 0.02,
+    fastRel = 0.015,
     slowAtt = 0.02,
-    slowRel = 0.08,
+    slowRel = 0.06,
     thresh = 0.02,
     noiseFloor = 0.005,
-    holdTime = 0.02,
+    holdTime = 0.01,
     silenceThresh = 1,
     node = null,
   } = options;
